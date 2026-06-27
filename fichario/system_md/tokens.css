@@ -1,0 +1,12 @@
+/*
+ * Tokens legados do Fichário Acadêmico.
+ *
+ * O design system ativo da Plataforma RENAST foi consolidado em:
+ * ../../assets/css/definicao-padroes.md
+ *
+ * Não adicione novos tokens locais aqui. Use assets/css/style.css e os
+ * aliases específicos de módulo apenas quando houver necessidade operacional.
+ */
+
+:root {
+}

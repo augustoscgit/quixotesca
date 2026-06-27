@@ -1,0 +1,132 @@
+ SELECT cons_cnae.id_matriz,
+    n_vinc.co_cnae,
+    n_vinc.co_cbo,
+    n_vinc.rais_n_vinc,
+    n_vinc.nu_jac,
+    cons_cnae.co_nivel_classificacao_consolidada AS co_nivel_classificacao_consolidada_cnae,
+    cons_cbo.co_nivel_classificacao_consolidada AS co_nivel_classificacao_consolidada_cbo,
+    cons_cnae.co_classificacao_consolidada AS co_classificacao_consolidada_cnae,
+    cons_cbo.co_classificacao_consolidada AS co_classificacao_consolidada_cbo,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_1,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_2,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_3,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_4,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_5,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_6,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_7,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_8,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '2'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_9,
+        CASE
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '0'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '1'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '0'::bpchar)) THEN '0'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '1'::bpchar)) THEN '1'::text
+            WHEN ((cons_cnae.co_classificacao_consolidada = '2'::bpchar) AND (cons_cbo.co_classificacao_consolidada = '2'::bpchar)) THEN '2'::text
+            ELSE '9'::text
+        END AS co_classificacao_consolidada_par_crit_10
+   FROM ((mvw_jac_subc_ocup n_vinc
+     JOIN mvw_matriz_classificacao_consolidada cons_cbo ON (((cons_cbo.n5_co_objeto)::text = (n_vinc.co_cbo)::text)))
+     JOIN mvw_matriz_classificacao_consolidada cons_cnae ON ((((cons_cnae.n5_co_objeto)::text = (n_vinc.co_cnae)::text) AND ((cons_cnae.id_matriz)::text = (cons_cbo.id_matriz)::text))));

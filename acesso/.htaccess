@@ -1,0 +1,14 @@
+AddHandler php80-script .php
+AddDefaultCharset UTF-8
+DirectoryIndex index.php
+Options -Indexes
+
+<FilesMatch "(^\.|\.env$|\.sql$|\.bak$|\.backup$|\.dump$|\.log$|\.sqlite$|\.sqlite3$|\.db$|\.zip$|\.rar$|\.7z$)">
+    Require all denied
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(src|secrets|private)(/|$) - [R=404,L]
+</IfModule>

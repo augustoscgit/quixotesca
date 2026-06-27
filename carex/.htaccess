@@ -1,0 +1,18 @@
+AddDefaultCharset UTF-8
+
+Options -Indexes
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^(README\.md|composer\.(json|lock)|package(-lock)?\.json|.*\.sql|.*\.bak|.*\.backup|.*\.dump|.*\.zip|.*\.rar|.*\.7z|.*\.key|.*\.pem|.*\.p12|.*\.pfx)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(config|src|tools|docs|secrets|private|scratch|chrome-debug-profile)(/|$) - [R=404,L]
+    # Redirecionamento removido para servir a landing page na raiz
+    # RewriteRule ^$ public/ [L,R=302]
+</IfModule>
