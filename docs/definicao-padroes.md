@@ -346,3 +346,18 @@ Na interface, o rotulo deve vir primeiro. Codigos tecnicos devem aparecer apenas
 - Placeholders devem usar cor secundaria do tema.
 - Campos `disabled` e `readonly` devem parecer inativos, mas continuar legiveis.
 - Autocomplete e sugestoes devem usar fundo, borda e texto do tema ativo.
+
+## 17. Separação de Código Público e Interno (Segurança)
+
+Para blindar a plataforma contra varreduras de arquivos sensíveis e tentativas de acesso direto via HTTP:
+
+- **Área Pública (`public_html/`)**:
+  - Aloja apenas os pontos de entrada legíveis e executáveis pelo navegador do usuário (scripts controladores de front-end, landing pages e ativos estáticos como imagens, favicons, CSS e JS globais).
+  - Nenhuma classe interna de banco de dados, arquivos de credenciais `.env` ou dumps de SQL pode residir sob esta pasta.
+- **Área Privada (Raiz do Projeto)**:
+  - Todas as pastas do backend dos módulos (`acesso/`, `carex/`, `fichario/`, `ldrt/`, `cat/`, `investigacao/`), helpers de layout (`includes/`) e credenciais reais (`secrets/`) residem fora do Document Root público do servidor.
+  - Bancos de dados locais (SQLite) e repositórios de sessão em arquivo devem ser alocados estritamente nas subpastas privadas (ex: `fichario/data/` e `acesso/private/sessions/`).
+- **Navegação e Portabilidade**:
+  - Todo link e referência HTML/PHP entre módulos e ativos deve ser estritamente relativo (ex: `../assets/favicon.png`, `../carex/matrizes.php`), garantindo compatibilidade integral no ambiente local (XAMPP) e na produção (Locaweb).
+- **Documentação Markdown (`.md`)**:
+  - Arquivos `.md` de uso interno por desenvolvedores ou agentes inteligentes de programação jamais devem ser deixados na pasta pública. Eles devem residir no diretório central de documentação privada `/docs/` ou em pastas internas dos módulos.
