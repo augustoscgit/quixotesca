@@ -22,26 +22,35 @@ Para evitar o upload de arquivos desnecessários (como versionamento `.git`, tes
    ```
 5. Clique em **OK** para aplicar. O WinSCP agora ignorará todos os arquivos de desenvolvimento e transferirá apenas o código de produção de forma rápida e segura.
 
-## Estrutura esperada no FTP publico
+## Estrutura de Pastas e Segurança no FTP (Locaweb)
 
-Suba o conteudo da raiz deste projeto diretamente para a raiz publica do dominio `www.renastonline.org`, mantendo esta estrutura:
+Para garantir segurança contra acessos diretos via HTTP, a plataforma é dividida entre arquivos **públicos** e **privados**:
 
-```text
-/
-  .htaccess
-  .env.example
-  index.html
-  assets/
-  carex/
-  fichario/
-  ldrt/
-  renastonline/
-  secrets/
-    .env
-    .htaccess
-```
+1. **Arquivos Públicos (Document Root)**:
+   Suba **apenas o conteúdo** da pasta `public_html/` (local) diretamente para a pasta pública do seu FTP (`public_html/` no servidor). O visitante acessará `https://www.renastonline.org/` e visualizará diretamente os arquivos desta pasta.
+   
+   A estrutura dentro da pasta pública será:
+   ```text
+   / (raiz publica do dominio)
+     .htaccess
+     index.html
+     index.php
+     favicon.ico
+     favicon.png
+     limpar_sessoes.php
+     assets/
+     acesso/
+     carex/
+     fichario/
+     ldrt/
+     cat/
+     investigacao/
+     renastonline/
+   ```
 
-Se o projeto for enviado para uma subpasta, os links relativos tendem a funcionar, mas OAuth, `APP_URL` e URLs canonicas precisam ser ajustados para essa subpasta.
+2. **Arquivos Privados (Fora da área pública)**:
+   Suba as pastas privadas do projeto (`acesso/`, `carex/`, `fichario/`, `ldrt/`, `cat/`, `investigacao/`, `includes/`, `secrets/`) para a **raiz da sua conta de hospedagem** (uma pasta acima de `public_html/`). 
+   Desse modo, o servidor de hospedagem conseguirá rodar a lógica do backend (via PHP), mas nenhum usuário mal-intencionado poderá acessar os arquivos sensíveis de banco de dados ou credenciais do `.env` pela internet.
 
 ## PHP
 

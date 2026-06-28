@@ -29,12 +29,12 @@ function platform_url(string $path): string
           Administrar
         </button>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="<?= platform_url('carex/public/administrativo.php') ?>">Administrativo CAREX</a></li>
+          <li><a class="dropdown-item" href="<?= platform_url('carex/administrativo.php') ?>">Administrativo CAREX</a></li>
         </ul>
       </div>
       <?php endif; ?>
       <i class="bi bi-person-circle text-white fs-4"></i>
-      <a class="btn btn-outline-light" href="<?= platform_url('carex/public/logout.php') ?>">Sair</a>
+      <a class="btn btn-outline-light" href="<?= platform_url('carex/logout.php') ?>">Sair</a>
     </div>
   </div>
 </nav>

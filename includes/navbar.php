@@ -70,8 +70,8 @@ if (!function_exists('render_platform_navbar')) {
                 'name' => $carexUser['name'] ?? 'Usuário',
                 'email' => $carexUser['email'] ?? '',
                 'role' => $carexUser['role'] ?? '',
-                'logout_url' => $relPath . 'carex/public/logout.php',
-                'profile_url' => $relPath . 'carex/public/perfil.php'
+                'logout_url' => $relPath . 'carex/logout.php',
+                'profile_url' => $relPath . 'carex/perfil.php'
             ];
         }
 
@@ -90,10 +90,10 @@ if (!function_exists('render_platform_navbar')) {
                 'brand_label' => 'carex-br',
                 'brand_url' => $relPath . 'carex/index.php',
                 'items' => [
-                    'matrizes' => ['url' => $relPath . 'carex/public/matrizes.php', 'label' => 'Matrizes', 'icon' => 'bi bi-table'],
-                    'metodologia' => ['url' => $relPath . 'carex/public/metodologia.php', 'label' => 'Metodologia', 'icon' => 'bi bi-journal-text'],
-                    'administrativo' => ['url' => $relPath . 'carex/public/administrativo.php', 'label' => 'Administrativo', 'icon' => 'bi bi-shield-lock', 'role' => 'admin'],
-                    'desenvolvimento' => ['url' => $relPath . 'carex/public/desenvolvimento.php', 'label' => 'Desenvolvimento', 'icon' => 'bi bi-code-slash', 'role' => 'admin'],
+                    'matrizes' => ['url' => $relPath . 'carex/matrizes.php', 'label' => 'Matrizes', 'icon' => 'bi bi-table'],
+                    'metodologia' => ['url' => $relPath . 'carex/metodologia.php', 'label' => 'Metodologia', 'icon' => 'bi bi-journal-text'],
+                    'administrativo' => ['url' => $relPath . 'carex/administrativo.php', 'label' => 'Administrativo', 'icon' => 'bi bi-shield-lock', 'role' => 'admin'],
+                    'desenvolvimento' => ['url' => $relPath . 'carex/desenvolvimento.php', 'label' => 'Desenvolvimento', 'icon' => 'bi bi-code-slash', 'role' => 'admin'],
                 ]
             ],
             'fichario' => [

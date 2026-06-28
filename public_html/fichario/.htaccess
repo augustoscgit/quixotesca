@@ -1,0 +1,15 @@
+# Force PHP 8.0 on Locaweb shared hosting.
+AddHandler php80-script .php
+
+AddDefaultCharset UTF-8
+Options -Indexes
+
+<FilesMatch "(^\.|\.env$|\.sql$|\.bak$|\.backup$|\.dump$|\.log$|\.sqlite$|\.sqlite3$|\.db$|\.zip$|\.rar$|\.7z$)">
+    Require all denied
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(private|secrets|data|docs|system_md|tests)(/|$) - [R=404,L]
+</IfModule>
