@@ -97,7 +97,7 @@ $csrfToken = Security::csrfToken();
     <meta name="color-scheme" content="light dark">
     <meta name="csrf-token" content="<?= Security::e($csrfToken) ?>">
     <title>CAREX | Perfil do Usuário</title>
-    <link href="assets/favicon.png" rel="icon" type="image/png">
+    <link href="../assets/favicon.png" rel="icon" type="image/png">
     <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="assets/app.css" rel="stylesheet">
     <style>

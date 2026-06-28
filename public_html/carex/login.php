@@ -85,7 +85,7 @@ $bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Carex-BR | Login</title>
-    <link href="assets/favicon.png" rel="icon" type="image/png">
+    <link href="../assets/favicon.png" rel="icon" type="image/png">
     <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Google Fonts Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -208,7 +208,7 @@ $bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap
         <main class="login-card">
             <div class="login-header">
                 <a href="../../" aria-label="Plataforma RENAST online" class="d-block">
-                    <img src="assets/logo-renast-horizontal.png" alt="Plataforma RENAST online" class="login-logo">
+                    <img src="../assets/img/logo-fundo-claro_horizontal.png" alt="Plataforma RENAST online" class="login-logo">
                 </a>
                 <a href="../../carex/" class="text-decoration-none">
                     <h1 class="login-title">Carex-BR</h1>
