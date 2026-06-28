@@ -27,19 +27,30 @@ Este projeto tem o seu escopo estritamente delimitado para garantir a independê
 
 ## 📂 Estrutura de Pastas e Componentes
 
-A estrutura de diretórios e a divisão de responsabilidades estão organizadas da seguinte forma:
+A plataforma é dividida entre uma área pública (Document Root do servidor) e pastas lógicas e de configuração privadas (fora do acesso HTTP):
 
-- **[/assets](assets)**: Logotipos oficiais, estilos CSS globais da landing page e o [guia de padrões visuais](assets/css/definicao-padroes.md).
-- **[/carex](carex)**: Módulo Carex-BR.
-  - Landing page de entrada: [carex/index.php](carex/index.php).
-  - Manual de desenvolvimento: [carex/instrucoes-agente.md](carex/instrucoes-agente.md).
-- **[/fichario](fichario)**: Módulo Fichário Acadêmico.
-  - Landing page de entrada: [fichario/index.php](fichario/index.php).
-  - Manual de desenvolvimento: [fichario/instrucoes-agente.md](fichario/instrucoes-agente.md).
-- **[/ldrt](ldrt)**: Módulo LDRT.
-  - Landing page de entrada: [ldrt/index.php](ldrt/index.php) (e [ldrt/public/index.php](ldrt/public/index.php)).
-  - Manual de desenvolvimento: [ldrt/instrucoes-agente.md](ldrt/instrucoes-agente.md).
-- **[/renastonline](renastonline)**: Pasta reservada para a integração do sistema central.
+### 🌐 Área Pública (`public_html/`)
+Contém apenas os pontos de entrada acessíveis via navegador e ativos estáticos:
+- **`public_html/index.php` / `index.html`**: Portal de entrada principal da plataforma.
+- **`public_html/assets/`**: Estilos CSS globais da landing page, Javascripts de tema e logotipos oficiais.
+- **`public_html/acesso/`**: Telas de login, cadastro, controle de usuários e papéis do módulo Acesso.
+- **`public_html/carex/`**: Telas do módulo Carex-BR (matrizes, categoria, administrativo, desenvolvimento).
+- **`public_html/fichario/`**: Telas do módulo Fichário Acadêmico (artigos, projetos, tags, timeline).
+- **`public_html/ldrt/`**: Telas de consulta e buscas cruzadas do módulo LDRT.
+- **`public_html/cat/`**: Telas de acompanhamento, inspeção e CNAE/CBO do módulo CAT.
+- **`public_html/investigacao/`**: Tela de investigação de óbito por causas externas.
+- **`public_html/renastonline/`**: Pasta de integração do sistema central.
+
+### 🔒 Área Privada (Fora da `public_html/`)
+Lógica de negócios e informações sensíveis blindadas de acesso HTTP direto:
+- **`acesso/`**: Lógica do módulo Acesso (`src/`), sessões ativas (`private/sessions/`) e configurações locais.
+- **`carex/`**: Código do CAREX (`src/`), documentação e configurações locais (`config/settings.json`).
+- **`fichario/`**: Código do Fichário (`src/`), banco de dados SQLite (`data/`) e bootstrap de inicialização.
+- **`ldrt/`**: Lógica do LDRT (`src/`), scripts de carga e banco de dados SQLite/PostgreSQL.
+- **`cat/`**: Código do CAT (`src/`), dicionários locais de CNAE/CBO/territórios e banco de dados.
+- **`investigacao/`**: Arquivos brutos de dicionários médicos e regionais.
+- **`includes/`**: Arquivos PHP globais compartilhados entre os cabeçalhos e barras de navegação da plataforma.
+- **`secrets/`**: Arquivos `.env` contendo as credenciais de acesso real aos bancos de dados de produção.
 
 ---
 

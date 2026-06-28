@@ -20,10 +20,10 @@ Edite `.env` localmente. Nunca versionar credenciais reais.
 URLs principais:
 
 ```text
-http://localhost/quixotesca/carex/public/
-http://localhost/quixotesca/carex/public/desenvolvimento.php
-http://localhost/quixotesca/carex/public/administrativo.php
-http://localhost/quixotesca/carex/public/matrizes.php
+http://localhost/quixotesca/public_html/carex/
+http://localhost/quixotesca/public_html/carex/desenvolvimento.php
+http://localhost/quixotesca/public_html/carex/administrativo.php
+http://localhost/quixotesca/public_html/carex/matrizes.php
 ```
 
 ## Validacoes

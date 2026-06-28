@@ -203,7 +203,7 @@ try {
                         <h6 class="text-light small font-weight-bold mb-2">Exemplo de Integração Python:</h6>
                         <pre class="bg-dark p-2 border border-secondary rounded text-light font-monospace" style="font-size: 0.75rem;">import requests
 
-url = "http://localhost/ldrt/api_rag.php"
+url = "http://localhost/quixotesca/public_html/ldrt/api_rag.php"
 params = {"q": "benzeno", "limit": 3}
 response = requests.get(url, params=params).json()
 

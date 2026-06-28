@@ -1,4 +1,4 @@
-﻿# Modulo CAT
+# Modulo CAT
 
 ## Visao geral
 
@@ -153,9 +153,9 @@ php -l cat\etl.php
 Endpoints uteis para teste local:
 
 ```http
-GET http://localhost/quixotesca/cat/api_etl.php?action=cnpj_aggregates&limit=10
-GET http://localhost/quixotesca/cat/cnpjs.php
-GET http://localhost/quixotesca/cat/cnpj.php?cnpj=84683374000300
-GET http://localhost/quixotesca/cat/inspecao.php
+GET http://localhost/quixotesca/public_html/cat/api_etl.php?action=cnpj_aggregates&limit=10
+GET http://localhost/quixotesca/public_html/cat/cnpjs.php
+GET http://localhost/quixotesca/public_html/cat/cnpj.php?cnpj=84683374000300
+GET http://localhost/quixotesca/public_html/cat/inspecao.php
 ```
 

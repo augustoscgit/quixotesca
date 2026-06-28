@@ -2,7 +2,7 @@
 
 As diretrizes de design, tokens, temas, paleta, UX, navbar, tabelas, formularios, fluxos hierarquicos e componentes foram centralizadas em:
 
-`assets/css/definicao-padroes.md`
+`public_html/assets/css/definicao-padroes.md`
 
 Este arquivo permanece como ponte de compatibilidade para referencias antigas a `system.md`.
 

@@ -8,7 +8,7 @@ Este arquivo existe para agentes de IA que assumirem continuidade do projeto.
 - Stack: PHP puro, Bootstrap, HTML e JavaScript sem framework de build.
 - Banco: PostgreSQL, schema `carex`.
 - Ambiente local observado: XAMPP em `C:\xampp\htdocs\quixotesca\carex`.
-- URL local principal: `http://localhost/quixotesca/carex/public/`.
+- URL local principal: `http://localhost/quixotesca/public_html/carex/`.
 - Entrada interna atual: `public/index.php` redireciona para `matrizes.php`.
 - Area interna exige login por `Carex\Http\Auth`.
 - Login oficial: Google OAuth 2.0 via `public/login.php` e `public/auth-callback.php`.

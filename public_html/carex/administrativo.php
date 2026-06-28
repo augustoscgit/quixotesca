@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $redirectParts = parse_url($redirectUri);
             $redirectPath = $redirectParts['path'] ?? '';
             if ($redirectPath === '' || $redirectPath === '/') {
-                $publicPath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/quixotesca/carex/public/administrativo.php')), '/');
+                $publicPath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/quixotesca/public_html/carex/administrativo.php')), '/');
                 $redirectUri = rtrim($redirectUri, '/') . $publicPath . '/auth-callback.php';
             }
 
@@ -521,7 +521,7 @@ try {
                         <?php
                             $proto = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
                             $host  = $_SERVER['HTTP_HOST'] ?? 'localhost';
-                            $publicPath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/quixotesca/carex/public/administrativo.php')), '/');
+                            $publicPath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/quixotesca/public_html/carex/administrativo.php')), '/');
                             $suggestedOrigin = $proto . '://' . $host;
                             $suggestedUri = $suggestedOrigin . $publicPath . '/auth-callback.php';
                         ?>
@@ -700,7 +700,7 @@ try {
                                 <div class="input-group input-group-sm">
                                     <input type="url" class="form-control font-monospace"
                                         id="googleRedirectUri" name="google_redirect_uri"
-                                        placeholder="https://www.renastonline.org/carex/public/auth-callback.php"
+                                        placeholder="https://www.renastonline.org/carex/auth-callback.php"
                                         value="<?= Security::e($currentRedirectUri) ?>"
                                         autocomplete="off">
                                     <button class="btn btn-outline-secondary" type="button"

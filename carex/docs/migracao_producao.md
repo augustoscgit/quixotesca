@@ -46,7 +46,7 @@ https://seudominio.com
 Nao cole aqui:
 
 ```text
-http://localhost/quixotesca/carex/public/auth-callback.php
+http://localhost/quixotesca/public_html/carex/auth-callback.php
 ```
 
 Se o Google mostrar a mensagem `Origem invalida: nao e permitido que URIs de origem contenham um caminho ou terminem com "/"`, a URL de callback foi colada no campo de origem JavaScript.
@@ -58,7 +58,7 @@ Aqui sim use a URL completa da callback PHP.
 Local:
 
 ```text
-http://localhost/quixotesca/carex/public/auth-callback.php
+http://localhost/quixotesca/public_html/carex/auth-callback.php
 ```
 
 Producao:

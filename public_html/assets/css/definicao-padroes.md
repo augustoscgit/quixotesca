@@ -6,10 +6,10 @@ Escopo: Portal Central, Acesso, Carex-BR, FichÃ¡rio AcadÃªmico, LDRT e pÃ¡
 
 ## 1. Fonte de Verdade
 
-- O CSS global da plataforma fica em `assets/css/style.css`.
-- O mapa da documentacao visual fica em `assets/css/documentacao-visual-centralizada.md`.
-- O seletor de tema e a troca automÃ¡tica de logos ficam em `assets/js/theme-switcher.js`.
-- As folhas locais (`acesso/assets/app.css`, `carex/public/assets/app.css`, `fichario/assets/app.css` e estilos inline de landing pages) podem definir componentes especÃ­ficos, mas devem herdar os tokens globais e respeitar este guia.
+- O CSS global da plataforma fica em `public_html/assets/css/style.css`.
+- O mapa da documentação visual fica em `public_html/assets/css/documentacao-visual-centralizada.md`.
+- O seletor de tema e a troca automática de logos ficam em `public_html/assets/js/theme-switcher.js`.
+- As folhas locais (`public_html/acesso/assets/app.css`, `public_html/carex/assets/app.css`, `public_html/fichario/assets/app.css` e estilos inline de landing pages) podem definir componentes específicos, mas devem herdar os tokens globais e respeitar este guia.
 - Guias locais de design devem apontar para este arquivo, evitando decisÃµes paralelas de paleta, tipografia, tema ou navegaÃ§Ã£o.
 
 ## 2. PrincÃ­pios de Interface
@@ -214,7 +214,7 @@ Cada modulo declara `--accent` uma unica vez via `[data-module="..."]`. O acento
 
 - Para fundo claro: `logo-fundo-claro_horizontal.png` ou `logo-fundo-claro-vertical.png`.
 - Para fundo escuro: `logo-fundo-escuro-horizontal.png` ou `logo-fundo-escuro-vertical.png`.
-- CAREX tambÃ©m usa os aliases servidos em `carex/public/assets/` (`logo-renast-horizontal.png` e `logo-renast-horizontal-dark.png`).
+- CAREX também usa os aliases servidos em `public_html/carex/assets/` (`logo-renast-horizontal.png` e `logo-renast-horizontal-dark.png`).
 - `theme-switcher.js` troca automaticamente as versÃµes de logo ao alternar tema; novas imagens adicionadas ao DOM tambÃ©m devem receber a versÃ£o correta.
 
 ## 12. Contraste e Compatibilidade
