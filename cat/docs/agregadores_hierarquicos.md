@@ -1,6 +1,6 @@
 # Padrao de agregadores hierarquicos e vocabularios controlados
 
-As regras gerais de visual, UX, menus, botoes, tabelas, filtros e tema ficam no guia central `../../assets/css/definicao-padroes.md`. Este documento detalha apenas o comportamento funcional especifico dos agregadores hierarquicos do modulo CAT.
+As regras gerais de visual, UX, menus, botoes, tabelas, filtros e tema ficam no guia central `../../docs/definicao-padroes.md`. Este documento detalha apenas o comportamento funcional especifico dos agregadores hierarquicos do modulo CAT.
 
 ## Objetivo
 

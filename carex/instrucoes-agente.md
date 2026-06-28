@@ -20,7 +20,7 @@ O Carex-BR consiste em um sistema de consulta de matrizes de risco carcinogÃªn
 
 O guia oficial de estilo, UX, interface, tema, navbar, botoes, tabelas e filtros da plataforma fica em:
 
-`../assets/css/definicao-padroes.md`
+`docs/definicao-padroes.md`
 
 As regras especificas de identidade do CAREX ficam em `docs/identidade-visual.md`, apenas para ativos, nome do modulo e compatibilidade local. Regras visuais antigas deste modulo sao historicas e nao devem orientar novas telas quando conflitarem com o guia central.
 

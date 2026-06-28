@@ -20,7 +20,7 @@ O LDRT consiste em uma aplicaÃ§Ã£o de consulta de doenÃ§as ocupacionais e 
 
 O guia oficial de estilo, UX, interface, tema, navbar, botoes, tabelas e filtros da plataforma fica em:
 
-`../assets/css/definicao-padroes.md`
+`docs/definicao-padroes.md`
 
 O arquivo local `assets/definicao-padroes.md` existe apenas como ponte de compatibilidade. Regras visuais antigas deste modulo sao historicas e nao devem orientar novas telas quando conflitarem com o guia central.
 

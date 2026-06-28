@@ -19,7 +19,7 @@ O CAT consiste em um sistema de controle de comunicaÃ§Ãµes de acidente de tr
 
 O guia oficial de estilo, UX, interface, tema, navbar, botoes, tabelas e filtros da plataforma fica em:
 
-`../assets/css/definicao-padroes.md`
+`docs/definicao-padroes.md`
 
 As regras especificas do modulo CAT ficam em `README.md` e `docs/agregadores_hierarquicos.md`, apenas para fluxos, agregadores, vocabularios e comportamento analitico do modulo. Regras visuais antigas deste modulo sao historicas e nao devem orientar novas telas quando conflitarem com o guia central.
 

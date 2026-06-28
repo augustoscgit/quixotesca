@@ -4,7 +4,7 @@ O CAREX usa a marca da Plataforma RENAST como identidade principal. O nome CAREX
 
 As regras oficiais de paleta, tema claro/escuro/auto, navbar, uso de logos, tipografia e contraste ficam no guia central:
 
-`../../assets/css/definicao-padroes.md`
+`../docs/definicao-padroes.md`
 
 ## Ativos
 

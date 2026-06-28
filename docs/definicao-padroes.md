@@ -7,7 +7,7 @@ Escopo: Portal Central, Acesso, Carex-BR, FichÃ¡rio AcadÃªmico, LDRT e pÃ¡
 ## 1. Fonte de Verdade
 
 - O CSS global da plataforma fica em `public_html/assets/css/style.css`.
-- O mapa da documentação visual fica em `public_html/assets/css/documentacao-visual-centralizada.md`.
+- O mapa da documentação visual fica em `public_html/docs/documentacao-visual-centralizada.md`.
 - O seletor de tema e a troca automática de logos ficam em `public_html/assets/js/theme-switcher.js`.
 - As folhas locais (`public_html/acesso/assets/app.css`, `public_html/carex/assets/app.css`, `public_html/fichario/assets/app.css` e estilos inline de landing pages) podem definir componentes específicos, mas devem herdar os tokens globais e respeitar este guia.
 - Guias locais de design devem apontar para este arquivo, evitando decisÃµes paralelas de paleta, tipografia, tema ou navegaÃ§Ã£o.
