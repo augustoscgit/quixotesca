@@ -236,12 +236,12 @@ if ($has_search) {
     <style>
                 :root, [data-bs-theme="light"] {
             --bg-color: #f1f5f9;
-            --bg-glow-1: rgba(99, 102, 241, 0.06);
-            --bg-glow-2: rgba(168, 85, 247, 0.04);
+            --bg-glow-1: transparent;
+            --bg-glow-2: transparent;
             --card-bg: rgba(255, 255, 255, 0.65);
             --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: #4f46e5;
-            --accent-hover: #3730a3;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-laranja-4);
             --text-muted: #64748b;
             --text-color: #1e293b;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
@@ -251,12 +251,12 @@ if ($has_search) {
 
         [data-bs-theme="dark"] {
             --bg-color: #0b0f19;
-            --bg-glow-1: rgba(99, 102, 241, 0.12);
-            --bg-glow-2: rgba(168, 85, 247, 0.08);
+            --bg-glow-1: transparent;
+            --bg-glow-2: transparent;
             --card-bg: rgba(22, 28, 45, 0.7);
             --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: #6366f1;
-            --accent-hover: #4f46e5;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-laranja-4);
             --text-muted: #94a3b8;
             --text-color: #f8fafc;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -267,9 +267,7 @@ if ($has_search) {
                 body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, var(--bg-glow-1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, var(--bg-glow-2) 0px, transparent 50%);
+            background-image: none;
             color: var(--text-color);
             min-height: 100vh;
         }
@@ -281,22 +279,22 @@ if ($has_search) {
 
                 .navbar {
             background-color: var(--navbar-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: none;
             border-bottom: 1px solid var(--border-color);
         }
 
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: var(--glass-shadow);
+            border-radius: 8px;
+            box-shadow: none;
         }
 
         .btn-primary {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
+            background-color: var(--accent-solid);
+            border-color: var(--accent-border);
             border-radius: 8px;
             padding: 10px 20px;
             font-weight: 500;
@@ -304,8 +302,8 @@ if ($has_search) {
         }
 
         .btn-primary:hover {
-            background-color: var(--accent-hover);
-            border-color: var(--accent-hover);
+            background-color: var(--accent-solid-hover);
+            border-color: var(--accent-solid-hover);
             transform: translateY(-1px);
         }
 
@@ -338,8 +336,8 @@ if ($has_search) {
         .form-control:focus,
         .form-select:focus {
             background-color: var(--field-bg) !important;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            border-color: var(--accent-border);
+            box-shadow: 0 0 0 0.2rem rgba(0, 99, 146, 0.25);
             color: var(--text-color) !important;
         }
 
@@ -390,7 +388,7 @@ if ($has_search) {
         }
 
         .suggestion-item:hover {
-            background-color: rgba(99, 102, 241, 0.15);
+            background-color: var(--bs-tertiary-bg);
             color: var(--text-color);
         }
 
@@ -445,7 +443,7 @@ if ($has_search) {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
             padding: 4px 10px;
-            border-radius: 20px;
+            border-radius: 8px;
             font-size: 0.85rem;
             margin-right: 8px;
             margin-bottom: 8px;
@@ -463,7 +461,7 @@ if ($has_search) {
 
         .info-box {
             background: rgba(255, 255, 255, 0.02);
-            border-left: 3px solid var(--accent-color);
+            border-left: 3px solid var(--accent-border);
             padding: 15px;
             border-radius: 0 8px 8px 0;
             margin-bottom: 15px;

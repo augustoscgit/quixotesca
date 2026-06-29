@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../../acesso/src/bootstrap.php';
-require_permission('acesso.users.permissions');
+require_platform_admin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_csrf();
@@ -13,6 +13,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($userId > 0) {
         $pdo = db();
+        $adminRoleIdStmt = $pdo->prepare('SELECT id FROM ' . table_name('roles') . " WHERE slug = 'admin' LIMIT 1");
+        $adminRoleIdStmt->execute();
+        $adminRoleId = (int) $adminRoleIdStmt->fetchColumn();
+        $currentUserId = (int) (current_user()['id'] ?? 0);
+
+        if ($userId === $currentUserId && $adminRoleId > 0 && !in_array($adminRoleId, $roleIds, true)) {
+            flash('error', 'Voce nao pode remover seu proprio papel de administrador.');
+            header('Location: permissoes.php?user_id=' . $userId);
+            exit;
+        }
+
         $pdo->beginTransaction();
         try {
             $pdo->prepare('DELETE FROM ' . table_name('user_roles') . ' WHERE user_id = :user_id')->execute(['user_id' => $userId]);
@@ -35,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $users = db()->query('SELECT id, name, email FROM ' . table_name('users') . ' ORDER BY name')->fetchAll();
-$roles = db()->query('SELECT * FROM ' . table_name('roles') . ' ORDER BY app_slug, slug')->fetchAll();
+$roles = db()->query("SELECT * FROM " . table_name('roles') . " WHERE slug IN ('admin', 'user') ORDER BY CASE slug WHEN 'admin' THEN 1 WHEN 'user' THEN 2 ELSE 3 END")->fetchAll();
 
 $selectedUserId = (int) ($_GET['user_id'] ?? ($users[0]['id'] ?? 0));
 $assignedStmt = db()->prepare('SELECT role_id FROM ' . table_name('user_roles') . ' WHERE user_id = :user_id');
@@ -63,7 +74,7 @@ render_header('Papeis', 'permissoes');
         <section class="panel p-4">
             <div class="section-title mb-2">Autorizacao</div>
             <h2 class="h4 mb-3">Atribuir papeis</h2>
-            <p class="muted">Os papeis das aplicacoes ficam preparados aqui, mas ainda nao sao aplicados em CAREX, Fichario ou LDRT nesta fase.</p>
+            <p class="muted">Use apenas os papeis centrais desta fase: admin controla tudo; user pode editar conteudo; visitantes leem areas publicas.</p>
 
             <form method="post">
                 <?= csrf_field() ?>

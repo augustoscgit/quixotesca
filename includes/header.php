@@ -1,5 +1,12 @@
 <?php
-if (!isset($_SESSION)) {
+if (!isset($_SESSION) && session_status() === PHP_SESSION_NONE) {
+    $sessionDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'acesso' . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'sessions';
+    if (!is_dir($sessionDir)) {
+        @mkdir($sessionDir, 0775, true);
+    }
+    if (is_dir($sessionDir) && is_writable($sessionDir)) {
+        session_save_path($sessionDir);
+    }
     session_start();
 }
 
@@ -23,7 +30,7 @@ function platform_url(string $path): string
       <img src="<?= platform_url('assets/img/logo-fundo-escuro-horizontal.png') ?>" alt="Logo RENAST" class="platform-logo-img navbar-logo-img">
     </a>
     <div class="d-flex align-items-center gap-3">
-      <?php if (isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'administrador'): ?>
+      <?php if (($_SESSION['_acesso_user_role'] ?? '') === 'admin'): ?>
       <div class="dropdown">
         <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           Administrar

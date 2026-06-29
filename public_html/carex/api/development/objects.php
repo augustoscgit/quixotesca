@@ -10,11 +10,7 @@ use Carex\Http\Security;
 
 $config = require dirname(__DIR__, 4) . '/carex' . '/src/bootstrap.php';
 
-Auth::requireApiLogin();
-if ((Auth::currentUser()['role'] ?? '') !== 'admin') {
-    Response::error('Forbidden', 403);
-    exit;
-}
+Auth::requireApiAdmin();
 
 Security::applyHeaders();
 Security::allowReadOnlyRequest();

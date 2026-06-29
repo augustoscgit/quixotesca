@@ -1294,18 +1294,14 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260615" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
     <style>
-        body {
-            background: var(--bg-gradient);
-        }
-
         .blob {
             animation: floatBlob 12s infinite alternate ease-in-out;
         }
 
-        .blob-purple {
+        .legacy-decoration-secondary {
             animation-delay: -6s;
         }
 
@@ -1329,7 +1325,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             background: rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255,255,255,0.05);
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 8px;
             font-family: inherit;
         }
 
@@ -1571,7 +1567,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             background-color: rgba(0, 0, 0, 0.3) !important;
             border: 1px solid #dac8b9 !important;
             color: #ffffff !important;
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 1.25rem;
             resize: none;
         }
@@ -1590,10 +1586,10 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
         /* Autocomplete dropdown list styling */
         .autocomplete-dropdown {
             background: rgba(18, 21, 40, 0.98) !important;
-            backdrop-filter: blur(16px);
+            backdrop-filter: none;
             border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            box-shadow: none;
             max-height: 220px;
             overflow-y: auto;
             position: absolute;
@@ -1667,8 +1663,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
 </head>
 <body>
     <!-- Background Animated Blobs -->
-    <div class="blob blob-blue"></div>
-    <div class="blob blob-purple"></div>
+
 
     <?php render_navbar('articles'); ?>
 
@@ -2333,7 +2328,12 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                     'Método': 'background: #fff8f1; color: #5a4b43; border: 1px solid #dac8b9;',
                     'Fonte': 'background: #e8f0e5; color: #2f6f40; border: 1px solid #b8cdb0;'
                 };
-                const style = catColors[tag.category] || 'background: rgba(255,255,255,0.06); color: #5a4b43; border: 1px solid rgba(255,255,255,0.15);';
+                const tokenStyles = {
+                    'tema': 'background: var(--tag-tema-bg); color: var(--tag-tema-text); border: 1px solid var(--tag-tema-border);',
+                    'metodo': 'background: var(--tag-metodo-bg); color: var(--tag-metodo-text); border: 1px solid var(--tag-metodo-border);',
+                    'fonte': 'background: var(--tag-fonte-bg); color: var(--tag-fonte-text); border: 1px solid var(--tag-fonte-border);'
+                };
+                const style = tokenStyles[normalizeStr(tag.category || '')] || 'background: var(--tag-neutro-bg); color: var(--tag-neutro-text); border: 1px solid var(--tag-neutro-border);';
 
                 const catSpan = `<span class="badge border" style="${style} font-size:0.65rem;">${tag.category}</span>`;
                 item.innerHTML = `<strong>${tag.name}</strong> ${catSpan}`;
@@ -3163,16 +3163,16 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 .toLowerCase();
 
             if (normalized === 'metodo') {
-                return { bg: 'rgba(168, 85, 247, 0.15)', text: '#c084fc', border: 'rgba(168, 85, 247, 0.3)' };
+                return { bg: 'var(--tag-metodo-bg)', text: 'var(--tag-metodo-text)', border: 'var(--tag-metodo-border)' };
             }
             if (normalized === 'fonte') {
-                return { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' };
+                return { bg: 'var(--tag-fonte-bg)', text: 'var(--tag-fonte-text)', border: 'var(--tag-fonte-border)' };
             }
             if (normalized === 'tema') {
-                return { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' };
+                return { bg: 'var(--tag-tema-bg)', text: 'var(--tag-tema-text)', border: 'var(--tag-tema-border)' };
             }
 
-            return { bg: 'rgba(255, 255, 255, 0.05)', text: '#e5e7eb', border: 'rgba(255, 255, 255, 0.1)' };
+            return { bg: 'var(--tag-neutro-bg)', text: 'var(--tag-neutro-text)', border: 'var(--tag-neutro-border)' };
         }
 
         function renderMarkingReadTags(tags) {
@@ -3565,7 +3565,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             width: 100vw;
             height: 100vh;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
+            backdrop-filter: none;
             display: flex;
             justify-content: center;
             align-items: center;

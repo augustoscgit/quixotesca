@@ -66,16 +66,6 @@ final class Security
 
     private static function startSession(): void
     {
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            return;
-        }
-
-        session_set_cookie_params([
-            'httponly' => true,
-            'samesite' => 'Lax',
-            'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
-        ]);
-
-        session_start();
+        Auth::startSession();
     }
 }

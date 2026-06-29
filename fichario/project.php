@@ -698,8 +698,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
     </style>
 </head>
 <body>
-    <div class="blob blob-blue"></div>
-    <div class="blob blob-purple"></div>
+
 
     <?php render_navbar('projects'); ?>
 

@@ -149,14 +149,15 @@ $results['env_keys'] = [
     <title>Diagnóstico - Fichário Acadêmico</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: radial-gradient(circle at 50% 50%, #151932 0%, #0c0e1b 100%);
+            --bg-gradient: none;
         }
         body {
             font-family: 'Outfit', sans-serif;
-            background: var(--bg-gradient);
-            color: #f3f4f6;
+            background: var(--bs-body-bg);
+            color: var(--bs-body-color);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -164,11 +165,12 @@ $results['env_keys'] = [
             padding: 2rem 1rem;
         }
         .glass-card {
-            backdrop-filter: blur(16px) saturate(180%);
-            background-color: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            background-color: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 8px;
+            box-shadow: none;
             padding: 2.5rem;
             max-width: 800px;
             width: 100%;
@@ -184,16 +186,16 @@ $results['env_keys'] = [
         .status-danger { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
         
         .list-group-item {
-            background-color: rgba(255, 255, 255, 0.015);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #e5e7eb;
+            background-color: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            color: var(--bs-body-color);
             margin-bottom: 0.75rem;
-            border-radius: 12px !important;
+            border-radius: 8px !important;
             transition: all 0.2s;
         }
         .list-group-item:hover {
-            background-color: rgba(255, 255, 255, 0.03);
-            border-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--bs-tertiary-bg);
+            border-color: var(--accent-ui);
         }
     </style>
 </head>

@@ -176,6 +176,7 @@ function ensure_schema_ready(PDO $pdo): void
     $version = (int) ($stmt->fetchColumn() ?: 0);
 
     if ($version >= 1) {
+        seed_initial_data($pdo);
         return;
     }
 
@@ -328,6 +329,8 @@ function seed_apps(PDO $pdo): void
 function seed_permissions(PDO $pdo): void
 {
     $permissions = [
+        ['platform', 'platform.admin', 'Administrar plataforma'],
+        ['platform', 'content.edit', 'Editar conteudo'],
         ['acesso', 'acesso.admin', 'Administrar acesso'],
         ['acesso', 'acesso.users.read', 'Ler usuarios'],
         ['acesso', 'acesso.users.create', 'Criar usuarios'],
@@ -350,6 +353,8 @@ function seed_permissions(PDO $pdo): void
 function seed_roles(PDO $pdo): void
 {
     $roles = [
+        ['platform', 'admin', 'Administrador'],
+        ['platform', 'user', 'Usuario editor'],
         ['acesso', 'acesso.admin', 'Administrador do Acesso'],
         ['fichario', 'fichario.reader', 'Leitor do Fichario'],
         ['fichario', 'fichario.admin', 'Administrador do Fichario'],
@@ -368,6 +373,8 @@ function seed_roles(PDO $pdo): void
 function seed_role_permissions(PDO $pdo): void
 {
     $map = [
+        'admin' => ['platform.admin', 'content.edit', 'acesso.admin', 'acesso.users.read', 'acesso.users.create', 'acesso.users.update', 'acesso.users.permissions'],
+        'user' => ['content.edit'],
         'acesso.admin' => ['acesso.admin', 'acesso.users.read', 'acesso.users.create', 'acesso.users.update', 'acesso.users.permissions'],
         'fichario.reader' => ['fichario.access'],
         'fichario.admin' => ['fichario.access', 'fichario.admin'],
@@ -418,7 +425,7 @@ function seed_admin_user(PDO $pdo): void
     ]);
     $userId = (int) $stmt->fetchColumn();
 
-    $roleStmt = $pdo->prepare('SELECT id FROM ' . table_name('roles') . " WHERE slug = 'acesso.admin'");
+    $roleStmt = $pdo->prepare('SELECT id FROM ' . table_name('roles') . " WHERE slug = 'admin'");
     $roleStmt->execute();
     $roleId = (int) $roleStmt->fetchColumn();
 
@@ -504,6 +511,12 @@ function current_user(): ?array
         return null;
     }
 
+    $permissions = user_permissions((int) $user['id']);
+    $roles = user_role_slugs((int) $user['id']);
+    $user['_permissions'] = $permissions;
+    $user['_roles'] = $roles;
+    $user['role'] = canonical_user_role($user, $roles, $permissions);
+
     return $user;
 }
 
@@ -516,6 +529,16 @@ function login_user(array $user): void
 {
     session_regenerate_id(true);
     $_SESSION['_acesso_user_id'] = (int) $user['id'];
+    $_SESSION['_acesso_user_name'] = (string) ($user['name'] ?? '');
+    $_SESSION['_acesso_user_email'] = (string) ($user['email'] ?? '');
+
+    try {
+        $permissions = user_permissions((int) $user['id']);
+        $roles = user_role_slugs((int) $user['id']);
+        $_SESSION['_acesso_user_role'] = canonical_user_role($user, $roles, $permissions);
+    } catch (Throwable $e) {
+        $_SESSION['_acesso_user_role'] = 'user';
+    }
 }
 
 function logout_user(): void
@@ -564,6 +587,60 @@ function user_permissions(int $userId): array
     return array_map('strval', $stmt->fetchAll(PDO::FETCH_COLUMN));
 }
 
+function user_role_slugs(int $userId): array
+{
+    $stmt = db()->prepare('
+        SELECT DISTINCT r.slug
+          FROM ' . table_name('roles') . ' r
+          JOIN ' . table_name('user_roles') . ' ur ON ur.role_id = r.id
+         WHERE ur.user_id = :user_id
+         ORDER BY r.slug
+    ');
+    $stmt->execute(['user_id' => $userId]);
+
+    return array_map('strval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+}
+
+function canonical_user_role(?array $user = null, ?array $roles = null, ?array $permissions = null): string
+{
+    if ($user === null) {
+        return 'public';
+    }
+
+    $userId = (int) ($user['id'] ?? 0);
+    $roles ??= $userId > 0 ? user_role_slugs($userId) : [];
+    $permissions ??= $userId > 0 ? user_permissions($userId) : [];
+
+    $legacyAdminPermissions = [
+        'platform.admin',
+        'acesso.admin',
+        'fichario.admin',
+        'ldrt.admin',
+        'carex.admin',
+    ];
+
+    if (in_array('admin', $roles, true) || array_intersect($legacyAdminPermissions, $permissions) !== []) {
+        return 'admin';
+    }
+
+    if (in_array('user', $roles, true) || in_array('content.edit', $permissions, true)) {
+        return 'user';
+    }
+
+    return 'public';
+}
+
+function platform_is_admin(?array $user = null): bool
+{
+    return canonical_user_role($user ?? current_user()) === 'admin';
+}
+
+function platform_can_edit(?array $user = null): bool
+{
+    $role = canonical_user_role($user ?? current_user());
+    return $role === 'admin' || $role === 'user';
+}
+
 function has_permission(string $permission): bool
 {
     $user = current_user();
@@ -571,8 +648,20 @@ function has_permission(string $permission): bool
         return false;
     }
 
-    $permissions = user_permissions((int) $user['id']);
-    return in_array('acesso.admin', $permissions, true) || in_array($permission, $permissions, true);
+    if (platform_is_admin($user)) {
+        return true;
+    }
+
+    if ($permission === 'content.edit') {
+        return platform_can_edit($user);
+    }
+
+    if (str_ends_with($permission, '.admin') || str_starts_with($permission, 'acesso.users.') || $permission === 'platform.admin') {
+        return false;
+    }
+
+    $permissions = $user['_permissions'] ?? user_permissions((int) $user['id']);
+    return in_array($permission, $permissions, true);
 }
 
 function require_permission(string $permission): void
@@ -585,6 +674,30 @@ function require_permission(string $permission): void
 
     http_response_code(403);
     exit('Acesso restrito.');
+}
+
+function require_platform_admin(): void
+{
+    require_login();
+
+    if (platform_is_admin()) {
+        return;
+    }
+
+    http_response_code(403);
+    exit('Acesso restrito a administradores.');
+}
+
+function require_platform_user(): void
+{
+    require_login();
+
+    if (platform_can_edit()) {
+        return;
+    }
+
+    http_response_code(403);
+    exit('Acesso restrito a usuarios autenticados.');
 }
 
 function find_user_by_login(string $login): ?array
@@ -655,7 +768,8 @@ function render_header(string $title, string $active = ''): void
     echo '<script src="../assets/js/theme-switcher.js"></script>';
     echo '</head><body>';
     require_once __DIR__ . '/../../includes/navbar.php';
-    render_platform_navbar('acesso', $active);
+    $module = str_contains($_SERVER['SCRIPT_NAME'] ?? '', '/admin/') ? 'admin' : 'acesso';
+    render_platform_navbar($module, $active);
     echo '<main class="container py-4">';
 
     if ($notice) {

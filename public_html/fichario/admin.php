@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../../fichario/bootstrap.php';
 
-require_login();
+require_admin();
 
 $pdo = db();
 $articleCount = (int) $pdo->query('SELECT COUNT(*) FROM articles')->fetchColumn();
@@ -23,16 +23,13 @@ $inactiveUsers = access_inactive_users_count();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260603h" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
     <style>
-        body {
-            background: var(--bg-gradient);
-        }
         .blob {
             animation: floatBlob 12s infinite alternate ease-in-out;
         }
-        .blob-purple {
+        .legacy-decoration-secondary {
             animation-delay: -6s;
         }
         @keyframes floatBlob {
@@ -43,8 +40,7 @@ $inactiveUsers = access_inactive_users_count();
 </head>
 <body>
     <!-- Background Animated Blobs -->
-    <div class="blob blob-blue"></div>
-    <div class="blob blob-purple"></div>
+
 
     <?php render_admin_navbar('admin'); ?>
     <main class="container py-4 main-container" style="position: relative; z-index: 10;">

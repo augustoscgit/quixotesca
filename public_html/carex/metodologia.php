@@ -6,8 +6,6 @@ use Carex\Http\Security;
 
 $config = require dirname(__DIR__, 2) . '/carex' . '/src/bootstrap.php';
 
-\Carex\Http\Auth::requireLogin();
-
 Security::applyHeaders();
 Security::allowReadOnlyRequest();
 
@@ -38,8 +36,9 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
         .metod-layout {
             display: grid;
             grid-template-columns: 260px 1fr;
-            gap: 0;
+            gap: 1.5rem;
             min-height: calc(100vh - 60px);
+            padding-inline: 1.5rem;
         }
         @media (max-width: 991px) {
             .metod-layout { grid-template-columns: 1fr; }
@@ -49,17 +48,21 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
         /* ── Sumário lateral ─────────────────────────────────────── */
         .metod-toc {
             position: sticky;
-            top: 60px;
-            height: calc(100vh - 60px);
+            top: 76px;
+            height: fit-content;
+            max-height: calc(100vh - 96px);
             overflow-y: auto;
-            border-right: 1px solid var(--bs-border-color-translucent);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 8px;
             background: var(--bs-body-bg);
-            padding: 1.5rem 1rem 2rem 1.5rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            box-shadow: none;
         }
         .metod-toc h6 {
             font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0;
             color: var(--bs-secondary-color);
             font-weight: 700;
             margin-bottom: 0.75rem;
@@ -69,25 +72,26 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
             font-size: 0.82rem;
             color: var(--bs-body-color);
             text-decoration: none;
-            padding: 3px 6px;
-            border-radius: 4px;
+            padding: 0.35rem 0.5rem;
+            border-radius: 6px;
+            border-left: 2px solid transparent;
             line-height: 1.4;
-            transition: background 0.15s, color 0.15s;
+            transition: background-color 0.15s, border-color 0.15s, color 0.15s;
         }
-        .toc-link:hover { background: var(--bs-tertiary-bg); color: var(--bs-primary); }
-        .toc-link.active { background: var(--bs-primary-bg-subtle); color: var(--bs-primary); font-weight: 600; }
+        .toc-link:hover { background: var(--bs-tertiary-bg); color: var(--accent-ui); }
+        .toc-link.active { background: var(--accent-surface); border-left-color: var(--accent-border); color: var(--accent-surface-text); font-weight: 600; }
         .toc-link.toc-h3 { padding-left: 1.25rem; font-size: 0.78rem; color: var(--bs-secondary-color); }
         .toc-link.toc-h4 { padding-left: 2rem; font-size: 0.75rem; color: var(--bs-tertiary-color); }
 
         /* ── Conteúdo principal ──────────────────────────────────── */
         .metod-body {
-            padding: 2rem 2.5rem 4rem;
+            padding: 2rem 1rem 4rem;
             max-width: 860px;
             font-size: 0.97rem;
             line-height: 1.75;
         }
         .metod-body h1 { font-size: 1.65rem; font-weight: 700; margin-bottom: 0.25rem; }
-        .metod-body h2 { font-size: 1.2rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bs-border-color); color: var(--bs-primary); scroll-margin-top: 80px; }
+        .metod-body h2 { font-size: 1.2rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--bs-border-color); color: var(--accent-ui) !important; scroll-margin-top: 80px; }
         .metod-body h3 { font-size: 1rem; font-weight: 600; margin-top: 1.75rem; margin-bottom: 0.5rem; scroll-margin-top: 80px; }
         .metod-body h4 { font-size: 0.9rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.4rem; scroll-margin-top: 80px; }
         .metod-body p  { margin-bottom: 0.9rem; }
@@ -100,7 +104,7 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
         .metod-body table th { background: var(--bs-tertiary-bg); font-weight: 600; }
         .metod-body table th, .metod-body table td { padding: 0.5rem 0.75rem; border: 1px solid var(--bs-border-color); vertical-align: top; }
         .metod-body hr { margin: 2rem 0; border-color: var(--bs-border-color); }
-        .metod-body blockquote { border-left: 4px solid var(--bs-primary); padding: 0.5rem 1rem; background: var(--bs-primary-bg-subtle); border-radius: 0 6px 6px 0; margin: 1rem 0; }
+        .metod-body blockquote { border-left: 4px solid var(--accent-border); padding: 0.5rem 1rem; background: var(--accent-surface); color: var(--bs-body-color); border-radius: 0 6px 6px 0; margin: 1rem 0; }
         .metod-body strong { font-weight: 600; }
 
         /* ── Barra de progresso de leitura ──────────────────────── */
@@ -109,7 +113,7 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
             top: 0;
             left: 0;
             height: 3px;
-            background: var(--bs-primary);
+            background: var(--accent-solid);
             width: 0%;
             z-index: 2000;
             transition: width 0.1s linear;

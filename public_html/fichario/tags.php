@@ -290,7 +290,7 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
 }
 ?>
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" data-module="fichario">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -301,26 +301,10 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260603h" rel="stylesheet">
-    <link href="assets/tag-visualizations.css?v=20260625" rel="stylesheet">
+    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
+    <link href="assets/tag-visualizations.css?v=20260629-tags" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
     <style>
-        body {
-            background: var(--bg-gradient);
-        }
-
-        .blob {
-            animation: floatBlob 12s infinite alternate ease-in-out;
-        }
-
-        .blob-purple {
-            animation-delay: -6s;
-        }
-
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 40px) scale(1.15); }
-        }
-
         .tag-tree-container::-webkit-scrollbar {
             width: 6px;
         }
@@ -387,8 +371,7 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
     </style>
 </head>
 <body>
-    <div class="blob blob-blue"></div>
-    <div class="blob blob-purple"></div>
+
 
     <?php render_navbar('tags'); ?>
 
@@ -824,6 +807,6 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
             }
         });
     </script>
-    <script src="assets/tag-visualizations.js?v=20260625"></script>
+    <script src="assets/tag-visualizations.js?v=20260629-tags"></script>
 </body>
 </html>

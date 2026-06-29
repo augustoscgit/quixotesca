@@ -4,6 +4,32 @@
  * Automatically runs migrations if database tables are missing.
  */
 
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    $sessionDir = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'acesso' . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'sessions';
+    if (!is_dir($sessionDir)) {
+        @mkdir($sessionDir, 0775, true);
+    }
+    if (is_dir($sessionDir) && is_writable($sessionDir)) {
+        session_save_path($sessionDir);
+    }
+
+    ini_set('session.use_strict_mode', '1');
+    ini_set('session.gc_maxlifetime', '14400');
+
+    $isHttps = (
+        (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
+    );
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+    @session_start();
+}
+
 function getDBConnection(): PDO
 {
     static $pdo = null;
@@ -196,6 +222,17 @@ function ensureRuntimeSchema(PDO $pdo): void
                 erro TEXT,
                 criado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() at time zone 'utc')
             );
+
+            CREATE TABLE IF NOT EXISTS cat_dashboard_daily_cache (
+                data_acidente DATE NOT NULL,
+                obito TEXT NOT NULL DEFAULT '',
+                uf_empregador TEXT NOT NULL DEFAULT '',
+                uf_acidente TEXT NOT NULL DEFAULT '',
+                municipio_empregador TEXT NOT NULL DEFAULT '',
+                total INTEGER NOT NULL DEFAULT 0,
+                atualizado_em TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() at time zone 'utc'),
+                PRIMARY KEY (data_acidente, obito, uf_empregador, uf_acidente, municipio_empregador)
+            );
         ");
 
         $functionExists = (bool)$pdo
@@ -242,6 +279,11 @@ function ensureRuntimeSchema(PDO $pdo): void
             CREATE INDEX IF NOT EXISTS idx_cnpj_cache_opencnpj_status ON cnpj_cache_opencnpj(status_http);
             CREATE INDEX IF NOT EXISTS idx_cnpj_opencnpj_log_criado ON cnpj_opencnpj_log(criado_em);
             CREATE INDEX IF NOT EXISTS idx_cnpj_opencnpj_log_cnpj ON cnpj_opencnpj_log(cnpj_digits);
+            CREATE INDEX IF NOT EXISTS idx_cat_dashboard_daily_data ON cat_dashboard_daily_cache(data_acidente);
+            CREATE INDEX IF NOT EXISTS idx_cat_dashboard_daily_obito ON cat_dashboard_daily_cache(obito);
+            CREATE INDEX IF NOT EXISTS idx_cat_dashboard_daily_uf_empregador ON cat_dashboard_daily_cache(uf_empregador);
+            CREATE INDEX IF NOT EXISTS idx_cat_dashboard_daily_uf_acidente ON cat_dashboard_daily_cache(uf_acidente);
+            CREATE INDEX IF NOT EXISTS idx_cat_dashboard_daily_municipio ON cat_dashboard_daily_cache(municipio_empregador);
         ");
         $pdo->query("SELECT pg_advisory_unlock(hashtext('cat_runtime_schema'))");
     } catch (PDOException $e) {
@@ -298,6 +340,57 @@ function refreshCnpjAggregates(PDO $pdo): int
             $pdo->rollBack();
         }
         throw $e;
+    }
+}
+
+function refreshCatDashboardDailyCache(PDO $pdo): int
+{
+    $pdo->beginTransaction();
+    try {
+        $pdo->exec("TRUNCATE TABLE cat_dashboard_daily_cache");
+        $inserted = $pdo->exec("
+            INSERT INTO cat_dashboard_daily_cache (
+                data_acidente, obito, uf_empregador, uf_acidente,
+                municipio_empregador, total, atualizado_em
+            )
+            WITH base AS (
+                SELECT parse_date_immutable(dados->>'data_acidente') AS data_acidente,
+                       COALESCE(NULLIF(btrim(COALESCE(dados->>'indica_obito_acidente', dados->>'indica_bito_acidente')), ''), '') AS obito,
+                       COALESCE(NULLIF(btrim(dados->>'uf_munic_empregador'), ''), '') AS uf_empregador,
+                       COALESCE(NULLIF(btrim(dados->>'uf_munic_acidente'), ''), '') AS uf_acidente,
+                       COALESCE(NULLIF(btrim(dados->>'munic_empr'), ''), '') AS municipio_empregador
+                  FROM registros_brutos
+            )
+            SELECT data_acidente,
+                   obito,
+                   uf_empregador,
+                   uf_acidente,
+                   municipio_empregador,
+                   COUNT(*)::integer AS total,
+                   now() at time zone 'utc'
+              FROM base
+             WHERE data_acidente IS NOT NULL
+             GROUP BY data_acidente, obito, uf_empregador, uf_acidente, municipio_empregador
+        ");
+        $pdo->commit();
+        return (int)$inserted;
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $e;
+    }
+}
+
+function ensureCatDashboardDailyCache(PDO $pdo): void
+{
+    $hasCache = filter_var(
+        $pdo->query("SELECT EXISTS (SELECT 1 FROM cat_dashboard_daily_cache LIMIT 1)")->fetchColumn(),
+        FILTER_VALIDATE_BOOLEAN
+    );
+
+    if (!$hasCache) {
+        refreshCatDashboardDailyCache($pdo);
     }
 }
 

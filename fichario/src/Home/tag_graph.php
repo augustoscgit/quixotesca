@@ -52,6 +52,7 @@ function prepare_home_tag_graph(PDO $pdo, array $cloudTags, int $nodeLimit = 60,
             'colorBg' => $color['bg'],
             'colorText' => $color['text'],
             'colorBorder' => $color['border'],
+            'colorSolid' => $color['solid'],
             'title' => ($category !== '' ? $category . ' - ' : '') . $tag['name'] . ' (' . $count . ' artigo(s))',
         ];
     }

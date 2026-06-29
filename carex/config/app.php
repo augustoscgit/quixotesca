@@ -19,9 +19,4 @@ return [
         'sslmode' => Env::get('DB_SSLMODE', ''),
         'allow_writes' => Env::bool('DB_ALLOW_WRITES', false),
     ],
-    'google' => [
-        'client_id' => Env::get('GOOGLE_CLIENT_ID', ''),
-        'client_secret' => Env::get('GOOGLE_CLIENT_SECRET', ''),
-        'redirect_uri' => Env::get('GOOGLE_REDIRECT_URI', ''),
-    ],
 ];

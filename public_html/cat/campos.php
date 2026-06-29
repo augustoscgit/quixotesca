@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../../acesso/src/bootstrap.php';
+require_platform_admin();
+
 /**
  * CAT - Matriz de Campos por Arquivo
  */
@@ -71,12 +74,12 @@ try {
             --bg-color: #f1f5f9;
             --card-bg: rgba(255, 255, 255, 0.7);
             --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #35383d;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #64748b;
             --text-color: #1e293b;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: rgba(241, 245, 249, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --field-bg: #f8fafc;
         }
 
@@ -84,12 +87,12 @@ try {
             --bg-color: #0b0f19;
             --card-bg: rgba(22, 28, 45, 0.7);
             --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #575d64;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #94a3b8;
             --text-color: #f8fafc;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: rgba(11, 15, 25, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --field-bg: #111827;
         }
 
@@ -103,18 +106,18 @@ try {
 
         .navbar {
             background-color: var(--navbar-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border-bottom: 1px solid var(--border-color);
         }
 
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: var(--glass-shadow);
+            border-radius: 8px;
+            box-shadow: none;
         }
 
         .form-control,
@@ -132,7 +135,7 @@ try {
             background-color: var(--field-bg) !important;
             color: var(--text-color) !important;
             border-color: var(--accent-color) !important;
-            box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.18);
+            box-shadow: 0 0 0 0.2rem rgba(70, 75, 81, 0.18);
         }
         .form-select option {
             background-color: var(--field-bg);
@@ -141,7 +144,7 @@ try {
         [data-bs-theme="light"] input[type="date"] { color-scheme: light; }
         [data-bs-theme="dark"] input[type="date"] { color-scheme: dark; }
 
-        .text-purple { color: var(--accent-color) !important; }
+        .text-accent { color: var(--accent-color) !important; }
         .btn-icon {
             width: 40px;
             height: 40px;
@@ -156,10 +159,10 @@ try {
             height: 34px;
         }
 
-        .btn-purple {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: #fff;
+        .btn-accent {
+            background-color: var(--accent-solid);
+            border-color: var(--accent-border);
+            color: var(--accent-on-solid);
             font-weight: 500;
         }
 
@@ -194,20 +197,21 @@ try {
         .file-col { min-width: 190px; }
         .cell-note { font-size: 0.72rem; line-height: 1.25; }
     </style>
+    <link href="../assets/css/style.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js"></script>
 </head>
 <body>
     <!-- Navbar -->
     <?php
     require_once __DIR__ . '/../../includes/navbar.php';
-    render_platform_navbar('cat', 'inspecao');
+    render_platform_navbar('cat', 'campos');
     ?>
 
     <main class="container-fluid py-5 px-4">
         <header class="mb-4">
             <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                 <div>
-                    <h1 class="display-6 text-purple mb-2" style="font-weight: 800;">Matriz de Campos por Arquivo</h1>
+                    <h1 class="display-6 text-accent mb-2" style="font-weight: 800;">Matriz de Campos por Arquivo</h1>
                     <p class="lead text-secondary mb-0">Compare presença, preenchimento e formatos de data entre os arquivos documentados da base CAT.</p>
                 </div>
             </div>

@@ -14,12 +14,11 @@ require __DIR__ . '/../../fichario/bootstrap.php';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260603h" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
 </head>
 <body>
-    <div class="blob blob-blue"></div>
-    <div class="blob blob-purple"></div>
+
 
     <?php render_navbar(''); ?>
 

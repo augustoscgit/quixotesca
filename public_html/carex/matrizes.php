@@ -8,8 +8,6 @@ use Carex\Http\Security;
 
 $config = require dirname(__DIR__, 2) . '/carex' . '/src/bootstrap.php';
 
-\Carex\Http\Auth::requireLogin();
-
 Security::applyHeaders();
 Security::allowReadOnlyRequest();
 
@@ -124,7 +122,7 @@ try {
                                     <span class="text-primary"><?= number_format($percent, 1, ',', '.') ?>%</span>
                                 </div>
                                 <div class="progress work-progress" style="height: 8px;" role="progressbar" aria-valuenow="<?= Security::e($progress) ?>" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar bg-success" style="width: <?= Security::e($progress) ?>%"></div>
+                                    <div class="progress-bar" style="width: <?= Security::e($progress) ?>%"></div>
                                 </div>
                             </div>
 

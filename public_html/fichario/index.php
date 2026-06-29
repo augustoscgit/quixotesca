@@ -64,9 +64,9 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/app.css?v=20260603h" rel="stylesheet">
-    <link href="assets/tag-visualizations.css?v=20260625" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
+    <link href="assets/tag-visualizations.css?v=20260629-tags" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js"></script>
     
     <style>
@@ -165,7 +165,7 @@ try {
         .action-card-citations:hover,
         .action-card-tags:hover {
             transform: none;
-            border-color: var(--accent) !important;
+            border-color: var(--accent-ui) !important;
             box-shadow: none !important;
         }
 
@@ -210,19 +210,19 @@ try {
 
         .action-card-articles .card-label {
             background: var(--bs-tertiary-bg);
-            color: var(--accent);
+            color: var(--accent-ui);
             border: 1px solid var(--bs-border-color);
         }
 
         .action-card-citations .card-label {
             background: var(--bs-tertiary-bg);
-            color: var(--accent);
+            color: var(--accent-ui);
             border: 1px solid var(--bs-border-color);
         }
 
         .action-card-tags .card-label {
             background: var(--bs-tertiary-bg);
-            color: var(--accent);
+            color: var(--accent-ui);
             border: 1px solid var(--bs-border-color);
         }
 
@@ -367,19 +367,19 @@ try {
 
         .action-card-articles .card-label {
             background: var(--bs-tertiary-bg) !important;
-            color: var(--accent) !important;
+            color: var(--accent-ui) !important;
             border: 1px solid var(--bs-border-color) !important;
         }
 
         .action-card-citations .card-label {
             background: var(--bs-tertiary-bg) !important;
-            color: var(--accent) !important;
+            color: var(--accent-ui) !important;
             border: 1px solid var(--bs-border-color) !important;
         }
 
         .action-card-tags .card-label {
             background: var(--bs-tertiary-bg) !important;
-            color: var(--accent) !important;
+            color: var(--accent-ui) !important;
             border: 1px solid var(--bs-border-color) !important;
         }
 
@@ -401,7 +401,7 @@ try {
         }
 
         .word-cloud-item:hover {
-            color: var(--accent) !important;
+            color: var(--accent-ui) !important;
             opacity: 1 !important;
             transform: none;
         }
@@ -599,6 +599,6 @@ try {
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js"></script>
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-    <script src="assets/tag-visualizations.js?v=20260625"></script>
+    <script src="assets/tag-visualizations.js?v=20260629-tags"></script>
 </body>
 </html>

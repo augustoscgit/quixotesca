@@ -8,5 +8,5 @@ require dirname(__DIR__, 2) . '/carex' . '/src/bootstrap.php';
 
 Auth::logout();
 
-header('Location: login.php');
+header('Location: ../acesso/logout.php');
 exit;

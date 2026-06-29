@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Carex\Database;
 
 use PDO;
-use InvalidArgumentException;
 
 final class AdminRepository
 {
@@ -80,92 +79,6 @@ final class AdminRepository
                 ], $links),
             ];
         }, $statement->fetchAll());
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function users(): array
-    {
-        $statement = $this->pdo->query(
-            "SELECT id, google_id, name, email, profile_picture, role, status, created_at, updated_at
-               FROM users
-              ORDER BY name ASC"
-        );
-
-        return array_map([$this, 'mapUser'], $statement->fetchAll());
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function updateUserAccess(int $id, string $role, string $status): array
-    {
-        $role = trim(strtolower($role));
-        $status = trim(strtolower($status));
-
-        if (!in_array($role, ['admin', 'especialista', 'usuario'], true)) {
-            throw new InvalidArgumentException('Perfil de usuario invalido.');
-        }
-
-        if (!in_array($status, ['ativo', 'desligado'], true)) {
-            throw new InvalidArgumentException('Status de usuario invalido.');
-        }
-
-        $current = $this->pdo->prepare('SELECT email FROM users WHERE id = :id');
-        $current->execute(['id' => $id]);
-        $existing = $current->fetch();
-
-        if (!$existing) {
-            throw new InvalidArgumentException('Usuario nao encontrado.');
-        }
-
-        if (strtolower((string) $existing['email']) === 'augustosc@gmail.com' && ($role !== 'admin' || $status !== 'ativo')) {
-            throw new InvalidArgumentException('A conta administradora principal deve permanecer ativa e com perfil admin.');
-        }
-
-        $statement = $this->pdo->prepare(
-            "UPDATE users
-                SET role = :role,
-                    status = :status,
-                    remember_token = CASE WHEN :status_for_token = 'desligado' THEN NULL ELSE remember_token END,
-                    updated_at = CURRENT_TIMESTAMP
-              WHERE id = :id
-          RETURNING id, google_id, name, email, profile_picture, role, status, created_at, updated_at"
-        );
-        $statement->execute([
-            'id' => $id,
-            'role' => $role,
-            'status' => $status,
-            'status_for_token' => $status,
-        ]);
-
-        $user = $statement->fetch();
-
-        if (!$user) {
-            throw new InvalidArgumentException('Nao foi possivel atualizar o usuario.');
-        }
-
-        return $this->mapUser($user);
-    }
-
-    /**
-     * @param array<string, mixed> $row
-     * @return array<string, mixed>
-     */
-    private function mapUser(array $row): array
-    {
-        return [
-            'id' => (int) $row['id'],
-            'google_id' => (string) $row['google_id'],
-            'name' => (string) $row['name'],
-            'email' => (string) $row['email'],
-            'profile_picture' => $row['profile_picture'] === null ? '' : (string) $row['profile_picture'],
-            'role' => (string) $row['role'],
-            'status' => (string) $row['status'],
-            'created_at' => (string) $row['created_at'],
-            'updated_at' => (string) $row['updated_at'],
-        ];
     }
 
     /**

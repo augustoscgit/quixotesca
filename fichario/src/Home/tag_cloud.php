@@ -27,11 +27,15 @@ function prepare_home_tag_cloud(array $tags): array
     $wordList = [];
     foreach ($radialTags as $tag) {
         $count = (int) ($tag['article_count'] ?? 0);
+        $category = trim((string) ($tag['category'] ?? ''));
+        $color = get_tag_colors($category !== '' ? $category : 'Sem agrupamento');
         $maxCount = max($maxCount, $count);
         $wordList[] = [
             $tag['name'],
             $count,
             (int) $tag['id'],
+            $category !== '' ? $category : 'Sem agrupamento',
+            $color['solid'],
         ];
     }
 

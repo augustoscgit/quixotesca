@@ -97,7 +97,7 @@ try {
 
         .nav-card:hover {
             transform: none;
-            border-color: var(--accent);
+            border-color: var(--accent-ui);
             background: var(--bs-tertiary-bg);
             box-shadow: none;
         }
@@ -111,7 +111,7 @@ try {
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            color: var(--accent);
+            color: var(--accent-ui);
             transition: all 0.3s ease;
             margin-bottom: 20px;
             border: 1px solid var(--bs-border-color);
@@ -119,7 +119,7 @@ try {
 
         .nav-card:hover .icon-wrapper {
             background-color: var(--bs-tertiary-bg);
-            color: var(--accent);
+            color: var(--accent-ui);
             transform: none;
         }
 
@@ -185,7 +185,7 @@ try {
             align-items: center;
             gap: 6px;
             padding: 4px 10px;
-            border-radius: 20px;
+            border-radius: 8px;
             font-size: 0.8rem;
             font-weight: 500;
         }

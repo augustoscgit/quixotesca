@@ -31,13 +31,18 @@
         return !!element && (!visibleOnly || !!element.offsetParent);
     }
 
+    function tagTypeSolidColor(category) {
+        const normalized = String(category || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        if (normalized === 'tema') return '#006392';
+        if (normalized === 'metodo') return '#944F00';
+        if (normalized === 'fonte') return '#5DCF00';
+        return '#464B51';
+    }
+
     function themedWordColor(word) {
-        const isDarkTheme = document.documentElement.getAttribute('data-bs-theme') === 'dark';
-        const palette = isDarkTheme
-            ? ['#60a5fa', '#a78bfa', '#34d399', '#818cf8', '#c084fc', '#22d3ee']
-            : ['#2563eb', '#7c3aed', '#047857', '#4f46e5', '#9333ea', '#0891b2'];
-        const hash = Array.from(String(word)).reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        return palette[hash % palette.length];
+        const explicitColor = Array.isArray(word) ? word[4] : '';
+        const category = Array.isArray(word) ? word[3] : '';
+        return explicitColor || tagTypeSolidColor(category);
     }
 
     function hexToRgba(hex, alpha, isDark) {
@@ -95,17 +100,17 @@
         const labelColor = isDark ? '#f8fafc' : '#111827';
         const mutedEdgeColor = isDark ? 'rgba(148, 163, 184, 0.13)' : 'rgba(71, 85, 105, 0.11)';
         const categoryFallback = isDark
-            ? { bg: 'rgba(148, 163, 184, 0.18)', text: '#cbd5e1', border: 'rgba(148, 163, 184, 0.42)' }
-            : { bg: 'rgba(100, 116, 139, 0.12)', text: '#475569', border: 'rgba(100, 116, 139, 0.32)' };
+            ? { bg: '#273444', text: '#e5e7eb', border: '#6b7280' }
+            : { bg: '#f8f9fa', text: '#464B51', border: '#adb5bd' };
         const categoryStyles = new Map();
 
         rawNodes.forEach((node) => {
             const category = node.category || 'Sem tipo';
             if (!categoryStyles.has(category)) {
                 categoryStyles.set(category, {
-                    bg: node.colorBg || categoryFallback.bg,
-                    text: node.colorText || categoryFallback.text,
-                    border: node.colorBorder || categoryFallback.border
+                    bg: node.colorSolid ? hexToRgba(node.colorSolid, isDark ? 0.32 : 0.16, isDark) : (node.colorBg || categoryFallback.bg),
+                    text: node.colorSolid || categoryFallback.text,
+                    border: node.colorSolid || node.colorBorder || categoryFallback.border
                 });
             }
         });

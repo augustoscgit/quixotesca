@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../../acesso/src/bootstrap.php';
+require_platform_admin();
+
 require_once __DIR__ . '/../../ldrt/src/db.php';
 // We don't need active database connection queries on initial load, but we can verify it
 $db_status = "Desconectado";
@@ -29,12 +32,12 @@ try {
     <style>
                 :root, [data-bs-theme="light"] {
             --bg-color: #f1f5f9;
-            --bg-glow-1: rgba(99, 102, 241, 0.06);
-            --bg-glow-2: rgba(168, 85, 247, 0.04);
+            --bg-glow-1: transparent;
+            --bg-glow-2: transparent;
             --card-bg: rgba(255, 255, 255, 0.65);
             --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: #4f46e5;
-            --accent-hover: #3730a3;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-laranja-4);
             --text-muted: #64748b;
             --text-color: #1e293b;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
@@ -44,12 +47,12 @@ try {
 
         [data-bs-theme="dark"] {
             --bg-color: #0b0f19;
-            --bg-glow-1: rgba(99, 102, 241, 0.12);
-            --bg-glow-2: rgba(168, 85, 247, 0.08);
+            --bg-glow-1: transparent;
+            --bg-glow-2: transparent;
             --card-bg: rgba(22, 28, 45, 0.7);
             --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: #6366f1;
-            --accent-hover: #4f46e5;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-laranja-4);
             --text-muted: #94a3b8;
             --text-color: #f8fafc;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -60,9 +63,7 @@ try {
                 body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, var(--bg-glow-1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, var(--bg-glow-2) 0px, transparent 50%);
+            background-image: none;
             color: var(--text-color);
             min-height: 100vh;
         }
@@ -74,17 +75,17 @@ try {
 
                 .navbar {
             background-color: var(--navbar-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: none;
             border-bottom: 1px solid var(--border-color);
         }
 
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: var(--glass-shadow);
+            border-radius: 8px;
+            box-shadow: none;
         }
 
         .form-control,
@@ -100,7 +101,7 @@ try {
             background-color: var(--field-bg) !important;
             border-color: var(--accent-color);
             color: var(--text-color) !important;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(0, 99, 146, 0.25);
         }
 
         .form-control::placeholder {
@@ -133,7 +134,7 @@ try {
             text-transform: uppercase;
         }
         .badge-cid { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .badge-rag-agente { background-color: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); }
+        .badge-rag-agente { background-color: var(--bs-tertiary-bg); color: var(--accent-ui); border: 1px solid var(--bs-border-color); }
         .badge-rag-relato { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
 
         .chunk-card {
@@ -146,7 +147,7 @@ try {
         }
 
         .chunk-card:hover {
-            border-color: rgba(99, 102, 241, 0.4);
+            border-color: var(--bs-border-color);
         }
 
         .chunk-text {

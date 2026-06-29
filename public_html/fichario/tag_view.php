@@ -811,8 +811,8 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260615" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
     <script>
         if (window.history && 'scrollRestoration' in window.history) {
             window.history.scrollRestoration = 'manual';
@@ -824,15 +824,11 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
         }
     </script>
     <style>
-        body {
-            background: var(--bg-gradient);
-        }
-
         .blob {
             animation: floatBlob 12s infinite alternate ease-in-out;
         }
 
-        .blob-purple {
+        .legacy-decoration-secondary {
             animation-delay: -6s;
         }
 
@@ -931,8 +927,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
     </style>
 </head>
 <body>
-    <div class="blob blob-blue"></div>
-    <div class="blob blob-purple"></div>
+
 
     <?php render_navbar('tags'); ?>
 
@@ -1420,15 +1415,15 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
         function getNoteTagColors(category) {
             const normalized = normalizeStr(category || '');
             if (normalized === 'metodo') {
-                return { bg: 'rgba(168, 85, 247, 0.15)', text: '#c084fc', border: 'rgba(168, 85, 247, 0.3)' };
+                return { bg: 'var(--tag-metodo-bg)', text: 'var(--tag-metodo-text)', border: 'var(--tag-metodo-border)' };
             }
             if (normalized === 'fonte') {
-                return { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' };
+                return { bg: 'var(--tag-fonte-bg)', text: 'var(--tag-fonte-text)', border: 'var(--tag-fonte-border)' };
             }
             if (normalized === 'tema') {
-                return { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' };
+                return { bg: 'var(--tag-tema-bg)', text: 'var(--tag-tema-text)', border: 'var(--tag-tema-border)' };
             }
-            return { bg: 'rgba(255,255,255,0.05)', text: '#e5e7eb', border: 'rgba(255,255,255,0.1)' };
+            return { bg: 'var(--tag-neutro-bg)', text: 'var(--tag-neutro-text)', border: 'var(--tag-neutro-border)' };
         }
 
         function initTagTooltips(scope = document) {

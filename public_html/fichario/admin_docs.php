@@ -147,12 +147,11 @@ $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : ''
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260603h" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
     <style>
-        body { background: var(--bg-gradient); }
         .blob { animation: floatBlob 12s infinite alternate ease-in-out; }
-        .blob-purple { animation-delay: -6s; }
+        .legacy-decoration-secondary { animation-delay: -6s; }
         @keyframes floatBlob {
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(60px, 40px) scale(1.15); }
@@ -185,8 +184,7 @@ $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : ''
     </style>
 </head>
 <body>
-    <div class="blob blob-blue"></div>
-    <div class="blob blob-purple"></div>
+
 
     <?php render_admin_navbar('docs'); ?>
     <main class="container py-4 main-container" style="position: relative; z-index: 10;">

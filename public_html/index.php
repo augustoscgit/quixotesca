@@ -37,8 +37,9 @@ $currentYear = date('Y');
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a href="acesso/" class="dropdown-item">Painel de acesso</a></li>
-                        <li><a href="acesso/usuarios.php" class="dropdown-item">Usuários</a></li>
-                        <li><a href="acesso/permissoes.php" class="dropdown-item">Permissões</a></li>
+                        <li id="menu-admin-item" hidden><a href="admin/index.php" class="dropdown-item">Painel Admin</a></li>
+                        <li id="menu-users-item" hidden><a href="admin/usuarios.php" class="dropdown-item">Usuários</a></li>
+                        <li id="menu-permissions-item" hidden><a href="admin/permissoes.php" class="dropdown-item">Permissões</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a href="acesso/logout.php" class="dropdown-item text-danger">Sair</a></li>
                     </ul>
@@ -239,6 +240,15 @@ $currentYear = date('Y');
             userMenuFullname.textContent = user.name || displayName;
             userMenuEmail.textContent = user.email || '';
             userMenu.hidden = false;
+
+            if (user.is_admin) {
+                const adminItem = document.getElementById('menu-admin-item');
+                const usersItem = document.getElementById('menu-users-item');
+                const permsItem = document.getElementById('menu-permissions-item');
+                if (adminItem) adminItem.hidden = false;
+                if (usersItem) usersItem.hidden = false;
+                if (permsItem) permsItem.hidden = false;
+            }
             
             const loginBtn = document.getElementById('login-button');
             if (loginBtn) loginBtn.hidden = true;

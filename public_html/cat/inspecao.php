@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../../acesso/src/bootstrap.php';
+require_platform_admin();
+
 /**
  * CAT - Visualizacao de registros
  */
@@ -19,7 +22,7 @@ try {
     // Fetch stats
     $total_files = (int)$db->query("SELECT COUNT(*) FROM arquivos_importacao")->fetchColumn();
     $loaded_files = (int)$db->query("SELECT COUNT(*) FROM arquivos_importacao WHERE situacao_carga = 'Carregado'")->fetchColumn();
-    $total_rows = (int)$db->query("SELECT COUNT(*) FROM registros_brutos")->fetchColumn();
+    $total_rows = (int)$db->query("SELECT COALESCE(SUM(linhas_processadas), 0) FROM arquivos_importacao WHERE situacao_carga = 'Carregado'")->fetchColumn();
     $failed_files = (int)$db->query("SELECT COUNT(*) FROM arquivos_importacao WHERE situacao_extracao = 'Falhou' OR situacao_carga = 'Falhou'")->fetchColumn();
 
     // Fetch loaded files list for filter dropdown
@@ -53,12 +56,12 @@ try {
             --bg-color: #f1f5f9;
             --card-bg: rgba(255, 255, 255, 0.7);
             --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #35383d;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #64748b;
             --text-color: #1e293b;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: rgba(241, 245, 249, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --field-bg: #f8fafc;
         }
 
@@ -66,12 +69,12 @@ try {
             --bg-color: #0b0f19;
             --card-bg: rgba(22, 28, 45, 0.7);
             --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #575d64;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #94a3b8;
             --text-color: #f8fafc;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: rgba(11, 15, 25, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --field-bg: #111827;
         }
 
@@ -88,18 +91,18 @@ try {
 
         .navbar {
             background-color: var(--navbar-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border-bottom: 1px solid var(--border-color);
         }
 
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: var(--glass-shadow);
+            border-radius: 8px;
+            box-shadow: none;
         }
 
         .form-control,
@@ -117,7 +120,7 @@ try {
             background-color: var(--field-bg) !important;
             color: var(--text-color) !important;
             border-color: var(--accent-color) !important;
-            box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.18);
+            box-shadow: 0 0 0 0.2rem rgba(70, 75, 81, 0.18);
         }
         .form-select option {
             background-color: var(--field-bg);
@@ -128,34 +131,34 @@ try {
         .inspect-position-input {
             background-color: transparent !important;
             border: 0 !important;
-            color: #fff !important;
+            color: var(--bs-body-color) !important;
             box-shadow: none !important;
             outline: none !important;
         }
 
         /* Buttons & Color Overrides */
-        .btn-purple {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: #fff;
+        .btn-accent {
+            background-color: var(--accent-solid);
+            border-color: var(--accent-border);
+            color: var(--accent-on-solid);
             font-weight: 500;
         }
-        .btn-purple:hover, .btn-purple:focus {
-            background-color: var(--accent-hover);
-            border-color: var(--accent-hover);
-            color: #fff;
+        .btn-accent:hover, .btn-accent:focus {
+            background-color: var(--accent-solid-hover);
+            border-color: var(--accent-solid-hover);
+            color: var(--accent-on-solid);
         }
-        .btn-outline-purple {
-            border-color: var(--accent-color);
+        .btn-outline-accent {
+            border-color: var(--accent-border);
             color: var(--accent-color);
             font-weight: 500;
         }
-        .btn-outline-purple:hover {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: #fff;
+        .btn-outline-accent:hover {
+            background-color: var(--accent-solid);
+            border-color: var(--accent-border);
+            color: var(--accent-on-solid);
         }
-        .text-purple {
+        .text-accent {
             color: var(--accent-color) !important;
         }
         .btn-icon {
@@ -176,7 +179,7 @@ try {
         .inspect-title {
             font-size: 1.1rem;
             font-weight: 600;
-            border-bottom: 2px solid var(--accent-color);
+            border-bottom: 2px solid var(--accent-border);
             padding-bottom: 8px;
             margin-bottom: 20px;
             color: var(--text-color);
@@ -312,14 +315,14 @@ try {
             100% { transform: translateX(100%); }
         }
 
-        /* Hover effect for navbar page navigation */
-        .hover-purple {
+        .hover-accent {
             transition: color 0.2s ease;
         }
-        .hover-purple:hover {
-            color: #464B51 !important;
+        .hover-accent:hover {
+            color: var(--accent-ui) !important;
         }
     </style>
+    <link href="../assets/css/style.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js"></script>
 </head>
 <body>
@@ -337,7 +340,7 @@ try {
         <!-- Header Section -->
         <header class="row mb-4 align-items-center">
             <div class="col-md-9">
-                <h1 class="display-5 text-purple mb-2" style="font-weight: 800; color: #464B51;">Registros de CAT</h1>
+                <h1 class="display-5 text-accent mb-2" style="font-weight: 800;">Registros de CAT</h1>
                 <p class="lead text-secondary">
                     Faça filtros cruzados sobre as comunicações de acidentes de trabalho e navegue individualmente pelos registros brutos da CAT.
                 </p>
@@ -423,7 +426,7 @@ try {
                         </div>
                         
                         <div class="d-flex gap-2 mt-4">
-                            <button type="submit" id="btn-inspect-filter" class="btn btn-purple btn-icon rounded-circle" title="Filtrar" aria-label="Filtrar">
+                            <button type="submit" id="btn-inspect-filter" class="btn btn-accent btn-icon rounded-circle" title="Filtrar" aria-label="Filtrar">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                             </button>
                             <button type="button" onclick="clearFilters()" class="btn btn-outline-secondary btn-icon rounded-circle" title="Limpar filtros" aria-label="Limpar filtros">
@@ -440,9 +443,9 @@ try {
                     
                     <!-- Search Results Summary Header -->
                     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 pb-3 border-bottom border-secondary">
-                        <h4 class="mb-0 text-light"><i class="fa-solid fa-address-card text-purple me-2"></i>CAT individual</h4>
+                        <h4 class="mb-0 text-light"><i class="fa-solid fa-address-card text-accent me-2"></i>CAT individual</h4>
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <span class="badge bg-purple-subtle text-purple border border-purple-subtle px-3 py-2 rounded-pill font-monospace" id="inspect-total-badge">0 registros encontrados</span>
+                            <span class="badge bg-accent-subtle text-accent border border-accent-subtle px-3 py-2 rounded-pill font-monospace" id="inspect-total-badge">0 registros encontrados</span>
                             <button type="button" id="btn-raw-json" class="btn btn-outline-secondary btn-icon rounded-circle" onclick="openRawJsonModal()" title="Mostrar JSON bruto" aria-label="Mostrar JSON bruto">
                                 <i class="fa-solid fa-code"></i>
                             </button>
@@ -488,7 +491,7 @@ try {
                         <div class="row g-4 mb-4">
                             <!-- 1. Dados do trabalhador -->
                             <div class="col-12 semantic-section">
-                                <h6 class="mb-3 text-purple" style="font-weight:600;"><i class="fa-solid fa-user me-2"></i>Dados do trabalhador</h6>
+                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-user me-2"></i>Dados do trabalhador</h6>
                                 
                                 <div class="mb-3">
                                     <div class="inspect-label">Sexo / Gênero</div>
@@ -505,12 +508,12 @@ try {
                                 <div class="mb-3">
                                     <div class="inspect-label d-flex justify-content-between align-items-center">
                                         <span>CBO (OcupaÃ§Ã£o)</span>
-                                        <button id="btn-cbo-hierarchy" class="btn btn-sm p-0 text-purple d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCboHierarchy()" title="Mostrar/ocultar hierarquia CBO" aria-label="Mostrar/ocultar hierarquia CBO">
+                                        <button id="btn-cbo-hierarchy" class="btn btn-sm p-0 text-accent d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCboHierarchy()" title="Mostrar/ocultar hierarquia CBO" aria-label="Mostrar/ocultar hierarquia CBO">
                                             <i class="fa-solid fa-sitemap"></i>
                                         </button>
                                     </div>
                                     <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                        <span class="badge bg-purple-subtle text-purple border border-purple-subtle font-monospace me-1" id="val-cbo-cod">-</span>
+                                        <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cbo-cod">-</span>
                                         <span class="small" id="val-cbo-desc">-</span>
                                         <div id="cbo-hierarchy-container" class="d-none mt-2 pt-2 border-top border-secondary w-100" style="font-size: 0.75rem; line-height: 1.4;">
                                             <div class="mb-1 text-muted"><strong class="text-white-50">Grande Grupo:</strong> <span id="val-cbo-gg">-</span></div>
@@ -524,7 +527,7 @@ try {
                             
                             <!-- 2. Dados do acidente -->
                             <div class="col-12 semantic-section">
-                                <h6 class="mb-3 text-purple" style="font-weight:600;"><i class="fa-solid fa-calendar-check me-2"></i>Dados do acidente</h6>
+                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-calendar-check me-2"></i>Dados do acidente</h6>
                                 
                                 <div class="row g-3">
                                     <div class="col-6">
@@ -567,12 +570,12 @@ try {
                                 <div class="mb-3">
                                     <div class="inspect-label d-flex justify-content-between align-items-center">
                                          <span>CID-10 (DiagnÃ³stico)</span>
-                                         <button id="btn-cid-hierarchy" class="btn btn-sm p-0 text-purple d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCidHierarchy()" title="Mostrar/ocultar hierarquia CID-10" aria-label="Mostrar/ocultar hierarquia CID-10">
+                                         <button id="btn-cid-hierarchy" class="btn btn-sm p-0 text-accent d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCidHierarchy()" title="Mostrar/ocultar hierarquia CID-10" aria-label="Mostrar/ocultar hierarquia CID-10">
                                              <i class="fa-solid fa-sitemap"></i>
                                          </button>
                                      </div>
                                      <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                         <span class="badge bg-purple-subtle text-purple border border-purple-subtle font-monospace me-1" id="val-cid-cod">-</span>
+                                         <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cid-cod">-</span>
                                          <span class="small" id="val-cid-desc">-</span>
                                          <div id="cid-hierarchy-container" class="d-none mt-2 pt-2 border-top border-secondary w-100" style="font-size: 0.75rem; line-height: 1.4;">
                                              <div class="mb-1 text-muted"><strong class="text-white-50">CapÃ­tulo:</strong> <span id="val-cid-cap">-</span></div>
@@ -597,18 +600,18 @@ try {
                             <!-- 3. Classificações relacionadas -->
                             <div class="col-12 mt-2">
                                 <hr class="border-secondary my-4">
-                                <h6 class="mb-3 text-purple" style="font-weight:600;"><i class="fa-solid fa-stethoscope me-2"></i>Códigos com dicionários</h6>
+                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-stethoscope me-2"></i>Códigos com dicionários</h6>
                                 
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <div class="inspect-label d-flex justify-content-between align-items-center">
                                             <span>CBO (Ocupação)</span>
-                                            <button id="btn-cbo-hierarchy" class="btn btn-sm p-0 text-purple d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCboHierarchy()" title="Mostrar/ocultar hierarquia CBO" aria-label="Mostrar/ocultar hierarquia CBO">
+                                            <button id="btn-cbo-hierarchy" class="btn btn-sm p-0 text-accent d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCboHierarchy()" title="Mostrar/ocultar hierarquia CBO" aria-label="Mostrar/ocultar hierarquia CBO">
                                                 <i class="fa-solid fa-sitemap"></i>
                                             </button>
                                         </div>
                                         <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                            <span class="badge bg-purple-subtle text-purple border border-purple-subtle font-monospace me-1" id="val-cbo-cod">-</span>
+                                            <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cbo-cod">-</span>
                                             <span class="small" id="val-cbo-desc">-</span>
                                             
                                             <!-- Collapsible CBO Hierarchy Tree -->
@@ -623,19 +626,19 @@ try {
                                     <div class="col-md-4">
                                         <div class="inspect-label">CNAE (Atividade)</div>
                                         <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                            <span class="badge bg-purple-subtle text-purple border border-purple-subtle font-monospace me-1" id="val-cnae-cod">-</span>
+                                            <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cnae-cod">-</span>
                                             <span class="small" id="val-cnae-desc">-</span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="inspect-label d-flex justify-content-between align-items-center">
                                              <span>CID-10 (Diagnóstico)</span>
-                                             <button id="btn-cid-hierarchy" class="btn btn-sm p-0 text-purple d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCidHierarchy()" title="Mostrar/ocultar hierarquia CID-10" aria-label="Mostrar/ocultar hierarquia CID-10">
+                                             <button id="btn-cid-hierarchy" class="btn btn-sm p-0 text-accent d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCidHierarchy()" title="Mostrar/ocultar hierarquia CID-10" aria-label="Mostrar/ocultar hierarquia CID-10">
                                                  <i class="fa-solid fa-sitemap"></i>
                                              </button>
                                          </div>
                                          <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                             <span class="badge bg-purple-subtle text-purple border border-purple-subtle font-monospace me-1" id="val-cid-cod">-</span>
+                                             <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cid-cod">-</span>
                                              <span class="small" id="val-cid-desc">-</span>
                                              
                                              <!-- Collapsible CID Hierarchy Tree -->
@@ -652,13 +655,13 @@ try {
                             <!-- 4. Grouped JSON fields -->
                             <div class="col-12 mt-2">
                                 <hr class="border-secondary my-4">
-                                <h6 class="mb-3 text-purple" style="font-weight:600;"><i class="fa-solid fa-building me-2"></i>Dados da empresa</h6>
+                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-building me-2"></i>Dados da empresa</h6>
                                 <div class="company-profile-grid mb-3">
                                     <div>
                                         <div class="inspect-label">CNPJ do empregador</div>
                                         <div class="inspect-value entity-link-row">
                                             <span class="font-monospace entity-value" id="val-cnpj-empresa">-</span>
-                                            <a id="btn-cnpj-page" class="btn btn-outline-purple btn-icon btn-sm d-none" href="#" title="Abrir pagina do CNPJ" aria-label="Abrir pagina do CNPJ">
+                                            <a id="btn-cnpj-page" class="btn btn-outline-accent btn-icon btn-sm d-none" href="#" title="Abrir pagina do CNPJ" aria-label="Abrir pagina do CNPJ">
                                                 <i class="fa-solid fa-building-user"></i>
                                             </a>
                                             <button id="btn-cnpj-refresh" class="btn btn-outline-secondary btn-icon btn-sm d-none" type="button" onclick="refreshCurrentCompanyCnpj()" title="Atualizar OpenCNPJ" aria-label="Atualizar OpenCNPJ">
@@ -670,7 +673,7 @@ try {
                                         <div class="inspect-label">Matriz</div>
                                         <div class="inspect-value entity-link-row">
                                             <span class="font-monospace entity-value" id="val-cnpj-matriz">-</span>
-                                            <a id="btn-matriz-page" class="btn btn-outline-purple btn-icon btn-sm d-none" href="#" title="Abrir pagina da matriz" aria-label="Abrir pagina da matriz">
+                                            <a id="btn-matriz-page" class="btn btn-outline-accent btn-icon btn-sm d-none" href="#" title="Abrir pagina da matriz" aria-label="Abrir pagina da matriz">
                                                 <i class="fa-solid fa-sitemap"></i>
                                             </a>
                                         </div>
@@ -686,14 +689,14 @@ try {
                                     <div class="wide-field">
                                         <div class="inspect-label">CNAE (Atividade)</div>
                                         <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                            <span class="badge bg-purple-subtle text-purple border border-purple-subtle font-monospace me-1" id="val-cnae-cod">-</span>
+                                            <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cnae-cod">-</span>
                                             <span class="small" id="val-cnae-desc">-</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="company-profile-grid mb-3">
                                     <div class="wide-field d-flex justify-content-between align-items-center gap-2">
-                                        <h6 class="mb-0 text-purple" style="font-weight:600;"><i class="fa-solid fa-cloud me-2"></i>Enriquecimento OpenCNPJ</h6>
+                                        <h6 class="mb-0 text-accent" style="font-weight:600;"><i class="fa-solid fa-cloud me-2"></i>Enriquecimento OpenCNPJ</h6>
                                         <span id="val-opencnpj-status" class="badge text-bg-secondary opencnpj-status">nao consultado</span>
                                     </div>
                                     <div class="wide-field">
@@ -721,21 +724,21 @@ try {
                             </div>
                             <div class="col-12 mt-2">
                                 <hr class="border-secondary my-4">
-                                <h6 class="mb-3 text-purple" style="font-weight:600;"><i class="fa-solid fa-landmark me-2"></i>Dados da unidade administrativa</h6>
+                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-landmark me-2"></i>Dados da unidade administrativa</h6>
                                 <div id="admin-fields-grid" class="extra-field-grid"></div>
                             </div>
                             <div class="col-12 mt-2">
                                 <hr class="border-secondary my-4">
-                                <h6 class="mb-3 text-purple" style="font-weight:600;"><i class="fa-solid fa-list-check me-2"></i>Outros</h6>
+                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-list-check me-2"></i>Outros</h6>
                                 <div id="other-fields-grid" class="extra-field-grid"></div>
                             </div>
                             <div class="col-12 mt-2">
                                 <hr class="border-secondary my-4">
                                 <div class="d-flex align-items-center justify-content-center gap-3 bg-dark bg-opacity-25 px-3 py-2 rounded-pill border border-secondary border-opacity-10 shadow-sm mx-auto" style="max-width: 360px;">
-                                    <button onclick="navigateRecord('first')" class="btn btn-link btn-sm p-0 text-white-50 hover-purple" title="Primeiro registro" aria-label="Primeiro registro">
+                                    <button onclick="navigateRecord('first')" class="btn btn-link btn-sm p-0 text-white-50 hover-accent" title="Primeiro registro" aria-label="Primeiro registro">
                                         <i class="fa-solid fa-angles-left"></i>
                                     </button>
-                                    <button onclick="navigateRecord('prev')" class="btn btn-link btn-sm p-0 text-white-50 hover-purple" title="Registro anterior" aria-label="Registro anterior">
+                                    <button onclick="navigateRecord('prev')" class="btn btn-link btn-sm p-0 text-white-50 hover-accent" title="Registro anterior" aria-label="Registro anterior">
                                         <i class="fa-solid fa-angle-left"></i>
                                     </button>
                                     <div class="d-flex align-items-center gap-1 font-monospace text-light small">
@@ -743,10 +746,10 @@ try {
                                         <span class="text-white-50">/</span>
                                         <span id="inspect-total" class="fw-semibold">0</span>
                                     </div>
-                                    <button onclick="navigateRecord('next')" class="btn btn-link btn-sm p-0 text-white-50 hover-purple" title="Próximo registro" aria-label="Próximo registro">
+                                    <button onclick="navigateRecord('next')" class="btn btn-link btn-sm p-0 text-white-50 hover-accent" title="Próximo registro" aria-label="Próximo registro">
                                         <i class="fa-solid fa-angle-right"></i>
                                     </button>
-                                    <button onclick="navigateRecord('last')" class="btn btn-link btn-sm p-0 text-white-50 hover-purple" title="Último registro" aria-label="Último registro">
+                                    <button onclick="navigateRecord('last')" class="btn btn-link btn-sm p-0 text-white-50 hover-accent" title="Último registro" aria-label="Último registro">
                                         <i class="fa-solid fa-angles-right"></i>
                                     </button>
                                 </div>
@@ -772,7 +775,7 @@ try {
         <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
             <div class="modal-content glass-card border border-secondary">
                 <div class="modal-header border-secondary">
-                    <h5 class="modal-title text-purple" id="rawJsonModalLabel"><i class="fa-solid fa-code me-2"></i>JSON bruto da CAT</h5>
+                    <h5 class="modal-title text-accent" id="rawJsonModalLabel"><i class="fa-solid fa-code me-2"></i>JSON bruto da CAT</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
@@ -918,8 +921,17 @@ try {
                 `&registro_origem_id=${encodeURIComponent(activeRecordOriginFilter)}`;
 
             try {
-                const response = await fetch(url);
+                const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                const contentType = response.headers.get('content-type') || '';
+                if (!response.ok || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    throw new Error(`Resposta inesperada (${response.status}): ${text.slice(0, 160)}`);
+                }
                 const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'API retornou falha ao consultar registros.');
+                }
 
                 if (data.success) {
                     totalRecords = data.total;
@@ -1040,7 +1052,7 @@ try {
                 const emptyArea = document.getElementById('inspect-empty');
                 if (emptyArea) {
                     emptyArea.classList.remove('d-none');
-                    emptyArea.innerHTML = '<i class="fa-solid fa-triangle-exclamation display-4 mb-3 d-block text-danger"></i><p class="mb-0">Não foi possível carregar o registro solicitado.</p>';
+                    emptyArea.innerHTML = '<i class="fa-solid fa-triangle-exclamation display-4 mb-3 d-block text-danger"></i><p class="mb-0">Não foi possível carregar o registro solicitado.</p><p class="small text-muted mt-2 mb-0">' + htmlspecialchars(error.message || String(error)) + '</p>';
                 }
             } finally {
                 setCatLoading(false);

@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Custom card layouts for Admin Dashboard */
+.admin-card {
+    border-radius: 8px;
+    border: 1px solid var(--bs-border-color);
+    background-color: var(--bs-tertiary-bg);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.admin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    color: inherit;
+}
+
+.admin-card .icon-container {
+    font-size: 2.25rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+    color: var(--bs-primary);
+}
+
+.admin-metric {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+/* Theme accent colors for module cards */
+.accent-acesso {
+    border-left: 4px solid #006392;
+}
+
+.accent-carex {
+    border-left: 4px solid #BC0300;
+}
+
+.accent-fichario {
+    border-left: 4px solid #225500;
+}
+
+.accent-cat {
+    border-left: 4px solid #464B51;
+}
+
+.accent-ldrt {
+    border-left: 4px solid #944F00;
+}

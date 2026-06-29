@@ -6,11 +6,7 @@ use Carex\Http\Security;
 
 $config = require dirname(__DIR__, 2) . '/carex' . '/src/bootstrap.php';
 
-\Carex\Http\Auth::requireLogin();
-if ((\Carex\Http\Auth::currentUser()['role'] ?? '') !== 'admin') {
-    http_response_code(403);
-    exit('Acesso restrito para administradores.');
-}
+\Carex\Http\Auth::requireAdmin();
 
 Security::applyHeaders();
 Security::allowReadOnlyRequest();

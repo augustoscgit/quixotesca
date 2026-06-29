@@ -29,8 +29,7 @@ const startRefreshProgress = (progressRow, estimatedRows) => {
   progressRow.classList.remove('d-none');
   label.textContent = 'Atualizacao em andamento';
   note.textContent = 'Progresso estimado por tempo decorrido; a conclusao real e confirmada pelo banco.';
-  bar.classList.add('progress-bar-animated', 'progress-bar-striped');
-  bar.classList.remove('bg-success', 'bg-danger');
+  bar.classList.remove('is-complete', 'is-error');
 
   const render = () => {
     const elapsedSeconds = Math.floor((Date.now() - startedAt) / 1000);
@@ -55,9 +54,8 @@ const startRefreshProgress = (progressRow, estimatedRows) => {
     shell.setAttribute('aria-valuenow', String(percent));
     bar.style.width = `${percent}%`;
     bar.textContent = state === 'success' ? '100%' : 'Erro';
-    bar.classList.remove('progress-bar-animated', 'progress-bar-striped');
-    bar.classList.toggle('bg-success', state === 'success');
-    bar.classList.toggle('bg-danger', state === 'error');
+    bar.classList.toggle('is-complete', state === 'success');
+    bar.classList.toggle('is-error', state === 'error');
     label.textContent = message;
     note.textContent = state === 'success'
       ? 'Atualizacao concluida e confirmada pelo banco.'

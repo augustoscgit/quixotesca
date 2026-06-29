@@ -8,8 +8,6 @@ use Carex\Http\Security;
 
 $config = require dirname(__DIR__, 2) . '/carex' . '/src/bootstrap.php';
 
-\Carex\Http\Auth::requireLogin();
-
 Security::applyHeaders();
 Security::allowReadOnlyRequest();
 

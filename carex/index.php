@@ -132,7 +132,7 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
         #cx-hero-content h1 strong {
             font-style: normal;
             font-weight: inherit;
-            color: var(--accent);
+            color: var(--accent-ui);
         }
         #cx-hero-content h2 {
             font-size: 11px;
@@ -207,7 +207,7 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
         .cx-stat-num {
             font-size: 26px;
             font-weight: 600;
-            color: var(--accent);
+            color: var(--accent-ui);
             letter-spacing: 0;
             line-height: 1;
             margin-bottom: 6px;
@@ -224,7 +224,7 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
         .cx-section { padding: 60px 40px; max-width: 860px; margin: 0 auto; width: 100%; }
         .cx-section-label {
             font-size: 11px;
-            color: var(--accent);
+            color: var(--accent-ui);
             text-transform: uppercase;
             letter-spacing: .12em;
             font-weight: 500;
@@ -243,7 +243,7 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
             color: var(--text);
             margin: 28px 0 12px;
             padding-left: 12px;
-            border-left: 2px solid var(--accent);
+            border-left: 2px solid var(--accent-border);
         }
         #cx-sobre-content h1:first-child, #cx-sobre-content h2:first-child { margin-top: 0; }
         #cx-sobre-content p {

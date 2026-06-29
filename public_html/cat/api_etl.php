@@ -1,4 +1,23 @@
 <?php
+require_once __DIR__ . '/../../acesso/src/bootstrap.php';
+
+$action = $_GET['action'] ?? '';
+$publicReadActions = [
+    'chart_data',
+    'quality_dashboard',
+    'get_states',
+    'get_cities',
+    'query_records',
+    'cnpj_filter_options',
+    'cnpj_aggregates',
+    'cnpj_cache_status',
+    'cnpj_cats',
+];
+
+if (!in_array($action, $publicReadActions, true)) {
+    require_platform_admin();
+}
+
 /**
  * AJAX API for CAT ETL Pipeline
  */
@@ -24,7 +43,6 @@ set_exception_handler(function (Throwable $e) {
     exit;
 });
 
-$action = $_GET['action'] ?? '';
 $db = getDBConnection();
 $tmpDir = __DIR__ . '/tmp';
 
@@ -565,6 +583,7 @@ switch ($action) {
         if (is_dir($extractPath)) removeDirectory($extractPath);
 
         $db->prepare("UPDATE arquivos_importacao SET situacao_carga = 'Carregado', ultima_execucao = NOW() WHERE id = ?")->execute([$id]);
+        refreshCatDashboardDailyCache($db);
 
         echo json_encode([
             'success' => true
@@ -588,6 +607,7 @@ switch ($action) {
         // 2. Reset status in arquivos_importacao
         $db->prepare("UPDATE arquivos_importacao SET situacao_extracao = 'Pendente', situacao_carga = 'Pendente', linhas_processadas = 0, mensagem_erro = NULL, ultima_execucao = NULL WHERE id = ?")->execute([$id]);
         $db->commit();
+        refreshCatDashboardDailyCache($db);
 
         // Also clean up any lingering temp files
         $zipPath = $tmpDir . '/' . $id . '.zip';
@@ -1017,6 +1037,14 @@ switch ($action) {
         ], JSON_UNESCAPED_UNICODE);
         break;
 
+    case 'refresh_dashboard_cache':
+        $inserted = refreshCatDashboardDailyCache($db);
+        echo json_encode([
+            'success' => true,
+            'rows' => $inserted,
+        ], JSON_UNESCAPED_UNICODE);
+        break;
+
     case 'cnpj_cats':
         $cnpj = normalizeCnpjDigits((string)($_GET['cnpj'] ?? ''));
         if (!isValidCnpjDigits($cnpj)) {
@@ -1087,6 +1115,8 @@ switch ($action) {
         break;
 
     case 'chart_data':
+        ensureCatDashboardDailyCache($db);
+
         $obito = trim($_GET['obito'] ?? '');
         $estado = trim($_GET['estado'] ?? '');
         $municipio = trim($_GET['municipio'] ?? '');
@@ -1096,36 +1126,34 @@ switch ($action) {
         $where = [];
         $params = [];
         
-        $where[] = "parse_date_immutable(dados->>'data_acidente') IS NOT NULL";
-        
         if ($obito !== '') {
-            $where[] = "(dados->>'indica_obito_acidente' = :obito OR dados->>'indica_bito_acidente' = :obito)";
+            $where[] = "obito = :obito";
             $params['obito'] = $obito;
         }
         if ($estado !== '') {
-            $where[] = "(dados->>'uf_munic_empregador' = :estado OR dados->>'uf_munic_acidente' = :estado)";
+            $where[] = "(uf_empregador = :estado OR uf_acidente = :estado)";
             $params['estado'] = $estado;
         }
         if ($municipio !== '') {
-            $where[] = "dados->>'munic_empr' ILIKE :municipio";
+            $where[] = "municipio_empregador ILIKE :municipio";
             $params['municipio'] = '%' . $municipio . '%';
         }
         if ($dataInicio !== '') {
-            $where[] = "parse_date_immutable(dados->>'data_acidente') >= :data_inicio::date";
+            $where[] = "data_acidente >= :data_inicio::date";
             $params['data_inicio'] = $dataInicio;
         }
         if ($dataFim !== '') {
-            $where[] = "parse_date_immutable(dados->>'data_acidente') <= :data_fim::date";
+            $where[] = "data_acidente <= :data_fim::date";
             $params['data_fim'] = $dataFim;
         }
         
-        $whereSql = 'WHERE ' . implode(' AND ', $where);
+        $whereSql = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
         
         $query = "
             SELECT 
-                to_char(parse_date_immutable(dados->>'data_acidente'), 'YYYY-MM') as mes_ano,
-                COUNT(*) as total
-            FROM registros_brutos
+                to_char(date_trunc('month', data_acidente), 'YYYY-MM') as mes_ano,
+                SUM(total) as total
+            FROM cat_dashboard_daily_cache
             $whereSql
             GROUP BY mes_ano
             ORDER BY mes_ano ASC
@@ -1150,8 +1178,8 @@ switch ($action) {
         
         // Also get filtered totals to update landing page cards dynamically!
         $totalRowsQuery = "
-            SELECT COUNT(*) 
-            FROM registros_brutos 
+            SELECT COALESCE(SUM(total), 0)
+            FROM cat_dashboard_daily_cache
             $whereSql
         ";
         $stmtTotal = $db->prepare($totalRowsQuery);
@@ -1354,20 +1382,22 @@ switch ($action) {
         break;
 
     case 'get_states':
+        ensureCatDashboardDailyCache($db);
+
         $q = trim($_GET['q'] ?? '');
         $whereState = "
-             WHERE dados->>'uf_munic_empregador' IS NOT NULL 
-               AND dados->>'uf_munic_empregador' != '{ñ class}'
-               AND dados->>'uf_munic_empregador' != ''
+             WHERE uf_empregador IS NOT NULL
+               AND uf_empregador != '{Ã± class}'
+               AND uf_empregador != ''
         ";
         $stateParams = [];
         if ($q !== '') {
-            $whereState .= " AND dados->>'uf_munic_empregador' ILIKE :q";
+            $whereState .= " AND uf_empregador ILIKE :q";
             $stateParams['q'] = '%' . $q . '%';
         }
         $stmt = $db->prepare("
-            SELECT DISTINCT dados->>'uf_munic_empregador' as estado 
-              FROM registros_brutos 
+            SELECT DISTINCT uf_empregador as estado
+              FROM cat_dashboard_daily_cache
               $whereState
              ORDER BY estado ASC
              LIMIT 30
@@ -1378,25 +1408,27 @@ switch ($action) {
         break;
 
     case 'get_cities':
+        ensureCatDashboardDailyCache($db);
+
         $estado = trim($_GET['estado'] ?? '');
         $q = trim($_GET['q'] ?? '');
-        $where = "WHERE dados->>'munic_empr' IS NOT NULL AND dados->>'munic_empr' != ''";
+        $where = "WHERE municipio_empregador IS NOT NULL AND municipio_empregador != ''";
         $params = [];
         if ($estado !== '') {
-            $where .= " AND (dados->>'uf_munic_empregador' = :estado OR dados->>'uf_munic_acidente' = :estado)";
+            $where .= " AND (uf_empregador = :estado OR uf_acidente = :estado)";
             $params['estado'] = $estado;
         } else {
             echo json_encode(['success' => true, 'cities' => []]);
             break;
         }
         if ($q !== '') {
-            $where .= " AND dados->>'munic_empr' ILIKE :q";
+            $where .= " AND municipio_empregador ILIKE :q";
             $params['q'] = '%' . $q . '%';
         }
-        
+
         $stmt = $db->prepare("
-            SELECT DISTINCT dados->>'munic_empr' as municipio 
-              FROM registros_brutos 
+            SELECT DISTINCT municipio_empregador as municipio
+              FROM cat_dashboard_daily_cache
               $where
              ORDER BY municipio ASC
              LIMIT 30
@@ -1405,7 +1437,6 @@ switch ($action) {
         $cities = $stmt->fetchAll(PDO::FETCH_COLUMN);
         echo json_encode(['success' => true, 'cities' => $cities]);
         break;
-
     case 'log':
         $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $nivel = trim($_POST['nivel'] ?? $_GET['nivel'] ?? 'info');

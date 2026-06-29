@@ -52,12 +52,12 @@ try {
     <style>
                 :root, [data-bs-theme="light"] {
             --bg-color: #f1f5f9;
-            --bg-glow-1: rgba(99, 102, 241, 0.06);
-            --bg-glow-2: rgba(168, 85, 247, 0.04);
+            --bg-glow-1: transparent;
+            --bg-glow-2: transparent;
             --card-bg: rgba(255, 255, 255, 0.65);
             --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: #4f46e5;
-            --accent-hover: #3730a3;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-laranja-4);
             --text-muted: #64748b;
             --text-color: #1e293b;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
@@ -66,12 +66,12 @@ try {
 
         [data-bs-theme="dark"] {
             --bg-color: #0b0f19;
-            --bg-glow-1: rgba(99, 102, 241, 0.12);
-            --bg-glow-2: rgba(168, 85, 247, 0.08);
+            --bg-glow-1: transparent;
+            --bg-glow-2: transparent;
             --card-bg: rgba(22, 28, 45, 0.7);
             --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: #6366f1;
-            --accent-hover: #4f46e5;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-laranja-4);
             --text-muted: #94a3b8;
             --text-color: #f8fafc;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -81,9 +81,7 @@ try {
                 body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, var(--bg-glow-1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, var(--bg-glow-2) 0px, transparent 50%);
+            background-image: none;
             color: var(--text-color);
             min-height: 100vh;
         }
@@ -95,17 +93,17 @@ try {
 
                 .navbar {
             background-color: var(--navbar-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: none;
             border-bottom: 1px solid var(--border-color);
         }
 
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: var(--glass-shadow);
+            border-radius: 8px;
+            box-shadow: none;
         }
 
         .tree-container {
@@ -137,9 +135,9 @@ try {
         }
 
         .tree-node-label.active {
-            background-color: rgba(99, 102, 241, 0.15);
-            color: #a5b4fc;
-            border-left: 3px solid var(--accent-color);
+            background-color: var(--bs-tertiary-bg);
+            color: var(--accent-ui);
+            border-left: 3px solid var(--accent-border);
         }
 
         .tree-toggle {
@@ -158,7 +156,7 @@ try {
 
         .info-box {
             background: rgba(255, 255, 255, 0.02);
-            border-left: 3px solid var(--accent-color);
+            border-left: 3px solid var(--accent-border);
             padding: 15px;
             border-radius: 0 8px 8px 0;
             margin-bottom: 20px;
@@ -191,7 +189,7 @@ try {
         .nav-tabs .nav-link.active {
             background-color: transparent;
             color: var(--accent-color);
-            border-bottom: 2px solid var(--accent-color);
+            border-bottom: 2px solid var(--accent-border);
         }
 
         .breadcrumb-item + .breadcrumb-item::before {

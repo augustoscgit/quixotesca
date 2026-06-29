@@ -412,9 +412,9 @@ uksort($tagsByCategory, static function (string $left, string $right): int {
 });
 
 $categoryColors = [
-    'Tema'   => ['css_bg' => '#ead6c7', 'css_text' => '#2b211c'],
-    'Método' => ['css_bg' => '#fff8f1', 'css_text' => '#5a4b43'],
-    'Fonte'  => ['css_bg' => '#e8f0e5', 'css_text' => '#2f6f40'],
+    'Tema'   => ['css_bg' => 'var(--tag-tema-bg)', 'css_text' => 'var(--tag-tema-text)'],
+    'Método' => ['css_bg' => 'var(--tag-metodo-bg)', 'css_text' => 'var(--tag-metodo-text)'],
+    'Fonte'  => ['css_bg' => 'var(--tag-fonte-bg)', 'css_text' => 'var(--tag-fonte-text)'],
 ];
 
 // Batch tag fetch statement removed to resolve N+1 query and run in batch
@@ -469,18 +469,14 @@ function selected_attr(string $current, string $value): string
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260615" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
     <style>
-        body {
-            background: var(--bg-gradient);
-        }
-
         .blob {
             animation: floatBlob 12s infinite alternate ease-in-out;
         }
 
-        .blob-purple {
+        .legacy-decoration-secondary {
             animation-delay: -6s;
         }
 
@@ -596,8 +592,7 @@ function selected_attr(string $current, string $value): string
 </head>
 <body>
     <!-- Background Animated Blobs -->
-    <div class="blob blob-blue"></div>
-    <div class="blob blob-purple"></div>
+
 
     <?php render_navbar('articles'); ?>
 
@@ -1425,7 +1420,7 @@ function selected_attr(string $current, string $value): string
             width: 100vw;
             height: 100vh;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
+            backdrop-filter: none;
             display: flex;
             justify-content: center;
             align-items: center;

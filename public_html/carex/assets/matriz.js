@@ -228,7 +228,7 @@ function renderRows(payload) {
       <tr>
         <td><span class="badge bg-secondary-subtle text-secondary-emphasis">${escapeHtml(row.no_origem_objeto)}</span></td>
         <td><span class="small text-body-secondary fw-semibold">${escapeHtml(row.no_tp_objeto)}</span></td>
-        <td><a href="categoria.php?id_matriz=${encodeURIComponent(state.matrixId)}&co_objeto=${encodeURIComponent(row.co_objeto)}&co_tp_objeto=${encodeURIComponent(row.co_tp_objeto)}" class="text-decoration-none link-primary fw-bold">${escapeHtml(row.co_objeto)}</a></td>
+        <td><a href="categoria.php?id_matriz=${encodeURIComponent(state.matrixId)}&co_objeto=${encodeURIComponent(row.co_objeto)}&co_tp_objeto=${encodeURIComponent(row.co_tp_objeto)}" class="text-decoration-none matrix-link-accent fw-bold">${escapeHtml(row.co_objeto)}</a></td>
         <td><a href="categoria.php?id_matriz=${encodeURIComponent(state.matrixId)}&co_objeto=${encodeURIComponent(row.co_objeto)}&co_tp_objeto=${encodeURIComponent(row.co_tp_objeto)}" class="text-decoration-none link-body-emphasis fw-semibold">${escapeHtml(row.no_objeto)}</a></td>
         <td><span class="badge py-1.5 px-2.5 rounded ${directBadgeClass}">${escapeHtml(row.no_classificacao)}</span></td>
         <td>
@@ -254,13 +254,13 @@ function showEstimatesSkeleton() {
   if (nodes.estimatesSummary) {
     nodes.estimatesSummary.innerHTML = `
       <div class="col-md-4">
-        <div class="border rounded bg-white p-3 placeholder-glow">
+        <div class="matrix-empty-state p-3 placeholder-glow">
           <span class="placeholder col-6 mb-2"></span>
           <span class="placeholder col-10 d-block"></span>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="border rounded bg-white p-3 placeholder-glow">
+        <div class="matrix-empty-state p-3 placeholder-glow">
           <span class="placeholder col-5 mb-2"></span>
           <span class="placeholder col-9 d-block"></span>
         </div>
@@ -306,7 +306,7 @@ function renderEstimates(payload) {
       <div class="col-md-4">
         <div class="border rounded bg-body-secondary p-3 h-100">
           <div class="text-body-secondary small">Média anual de vínculos entre ${escapeHtml(payload.min_ano ?? '')} e ${escapeHtml(payload.max_ano ?? '')}</div>
-          <div class="fs-4 fw-bold text-primary">${formatAverage(payload.total_vinculos_por_criterio)}</div>
+          <div class="fs-4 fw-bold matrix-section-title">${formatAverage(payload.total_vinculos_por_criterio)}</div>
         </div>
       </div>
       <div class="col-md-4">
@@ -366,7 +366,7 @@ function renderEstimateGrid(criteria, classBadgeMap, formatAverage) {
 
   estimatesTarget.innerHTML = criteria.length > 0
     ? criteria.map((criterion) => renderEstimateCriterionCard(criterion, classBadgeMap, formatAverage)).join('')
-    : '<div class="text-body-secondary text-center border rounded bg-white p-4">Nenhuma estimativa encontrada.</div>';
+    : '<div class="matrix-empty-state text-body-secondary text-center p-4">Nenhuma estimativa encontrada.</div>';
 }
 
 function renderEstimateCriterionCard(criterion, classBadgeMap, formatAverage) {
@@ -434,8 +434,8 @@ function renderEstimateCriterionCard(criterion, classBadgeMap, formatAverage) {
           <div class="text-body-secondary small">${formatAverage(criterion.total_vinculos)} vinculos/ano na media de ${Number(criterion.total_anos_rais || 0).toLocaleString('pt-BR')} anos</div>
         </div>
       </div>
-      <div class="table-responsive border rounded bg-white shadow-sm">
-        <table class="table table-sm estimate-matrix-table mb-0 align-middle">
+      <div class="table-responsive matrix-table-wrap">
+        <table class="table table-sm estimate-matrix-table matrix-table mb-0 align-middle">
           <thead>
             <tr>
               <th colspan="3" class="border-0 bg-transparent"></th>
@@ -481,7 +481,7 @@ function renderEstimateMatrices(criteria, classBadgeMap) {
           </div>
         </div>
         <div class="table-responsive">
-          <table class="table table-sm estimate-matrix-table mb-0">
+          <table class="table table-sm estimate-matrix-table matrix-table mb-0">
             <thead>
               <tr>
                 <th scope="col">CBO \\ CNAE</th>
@@ -513,7 +513,7 @@ function renderEstimateMatrices(criteria, classBadgeMap) {
 
   nodes.estimatesMatrices.innerHTML = sections.length > 0
     ? sections.join('')
-    : '<div class="text-body-secondary text-center border rounded bg-white p-4">Nenhuma tabela 3x3 encontrada.</div>';
+    : '<div class="matrix-empty-state text-body-secondary text-center p-4">Nenhuma tabela 3x3 encontrada.</div>';
 }
 
 async function loadEstimates(force = false) {
@@ -578,7 +578,7 @@ async function addFilterRow(preselectedColumn = '', preselectedValues = []) {
   });
 
   const rowHtml = `
-    <div class="d-flex flex-wrap gap-2 align-items-center bg-body p-2 border rounded shadow-sm" id="${filterId}">
+    <div class="d-flex flex-wrap gap-2 align-items-center p-2 matrix-empty-state" id="${filterId}">
       <div class="flex-grow-1" style="min-width: 150px;">
         <select class="form-select form-select-sm filter-column-select">
           <option value="">Selecione o campo...</option>

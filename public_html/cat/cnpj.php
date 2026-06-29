@@ -157,31 +157,31 @@ try {
             --bg-color: #f1f5f9;
             --card-bg: rgba(255, 255, 255, 0.7);
             --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #35383d;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #64748b;
             --text-color: #1e293b;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: rgba(241, 245, 249, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --field-bg: #f8fafc;
         }
         [data-bs-theme="dark"] {
             --bg-color: #0b0f19;
             --card-bg: rgba(22, 28, 45, 0.7);
             --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #575d64;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #94a3b8;
             --text-color: #f8fafc;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: rgba(11, 15, 25, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --field-bg: #111827;
         }
         body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
-        .navbar { background-color: var(--navbar-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); }
-        .glass-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: var(--glass-shadow); }
-        .text-purple { color: var(--accent-color) !important; }
+        .navbar { background-color: var(--navbar-bg); backdrop-filter: none; border-bottom: 1px solid var(--border-color); }
+        .glass-card { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: none; }
+        .text-accent { color: var(--accent-color) !important; }
         .btn-icon { width: 40px; height: 40px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
         .info-label { color: var(--text-muted); font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
         .info-value { background: var(--field-bg); border: 1px solid var(--border-color); border-radius: 8px; min-height: 42px; padding: 10px 12px; word-break: break-word; }
@@ -189,6 +189,7 @@ try {
         .table thead th { color: var(--text-muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }
         .metric-number { font-size: 1.75rem; font-weight: 800; line-height: 1; }
     </style>
+    <link href="../assets/css/style.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js"></script>
 </head>
 <body>
@@ -205,15 +206,15 @@ try {
             <header class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
                 <div>
                     <div class="text-muted mb-1">CNPJ do empregador</div>
-                    <h1 class="display-6 text-purple mb-2" style="font-weight: 800;"><?= h(formatCnpj($cnpj)) ?></h1>
+                    <h1 class="display-6 text-accent mb-2" style="font-weight: 800;"><?= h(formatCnpj($cnpj)) ?></h1>
                     <p class="lead text-secondary mb-0" id="opencnpj-title"><?= h($cache['razao_social'] ?? $cache['nome_fantasia'] ?? 'Dados cadastrais ainda não carregados') ?></p>
                 </div>
                 <div class="d-flex gap-2">
                     <a class="btn btn-outline-secondary btn-icon" href="cnpjs.php" title="Voltar ao agregador" aria-label="Voltar ao agregador"><i class="fa-solid fa-arrow-left"></i></a>
                     <?php if (!empty($aggregate['matriz'])): ?>
-                        <a class="btn btn-outline-purple btn-icon" href="matriz.php?matriz=<?= h($aggregate['matriz']) ?>" title="Abrir matriz" aria-label="Abrir matriz"><i class="fa-solid fa-sitemap"></i></a>
+                        <a class="btn btn-outline-accent btn-icon" href="matriz.php?matriz=<?= h($aggregate['matriz']) ?>" title="Abrir matriz" aria-label="Abrir matriz"><i class="fa-solid fa-sitemap"></i></a>
                     <?php endif; ?>
-                    <a class="btn btn-outline-purple btn-icon" href="inspecao.php?cnpj=<?= h($cnpj) ?>" title="Navegar acidentes" aria-label="Navegar acidentes"><i class="fa-solid fa-address-card"></i></a>
+                    <a class="btn btn-outline-accent btn-icon" href="inspecao.php?cnpj=<?= h($cnpj) ?>" title="Navegar acidentes" aria-label="Navegar acidentes"><i class="fa-solid fa-address-card"></i></a>
                     <button type="button" class="btn btn-outline-secondary btn-icon" onclick="refreshOpenCnpj()" title="Atualizar OpenCNPJ" aria-label="Atualizar OpenCNPJ"><i class="fa-solid fa-cloud-arrow-down"></i></button>
                 </div>
             </header>
@@ -221,7 +222,7 @@ try {
             <section class="row g-4 mb-4">
                 <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Acidentes</div><div class="metric-number"><?= number_format((int)($aggregate['acidentes'] ?? 0), 0, ',', '.') ?></div></div></div>
                 <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Óbitos</div><div class="metric-number"><?= number_format((int)($aggregate['obitos'] ?? 0), 0, ',', '.') ?></div></div></div>
-                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Matriz</div><div class="metric-number font-monospace"><?php if (!empty($aggregate['matriz'])): ?><a class="text-purple text-decoration-none" href="matriz.php?matriz=<?= h($aggregate['matriz']) ?>"><?= h($aggregate['matriz']) ?></a><?php else: ?>-<?php endif; ?></div></div></div>
+                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Matriz</div><div class="metric-number font-monospace"><?php if (!empty($aggregate['matriz'])): ?><a class="text-accent text-decoration-none" href="matriz.php?matriz=<?= h($aggregate['matriz']) ?>"><?= h($aggregate['matriz']) ?></a><?php else: ?>-<?php endif; ?></div></div></div>
                 <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Filial</div><div class="metric-number font-monospace"><?= h($aggregate['filial'] ?? '-') ?></div></div></div>
             </section>
 
@@ -246,7 +247,7 @@ try {
                 ]);
             ?>
             <section class="glass-card p-4 mb-4">
-                <h2 class="h5 mb-3 text-purple"><i class="fa-solid fa-database me-2"></i>Cadastro completo OpenCNPJ</h2>
+                <h2 class="h5 mb-3 text-accent"><i class="fa-solid fa-database me-2"></i>Cadastro completo OpenCNPJ</h2>
                 <?php if (!$openCnpjRaw): ?>
                     <div class="text-muted small">Dados completos ainda nao estao no cache. Use o botao de atualizacao da API no canto superior direito.</div>
                 <?php else: ?>
@@ -305,7 +306,7 @@ try {
                         </div>
                         <div class="col-12">
                             <details class="mt-2">
-                                <summary class="small text-purple fw-semibold">JSON completo armazenado</summary>
+                                <summary class="small text-accent fw-semibold">JSON completo armazenado</summary>
                                 <pre class="bg-body-tertiary border rounded p-3 mt-2 small overflow-auto" style="max-height: 420px;"><?= h(json_encode($openCnpjRaw, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)) ?></pre>
                             </details>
                         </div>
@@ -317,7 +318,7 @@ try {
                 <div class="col-xl-7">
                     <div class="glass-card p-4 h-100">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 mb-0 text-purple"><i class="fa-solid fa-id-card me-2"></i>Cadastro OpenCNPJ</h2>
+                            <h2 class="h5 mb-0 text-accent"><i class="fa-solid fa-id-card me-2"></i>Cadastro OpenCNPJ</h2>
                             <span class="badge text-bg-secondary" id="opencnpj-status"><?= $cache ? h(($cache['is_fresh'] ?? false) ? 'cache válido' : 'cache expirado') : 'não consultado' ?></span>
                         </div>
                         <div class="row g-3">
@@ -333,7 +334,7 @@ try {
                 </div>
                 <div class="col-xl-5">
                     <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-purple"><i class="fa-solid fa-building me-2"></i>Dados locais CAT</h2>
+                        <h2 class="h5 mb-3 text-accent"><i class="fa-solid fa-building me-2"></i>Dados locais CAT</h2>
                         <div class="row g-3">
                             <div class="col-12"><div class="info-label">CNAE no arquivo CAT</div><div class="info-value"><?= h(trim(($aggregate['cnae_codigo'] ?? '') . ' - ' . ($aggregate['cnae_descricao'] ?? ''), ' -')) ?: '-' ?></div></div>
                             <div class="col-md-6"><div class="info-label">Município empregador</div><div class="info-value"><?= h($aggregate['municipio_empregador'] ?? '-') ?></div></div>
@@ -348,7 +349,7 @@ try {
             <section class="row g-4 mb-4">
                 <div class="col-xl-6">
                     <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-purple">Distribuição por tipo de acidente</h2>
+                        <h2 class="h5 mb-3 text-accent">Distribuição por tipo de acidente</h2>
                         <?php foreach ($typeDistribution as $row): ?>
                             <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-2"><span><?= h($row['label']) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
                         <?php endforeach; ?>
@@ -356,7 +357,7 @@ try {
                 </div>
                 <div class="col-xl-6">
                     <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-purple">Distribuição por sexo</h2>
+                        <h2 class="h5 mb-3 text-accent">Distribuição por sexo</h2>
                         <?php foreach ($sexDistribution as $row): ?>
                             <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-2"><span><?= h($row['label']) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
                         <?php endforeach; ?>
@@ -366,7 +367,7 @@ try {
 
             <section class="glass-card p-4 mb-4">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                    <h2 class="h5 mb-0 text-purple"><i class="fa-solid fa-list me-2"></i>CATs registradas</h2>
+                    <h2 class="h5 mb-0 text-accent"><i class="fa-solid fa-list me-2"></i>CATs registradas</h2>
                     <div class="d-flex align-items-center gap-2 flex-wrap">
                         <span class="small text-muted" id="cat-range-summary">Carregando CATs...</span>
                         <span class="small text-muted">Linhas</span>
@@ -390,7 +391,7 @@ try {
                                     <td class="font-monospace"><?= h($row['cbo'] ?? '-') ?></td>
                                     <td class="font-monospace"><?= h($row['registro_origem_id'] ?? '-') ?></td>
                                     <td class="small text-muted"><?= h($row['arquivo_nome'] ?? '-') ?></td>
-                                    <td class="text-end"><a class="btn btn-outline-purple btn-icon btn-sm" href="inspecao.php?cnpj=<?= h($cnpj) ?>&registro=<?= h($row['registro_origem_id'] ?? '') ?>" title="Abrir esta CAT" aria-label="Abrir esta CAT"><i class="fa-solid fa-address-card"></i></a></td>
+                                    <td class="text-end"><a class="btn btn-outline-accent btn-icon btn-sm" href="inspecao.php?cnpj=<?= h($cnpj) ?>&registro=<?= h($row['registro_origem_id'] ?? '') ?>" title="Abrir esta CAT" aria-label="Abrir esta CAT"><i class="fa-solid fa-address-card"></i></a></td>
                                 </tr>
                             <?php endforeach; ?>
                             <?php if (empty($recentAccidents)): ?>
@@ -424,14 +425,14 @@ try {
 
             <?php if (count($matrixBranches) > 1): ?>
                 <section class="glass-card p-4">
-                    <h2 class="h5 mb-3 text-purple"><i class="fa-solid fa-code-branch me-2"></i>Filiais da mesma matriz</h2>
+                    <h2 class="h5 mb-3 text-accent"><i class="fa-solid fa-code-branch me-2"></i>Filiais da mesma matriz</h2>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead><tr><th>CNPJ</th><th>Filial</th><th>Acidentes</th><th>Óbitos</th><th>Território</th></tr></thead>
                             <tbody>
                                 <?php foreach ($matrixBranches as $branch): ?>
                                     <tr>
-                                        <td><a class="text-purple font-monospace text-decoration-none fw-semibold" href="cnpj.php?cnpj=<?= h($branch['cnpj_digits']) ?>"><?= h(formatCnpj($branch['cnpj_digits'])) ?></a></td>
+                                        <td><a class="text-accent font-monospace text-decoration-none fw-semibold" href="cnpj.php?cnpj=<?= h($branch['cnpj_digits']) ?>"><?= h(formatCnpj($branch['cnpj_digits'])) ?></a></td>
                                         <td class="font-monospace"><?= h($branch['filial']) ?></td>
                                         <td><?= number_format((int)$branch['acidentes'], 0, ',', '.') ?></td>
                                         <td><?= number_format((int)$branch['obitos'], 0, ',', '.') ?></td>
@@ -570,7 +571,7 @@ try {
                         <td>${renderCatCode(row.cid, row.cid_label)}</td>
                         <td>${renderCatCode(row.cbo, row.cbo_label)}</td>
                         <td class="text-end">
-                            <a class="btn btn-outline-purple btn-icon btn-sm" href="inspecao.php?cnpj=${encodeURIComponent(cnpj)}&registro=${encodeURIComponent(row.registro_origem_id || '')}" title="Abrir esta CAT" aria-label="Abrir esta CAT">
+                            <a class="btn btn-outline-accent btn-icon btn-sm" href="inspecao.php?cnpj=${encodeURIComponent(cnpj)}&registro=${encodeURIComponent(row.registro_origem_id || '')}" title="Abrir esta CAT" aria-label="Abrir esta CAT">
                                 <i class="fa-solid fa-address-card"></i>
                             </a>
                         </td>

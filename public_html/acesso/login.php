@@ -5,7 +5,8 @@ declare(strict_types=1);
 require __DIR__ . '/../../acesso/src/bootstrap.php';
 
 if (is_logged_in()) {
-    header('Location: index.php');
+    $next = (string) ($_GET['next'] ?? $_POST['next'] ?? 'index.php');
+    header('Location: ' . safe_redirect_target($next));
     exit;
 }
 

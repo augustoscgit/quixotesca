@@ -3,6 +3,32 @@
  * Database connection helper using PDO and .env credentials
  */
 
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    $sessionDir = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'acesso' . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'sessions';
+    if (!is_dir($sessionDir)) {
+        @mkdir($sessionDir, 0775, true);
+    }
+    if (is_dir($sessionDir) && is_writable($sessionDir)) {
+        session_save_path($sessionDir);
+    }
+
+    ini_set('session.use_strict_mode', '1');
+    ini_set('session.gc_maxlifetime', '14400');
+
+    $isHttps = (
+        (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
+    );
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+    @session_start();
+}
+
 function getDBConnection() {
     static $pdo = null;
     if ($pdo !== null) {

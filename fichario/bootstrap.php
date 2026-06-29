@@ -206,7 +206,7 @@ function inject_default_html_metadata(string $html): string
         '    <meta property="og:url" content="' . h($canonical) . '" data-fichario-seo="1">',
         '    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" data-fichario-seo="1">',
         '    <script src="../assets/js/theme-switcher.js" data-fichario-seo="1"></script>',
-'    <link rel="stylesheet" href="../assets/css/style.css" data-fichario-seo="1">',
+'    <link rel="stylesheet" href="../assets/css/style.css?v=20260629-tags" data-fichario-seo="1">',
         '    <script type="application/ld+json" data-fichario-seo="1">' . json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>',
     ]) . "\n";
 
@@ -811,13 +811,45 @@ function search_normalize(?string $value): string
 
 function get_tag_colors(string $category): array
 {
-    $category = trim($category);
+    $normalized = search_normalize(trim($category));
     $colors = [
-        'Tema'   => ['bg' => 'rgba(59, 130, 246, 0.15)', 'text' => '#60a5fa', 'border' => 'rgba(59, 130, 246, 0.3)'],
-        'Método' => ['bg' => 'rgba(168, 85, 247, 0.15)', 'text' => '#c084fc', 'border' => 'rgba(168, 85, 247, 0.3)'],
-        'Fonte'  => ['bg' => 'rgba(16, 185, 129, 0.15)', 'text' => '#34d399', 'border' => 'rgba(16, 185, 129, 0.3)'],
+        'tema' => [
+            'bg' => 'var(--tag-tema-bg)',
+            'text' => 'var(--tag-tema-text)',
+            'border' => 'var(--tag-tema-border)',
+            'solid' => '#006392',
+        ],
+        'metodo' => [
+            'bg' => 'var(--tag-metodo-bg)',
+            'text' => 'var(--tag-metodo-text)',
+            'border' => 'var(--tag-metodo-border)',
+            'solid' => '#944F00',
+        ],
+        'fonte' => [
+            'bg' => 'var(--tag-fonte-bg)',
+            'text' => 'var(--tag-fonte-text)',
+            'border' => 'var(--tag-fonte-border)',
+            'solid' => '#5DCF00',
+        ],
+        'sem agrupamento' => [
+            'bg' => 'var(--tag-neutro-bg)',
+            'text' => 'var(--tag-neutro-text)',
+            'border' => 'var(--tag-neutro-border)',
+            'solid' => '#464B51',
+        ],
+        'outros' => [
+            'bg' => 'var(--tag-neutro-bg)',
+            'text' => 'var(--tag-neutro-text)',
+            'border' => 'var(--tag-neutro-border)',
+            'solid' => '#464B51',
+        ],
     ];
-    return $colors[$category] ?? ['bg' => 'rgba(255, 255, 255, 0.05)', 'text' => '#e5e7eb', 'border' => 'rgba(255, 255, 255, 0.1)'];
+    return $colors[$normalized] ?? [
+        'bg' => 'var(--tag-neutro-bg)',
+        'text' => 'var(--tag-neutro-text)',
+        'border' => 'var(--tag-neutro-border)',
+        'solid' => '#464B51',
+    ];
 }
 
 function tag_definition_text(array $tag): string

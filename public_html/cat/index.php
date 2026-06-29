@@ -18,7 +18,7 @@ try {
     // Fetch initial stats
     $total_files = (int)$db->query("SELECT COUNT(*) FROM arquivos_importacao")->fetchColumn();
     $loaded_files = (int)$db->query("SELECT COUNT(*) FROM arquivos_importacao WHERE situacao_carga = 'Carregado'")->fetchColumn();
-    $total_rows = (int)$db->query("SELECT COUNT(*) FROM registros_brutos")->fetchColumn();
+    $total_rows = (int)$db->query("SELECT COALESCE(SUM(linhas_processadas), 0) FROM arquivos_importacao WHERE situacao_carga = 'Carregado'")->fetchColumn();
     $failed_files = (int)$db->query("SELECT COUNT(*) FROM arquivos_importacao WHERE situacao_extracao = 'Falhou' OR situacao_carga = 'Falhou'")->fetchColumn();
 } catch (Exception $e) {
     $db_error = $e->getMessage();
@@ -48,7 +48,7 @@ try {
             --bg-color: var(--bs-body-bg);
             --card-bg: var(--bs-body-bg);
             --border-color: var(--bs-border-color);
-            --accent-color: var(--accent);
+            --accent-color: var(--accent-ui);
             --accent-hover: var(--brand-cinza-4);
             --text-muted: var(--bs-secondary-color);
             --text-color: var(--bs-body-color);
@@ -60,7 +60,7 @@ try {
             --bg-color: var(--bs-body-bg);
             --card-bg: var(--bs-body-bg);
             --border-color: var(--bs-border-color);
-            --accent-color: var(--accent);
+            --accent-color: var(--accent-ui);
             --accent-hover: var(--brand-cinza-4);
             --text-muted: var(--bs-secondary-color);
             --text-color: var(--bs-body-color);
@@ -140,23 +140,23 @@ try {
         .btn-accent {
             background-color: var(--bs-primary);
             border-color: var(--bs-primary);
-            color: #fff;
+            color: var(--accent-on-solid);
             font-weight: 500;
         }
         .btn-accent:hover, .btn-accent:focus {
             background-color: var(--primary-hover);
             border-color: var(--primary-hover);
-            color: #fff;
+            color: var(--accent-on-solid);
         }
         .btn-outline-accent {
-            border-color: var(--accent-color);
+            border-color: var(--accent-border);
             color: var(--accent-color);
             font-weight: 500;
         }
         .btn-outline-accent:hover {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: #fff;
+            background-color: var(--accent-solid);
+            border-color: var(--accent-border);
+            color: var(--accent-on-solid);
         }
         .text-accent {
             color: var(--accent-color) !important;
@@ -210,7 +210,7 @@ try {
             overflow: hidden;
         }
         .distribution-bar {
-            background: var(--accent-color);
+            background: var(--accent-solid);
             height: 100%;
         }
         .skeleton-block {
@@ -532,7 +532,7 @@ try {
             const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
             const textColor = isDark ? '#94a3b8' : '#64748b';
             const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)';
-            const accentColor = cssVar('--accent') || '#464B51';
+            const accentColor = cssVar('--accent') || cssVar('--brand-cinza-4') || '#6c757d';
             const topFindings = findings.filter(item => (item.count || 0) > 0).slice(0, 18);
 
             if (qualityChart) {
@@ -628,7 +628,7 @@ try {
             const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
             const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)';
             const textColor = isDark ? '#94a3b8' : '#64748b';
-            const accentColor = cssVar('--accent') || '#464B51';
+            const accentColor = cssVar('--accent') || cssVar('--brand-cinza-4') || '#6c757d';
             
             if (myChart) {
                 myChart.destroy();

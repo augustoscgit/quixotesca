@@ -20,16 +20,23 @@ if (!$user) {
     exit;
 }
 
+$isAdmin = false;
+try {
+    $isAdmin = platform_is_admin($user);
+} catch (Throwable $e) {}
+
 echo json_encode([
     'logged_in' => true,
     'user' => [
         'name' => (string) ($user['name'] ?? ''),
         'email' => (string) ($user['email'] ?? ''),
+        'is_admin' => $isAdmin,
     ],
     'links' => [
         'dashboard' => 'acesso/',
-        'users' => 'acesso/usuarios.php',
-        'permissions' => 'acesso/permissoes.php',
+        'admin' => $isAdmin ? 'admin/index.php' : null,
+        'users' => $isAdmin ? 'admin/usuarios.php' : null,
+        'permissions' => $isAdmin ? 'admin/permissoes.php' : null,
         'logout' => 'acesso/logout.php',
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

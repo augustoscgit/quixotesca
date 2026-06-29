@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../../acesso/src/bootstrap.php';
+require_platform_admin();
+
 /**
  * CAT - Painel de Controle de ETL (Ingestão de Dados)
  */
@@ -84,12 +87,12 @@ try {
             --bg-color: #f1f5f9;
             --card-bg: rgba(255, 255, 255, 0.7);
             --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #35383d;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #64748b;
             --text-color: #1e293b;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: rgba(241, 245, 249, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --console-bg: #0f172a;
             --field-bg: #f8fafc;
         }
@@ -98,12 +101,12 @@ try {
             --bg-color: #0b0f19;
             --card-bg: rgba(22, 28, 45, 0.7);
             --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #575d64;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #94a3b8;
             --text-color: #f8fafc;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: rgba(11, 15, 25, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --console-bg: #090d16;
             --field-bg: #111827;
         }
@@ -121,18 +124,18 @@ try {
 
         .navbar {
             background-color: var(--navbar-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border-bottom: 1px solid var(--border-color);
         }
 
         .glass-card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: var(--glass-shadow);
+            border-radius: 8px;
+            box-shadow: none;
         }
         .etl-table-card {
             overflow: hidden;
@@ -153,7 +156,7 @@ try {
             background-color: var(--field-bg) !important;
             color: var(--text-color) !important;
             border-color: var(--accent-color) !important;
-            box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.18);
+            box-shadow: 0 0 0 0.2rem rgba(70, 75, 81, 0.18);
         }
         .form-select option {
             background-color: var(--field-bg);
@@ -180,28 +183,28 @@ try {
         }
 
         /* Buttons & Color Overrides */
-        .btn-purple {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: #fff;
+        .btn-accent {
+            background-color: var(--accent-solid);
+            border-color: var(--accent-border);
+            color: var(--accent-on-solid);
             font-weight: 500;
         }
-        .btn-purple:hover, .btn-purple:focus {
-            background-color: var(--accent-hover);
-            border-color: var(--accent-hover);
-            color: #fff;
+        .btn-accent:hover, .btn-accent:focus {
+            background-color: var(--accent-solid-hover);
+            border-color: var(--accent-solid-hover);
+            color: var(--accent-on-solid);
         }
-        .btn-outline-purple {
-            border-color: var(--accent-color);
+        .btn-outline-accent {
+            border-color: var(--accent-border);
             color: var(--accent-color);
             font-weight: 500;
         }
-        .btn-outline-purple:hover {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            color: #fff;
+        .btn-outline-accent:hover {
+            background-color: var(--accent-solid);
+            border-color: var(--accent-border);
+            color: var(--accent-on-solid);
         }
-        .text-purple {
+        .text-accent {
             color: var(--accent-color) !important;
         }
 
@@ -232,7 +235,7 @@ try {
             height: 8px;
         }
         .etl-table-scroll::-webkit-scrollbar-thumb {
-            background: rgba(168, 85, 247, 0.45);
+            background: rgba(70, 75, 81, 0.25);
             border-radius: 999px;
         }
         .table-custom {
@@ -257,7 +260,7 @@ try {
         }
         .table-custom tbody tr:hover {
             transform: translateY(-2px);
-            box-shadow: var(--glass-shadow);
+            box-shadow: none;
         }
         .table-custom tbody td {
             border-top: 1px solid var(--border-color);
@@ -331,14 +334,15 @@ try {
 
         .progress-bar-custom {
             height: 8px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
+            background: var(--bs-tertiary-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 999px;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, #6c757d, #464B51);
+            background: var(--accent-solid);
             width: 0%;
             transition: width 0.2s ease;
         }
@@ -373,7 +377,7 @@ try {
         }
 
         .step-item.active {
-            color: #464B51;
+            color: var(--accent-ui);
             font-weight: 600;
         }
 
@@ -396,6 +400,7 @@ try {
             font-size: 0.75rem;
         }
     </style>
+    <link href="../assets/css/style.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js"></script>
 </head>
 <body>
@@ -404,7 +409,7 @@ try {
     <!-- Navbar -->
     <?php
     require_once __DIR__ . '/../../includes/navbar.php';
-    render_platform_navbar('cat', 'inicio');
+    render_platform_navbar('cat', 'processos');
     ?>
 
     <!-- Main Container -->
@@ -413,13 +418,13 @@ try {
         <!-- Header Section -->
         <header class="row mb-4 align-items-center">
             <div class="col-md-8">
-                <h1 class="display-5 text-purple mb-2" style="font-weight: 800; color: #464B51;">Gerenciamento de Ingestão (ETL)</h1>
+                <h1 class="display-5 text-accent mb-2" style="font-weight: 800;">Gerenciamento de Ingestão (ETL)</h1>
                 <p class="lead text-secondary">
                     Controle de sincronização e ingestão das bases de dados de CAT do governo federal. Execute cargas incrementais, verifique logs de erros de processamento e limpe caches temporários.
                 </p>
             </div>
             <div class="col-md-4 text-md-end text-start mt-3 mt-md-0 d-flex gap-2 justify-content-md-end">
-                <button id="btn-sync-api" class="btn btn-purple btn-icon rounded-circle" title="Sincronizar lista" aria-label="Sincronizar lista" <?= ($db_status !== "Conectado") ? 'disabled' : '' ?>>
+                <button id="btn-sync-api" class="btn btn-accent btn-icon rounded-circle" title="Sincronizar lista" aria-label="Sincronizar lista" <?= ($db_status !== "Conectado") ? 'disabled' : '' ?>>
                     <i class="fa-solid fa-rotate"></i>
                 </button>
             </div>
@@ -468,13 +473,13 @@ try {
 
         <!-- ETL Pane -->
         <div class="glass-card p-4 etl-table-card">
-            <h4 class="mb-4 text-light"><i class="fa-solid fa-cloud-arrow-down text-purple me-2"></i>Repositório de Arquivos Públicos (INSS)</h4>
+            <h4 class="mb-4 text-light"><i class="fa-solid fa-cloud-arrow-down text-accent me-2"></i>Repositório de Arquivos Públicos (INSS)</h4>
             
             <?php if (empty($files)): ?>
                 <div class="text-center py-5 text-secondary">
                     <i class="fa-solid fa-folder-open display-4 mb-3 d-block text-muted"></i>
                     <p class="mb-3">Nenhum arquivo catalogado ainda. Clique no botão de sincronização para listar as fontes da API do INSS.</p>
-                    <button id="btn-sync-api-empty" class="btn btn-purple btn-icon rounded-circle" title="Buscar arquivos públicos" aria-label="Buscar arquivos públicos" <?= ($db_status !== "Conectado") ? 'disabled' : '' ?>>
+                    <button id="btn-sync-api-empty" class="btn btn-accent btn-icon rounded-circle" title="Buscar arquivos públicos" aria-label="Buscar arquivos públicos" <?= ($db_status !== "Conectado") ? 'disabled' : '' ?>>
                         <i class="fa-solid fa-rotate"></i>
                     </button>
                 </div>
@@ -562,14 +567,14 @@ try {
                                                  </button>
                                              <?php else: ?>
                                                  <?php if ($file['linhas_processadas'] > 0): ?>
-                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, true)" class="btn btn-purple btn-sm btn-icon rounded" title="Continuar ETL do ponto de parada" aria-label="Continuar ETL do ponto de parada">
+                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, true)" class="btn btn-accent btn-sm btn-icon rounded" title="Continuar ETL do ponto de parada" aria-label="Continuar ETL do ponto de parada">
                                                          <i class="fa-solid fa-play"></i>
                                                      </button>
-                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, false)" class="btn btn-outline-purple btn-sm btn-icon rounded" title="Reiniciar do zero" aria-label="Reiniciar do zero">
+                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, false)" class="btn btn-outline-accent btn-sm btn-icon rounded" title="Reiniciar do zero" aria-label="Reiniciar do zero">
                                                          <i class="fa-solid fa-backward"></i>
                                                      </button>
                                                  <?php else: ?>
-                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, false)" class="btn btn-purple btn-sm btn-icon rounded" title="Executar ETL completo" aria-label="Executar ETL completo">
+                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, false)" class="btn btn-accent btn-sm btn-icon rounded" title="Executar ETL completo" aria-label="Executar ETL completo">
                                                          <i class="fa-solid fa-play"></i>
                                                      </button>
                                                  <?php endif; ?>
@@ -601,7 +606,7 @@ try {
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content glass-card border border-secondary text-light">
                 <div class="modal-header border-secondary pb-3">
-                    <h5 class="modal-title" id="etlModalLabel"><i class="fa-solid fa-cogs text-purple me-2"></i>Executando Pipeline ETL</h5>
+                    <h5 class="modal-title" id="etlModalLabel"><i class="fa-solid fa-cogs text-accent me-2"></i>Executando Pipeline ETL</h5>
                 </div>
                 <div class="modal-body py-4">
                     
@@ -676,15 +681,15 @@ try {
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content glass-card border border-secondary text-light">
                 <div class="modal-header border-secondary pb-3">
-                    <h5 class="modal-title" id="fileInfoModalLabel"><i class="fa-solid fa-circle-info text-purple me-2"></i>Documentação do Arquivo</h5>
+                    <h5 class="modal-title" id="fileInfoModalLabel"><i class="fa-solid fa-circle-info text-accent me-2"></i>Documentação do Arquivo</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body py-4">
-                    <h6 id="file-info-target-name" class="text-purple mb-3">-</h6>
+                    <h6 id="file-info-target-name" class="text-accent mb-3">-</h6>
                     <div id="file-info-content" class="small text-muted">Carregando...</div>
                 </div>
                 <div class="modal-footer border-secondary pt-3">
-                    <a href="campos.php" class="btn btn-outline-purple btn-icon rounded-circle" title="Ver matriz completa" aria-label="Ver matriz completa">
+                    <a href="campos.php" class="btn btn-outline-accent btn-icon rounded-circle" title="Ver matriz completa" aria-label="Ver matriz completa">
                         <i class="fa-solid fa-table-list"></i>
                     </a>
                     <button type="button" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
@@ -1231,7 +1236,7 @@ function showConfirmModal(message, onConfirm) {
             if (activeTh) {
                 const icon = activeTh.querySelector('i');
                 if (icon) {
-                    icon.className = currentSortDesc ? 'fa-solid fa-sort-down ms-1 text-purple small' : 'fa-solid fa-sort-up ms-1 text-purple small';
+                    icon.className = currentSortDesc ? 'fa-solid fa-sort-down ms-1 text-accent small' : 'fa-solid fa-sort-up ms-1 text-accent small';
                 }
             }
 

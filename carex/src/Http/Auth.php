@@ -5,14 +5,9 @@ declare(strict_types=1);
 namespace Carex\Http;
 
 use Carex\Database\Connection;
-use Carex\Database\UserRepository;
-use RuntimeException;
 
 final class Auth
 {
-    private const SESSION_USER_KEY = '_carex_auth_user';
-    private const REMEMBER_COOKIE_NAME = '_carex_remember_token';
-
     public static function startSession(): void
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
@@ -22,6 +17,7 @@ final class Auth
         self::configureSessionStorage();
 
         session_set_cookie_params([
+            'path' => '/',
             'httponly' => true,
             'samesite' => 'Lax',
             'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
@@ -36,7 +32,7 @@ final class Auth
             return;
         }
 
-        $sessionDir = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'sessions';
+        $sessionDir = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'acesso' . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'sessions';
         if (!is_dir($sessionDir)) {
             @mkdir($sessionDir, 0775, true);
         }
@@ -44,7 +40,7 @@ final class Auth
         if (!is_dir($sessionDir) || !is_writable($sessionDir)) {
             $fallbackDir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR)
                 . DIRECTORY_SEPARATOR
-                . 'carex_sessions_' . substr(hash('sha256', dirname(__DIR__, 2)), 0, 12);
+                . 'carex_sessions_' . substr(hash('sha256', dirname(__DIR__, 3)), 0, 12);
             if (!is_dir($fallbackDir)) {
                 @mkdir($fallbackDir, 0700, true);
             }
@@ -61,14 +57,73 @@ final class Auth
 
     public static function isAuthenticated(): bool
     {
-        self::startSession();
-        return isset($_SESSION[self::SESSION_USER_KEY]) && is_array($_SESSION[self::SESSION_USER_KEY]);
+        return self::currentUser() !== null;
     }
 
     public static function currentUser(): ?array
     {
         self::startSession();
-        return $_SESSION[self::SESSION_USER_KEY] ?? null;
+        $acessoUserId = (int) ($_SESSION['_acesso_user_id'] ?? 0);
+        if ($acessoUserId <= 0) {
+            return null;
+        }
+
+        try {
+            $config = require dirname(__DIR__) . '/bootstrap.php';
+            $pdo = Connection::make($config['database']);
+
+            $stmt = $pdo->prepare('SELECT id, name, email, username, status FROM acesso.users WHERE id = :id LIMIT 1');
+            $stmt->execute(['id' => $acessoUserId]);
+            $user = $stmt->fetch();
+
+            if (!$user || ($user['status'] ?? '') !== 'active') {
+                unset($_SESSION['_acesso_user_id'], $_SESSION['_acesso_user_name'], $_SESSION['_acesso_user_email'], $_SESSION['_acesso_user_role']);
+                return null;
+            }
+
+            $rolesStmt = $pdo->prepare('
+                SELECT DISTINCT r.slug
+                  FROM acesso.roles r
+                  JOIN acesso.user_roles ur ON ur.role_id = r.id
+                 WHERE ur.user_id = :user_id
+                 ORDER BY r.slug
+            ');
+            $rolesStmt->execute(['user_id' => $acessoUserId]);
+            $roles = array_map('strval', $rolesStmt->fetchAll(\PDO::FETCH_COLUMN));
+
+            $permStmt = $pdo->prepare('
+                SELECT DISTINCT p.slug
+                  FROM acesso.permissions p
+                  JOIN acesso.role_permissions rp ON rp.permission_id = p.id
+                  JOIN acesso.user_roles ur ON ur.role_id = rp.role_id
+                 WHERE ur.user_id = :user_id
+                 ORDER BY p.slug
+            ');
+            $permStmt->execute(['user_id' => $acessoUserId]);
+            $permissions = array_map('strval', $permStmt->fetchAll(\PDO::FETCH_COLUMN));
+
+            $legacyAdmin = array_intersect(['platform.admin', 'acesso.admin', 'fichario.admin', 'ldrt.admin', 'carex.admin'], $permissions) !== [];
+            $role = (in_array('admin', $roles, true) || $legacyAdmin)
+                ? 'admin'
+                : (in_array('user', $roles, true) || in_array('content.edit', $permissions, true) ? 'user' : 'public');
+
+            $_SESSION['_acesso_user_name'] = (string) $user['name'];
+            $_SESSION['_acesso_user_email'] = (string) $user['email'];
+            $_SESSION['_acesso_user_role'] = $role;
+
+            return [
+                'id' => (int) $user['id'],
+                'name' => (string) $user['name'],
+                'email' => (string) $user['email'],
+                'username' => (string) ($user['username'] ?? ''),
+                'status' => (string) $user['status'],
+                'role' => $role,
+                '_roles' => $roles,
+                '_permissions' => $permissions,
+            ];
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     /**
@@ -76,88 +131,17 @@ final class Auth
      */
     public static function updateCurrentUser(array $user): void
     {
-        self::startSession();
-
-        if (isset($_SESSION[self::SESSION_USER_KEY]) && is_array($_SESSION[self::SESSION_USER_KEY])) {
-            $_SESSION[self::SESSION_USER_KEY] = array_merge($_SESSION[self::SESSION_USER_KEY], $user);
-        }
+        $_SESSION['_acesso_user_name'] = (string) ($user['name'] ?? ($_SESSION['_acesso_user_name'] ?? ''));
+        $_SESSION['_acesso_user_email'] = (string) ($user['email'] ?? ($_SESSION['_acesso_user_email'] ?? ''));
     }
 
     /**
-     * Authenticates the user in the session and optionally sets the remember cookie.
-     */
-    public static function login(array $user, bool $rememberMe = false): void
-    {
-        self::startSession();
-        $_SESSION[self::SESSION_USER_KEY] = $user;
-
-        if ($rememberMe) {
-            try {
-                $token = bin2hex(random_bytes(32));
-
-                // Save remember token in DB
-                $config = require dirname(__DIR__) . '/bootstrap.php';
-                $config['database']['allow_writes'] = true; // Force write connection for auth updates
-                $pdo = Connection::make($config['database']);
-                $userRepo = new UserRepository($pdo);
-                $userRepo->updateRememberToken((int) $user['id'], $token);
-
-                // Set cookie
-                setcookie(
-                    self::REMEMBER_COOKIE_NAME,
-                    $token,
-                    [
-                        'expires' => time() + 30 * 24 * 60 * 60, // 30 days
-                        'path' => '/',
-                        'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
-                        'httponly' => true,
-                        'samesite' => 'Lax'
-                    ]
-                );
-            } catch (\Throwable $error) {
-                $_SESSION['_carex_remember_error'] = $error->getMessage();
-            }
-        }
-    }
-
-    /**
-     * Clears user session and deletes the remember cookie.
+     * Clears user session.
      */
     public static function logout(): void
     {
         self::startSession();
-        $user = self::currentUser();
-
-        if ($user) {
-            // Invalidate remember token in DB
-            try {
-                $config = require dirname(__DIR__) . '/bootstrap.php';
-                $config['database']['allow_writes'] = true;
-                $pdo = Connection::make($config['database']);
-                $userRepo = new UserRepository($pdo);
-                $userRepo->updateRememberToken((int) $user['id'], null);
-            } catch (\Throwable $e) {
-                // Ignore DB error on logout
-            }
-        }
-
-        unset($_SESSION[self::SESSION_USER_KEY]);
-
-        // Clear cookie
-        if (isset($_COOKIE[self::REMEMBER_COOKIE_NAME])) {
-            setcookie(
-                self::REMEMBER_COOKIE_NAME,
-                '',
-                [
-                    'expires' => time() - 3600,
-                    'path' => '/',
-                    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
-                    'httponly' => true,
-                    'samesite' => 'Lax'
-                ]
-            );
-            unset($_COOKIE[self::REMEMBER_COOKIE_NAME]);
-        }
+        unset($_SESSION['_acesso_user_id'], $_SESSION['_acesso_user_name'], $_SESSION['_acesso_user_email'], $_SESSION['_acesso_user_role']);
     }
 
     /**
@@ -168,60 +152,26 @@ final class Auth
         self::startSession();
 
         if (self::isAuthenticated()) {
-            $user = self::currentUser();
-            
-            // Check if status is suspended (desligado) in DB
-            try {
-                $config = require dirname(__DIR__) . '/bootstrap.php';
-                $pdo = Connection::make($config['database']);
-                $userRepo = new UserRepository($pdo);
-                $dbUser = $userRepo->getUserById((int) $user['id']);
-
-                if ($dbUser && $dbUser['status'] === 'desligado') {
-                    self::logout();
-                    header('Location: login.php?error=desligado');
-                    exit;
-                }
-
-                if ($dbUser) {
-                    $_SESSION[self::SESSION_USER_KEY] = $dbUser;
-                }
-            } catch (\Throwable $e) {
-                // Allow proceeding if database fails during check
-            }
             return;
         }
 
-        // Try remember me re-authentication
-        $cookieToken = $_COOKIE[self::REMEMBER_COOKIE_NAME] ?? '';
-        if (is_string($cookieToken) && $cookieToken !== '') {
-            try {
-                $config = require dirname(__DIR__) . '/bootstrap.php';
-                $config['database']['allow_writes'] = true; // writes allowed for token validation and updates
-                $pdo = Connection::make($config['database']);
-                $userRepo = new UserRepository($pdo);
-                $user = $userRepo->getUserByRememberToken($cookieToken);
+        // Save requested page to redirect back after login
+        $next = $_SERVER['REQUEST_URI'] ?? 'matrizes.php';
 
-                if ($user) {
-                    $_SESSION[self::SESSION_USER_KEY] = $user;
-                    return;
-                }
-            } catch (RuntimeException $e) {
-                // Suspended user detected by getUserByRememberToken
-                self::logout();
-                header('Location: login.php?error=desligado');
-                exit;
-            } catch (\Throwable $e) {
-                // Other DB errors - delete corrupted cookie
-                self::logout();
-            }
+        header('Location: ../acesso/login.php?next=' . rawurlencode($next));
+        exit;
+    }
+
+    public static function requireAdmin(): void
+    {
+        self::requireLogin();
+
+        if ((self::currentUser()['role'] ?? 'public') === 'admin') {
+            return;
         }
 
-        // Save requested page to redirect back after login
-        $_SESSION['redirect_to'] = $_SERVER['REQUEST_URI'] ?? 'matrizes.php';
-
-        header('Location: login.php');
-        exit;
+        http_response_code(403);
+        exit('Acesso restrito para administradores.');
     }
 
     /**
@@ -232,52 +182,22 @@ final class Auth
         self::startSession();
 
         if (self::isAuthenticated()) {
-            $user = self::currentUser();
-            try {
-                $config = require dirname(__DIR__) . '/bootstrap.php';
-                $pdo = Connection::make($config['database']);
-                $userRepo = new UserRepository($pdo);
-                $dbUser = $userRepo->getUserById((int) $user['id']);
-
-                if ($dbUser && $dbUser['status'] === 'desligado') {
-                    self::logout();
-                    Response::error('Aviso de desligamento. Por favor, entre em contato com o administrador.', 401);
-                    return;
-                }
-
-                if ($dbUser) {
-                    $_SESSION[self::SESSION_USER_KEY] = $dbUser;
-                }
-            } catch (\Throwable $e) {
-                // Fallback: assume valid if DB fails
-            }
             return;
         }
 
-        // Try remember me re-authentication
-        $cookieToken = $_COOKIE[self::REMEMBER_COOKIE_NAME] ?? '';
-        if (is_string($cookieToken) && $cookieToken !== '') {
-            try {
-                $config = require dirname(__DIR__) . '/bootstrap.php';
-                $config['database']['allow_writes'] = true;
-                $pdo = Connection::make($config['database']);
-                $userRepo = new UserRepository($pdo);
-                $user = $userRepo->getUserByRememberToken($cookieToken);
+        Response::error('Não autorizado.', 401);
+        exit;
+    }
 
-                if ($user) {
-                    $_SESSION[self::SESSION_USER_KEY] = $user;
-                    return;
-                }
-            } catch (RuntimeException $e) {
-                self::logout();
-                Response::error('Aviso de desligamento. Por favor, entre em contato com o administrador.', 401);
-                return;
-            } catch (\Throwable $e) {
-                self::logout();
-            }
+    public static function requireApiAdmin(): void
+    {
+        self::requireApiLogin();
+
+        if ((self::currentUser()['role'] ?? 'public') === 'admin') {
+            return;
         }
 
-        Response::error('Não autorizado.', 401);
+        Response::error('Forbidden', 403);
         exit;
     }
 }

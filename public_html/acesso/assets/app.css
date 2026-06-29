@@ -83,7 +83,7 @@ body {
 .form-control:focus,
 .form-select:focus {
     background-color: var(--surface-strong);
-    border-color: var(--accent);
+    border-color: var(--accent-ui);
     box-shadow: 0 0 0 0.2rem rgba(56, 189, 248, 0.16);
     color: var(--text);
 }

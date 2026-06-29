@@ -7,8 +7,6 @@ use Carex\Http\Security;
 
 $config = require dirname(__DIR__, 2) . '/carex' . '/src/bootstrap.php';
 
-\Carex\Http\Auth::requireLogin();
-
 Security::applyHeaders();
 Security::allowReadOnlyRequest();
 
@@ -109,9 +107,92 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
     <title>CAREX | Matriz <?= Security::e($matrix ? $matrix['no_matriz'] : '') ?></title>
     <link href="../assets/favicon.png" rel="icon" type="image/png">
     <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="assets/app.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-contrast" rel="stylesheet">
+    <style>
+        .matrix-breadcrumb {
+            background: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+        }
+
+        .matrix-breadcrumb .breadcrumb {
+            margin-bottom: 0;
+        }
+
+        .matrix-breadcrumb a,
+        .matrix-link-accent {
+            color: var(--accent-ui) !important;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .matrix-breadcrumb a:hover,
+        .matrix-link-accent:hover {
+            text-decoration: underline;
+        }
+
+        .matrix-table-wrap,
+        .matrix-empty-state {
+            background: var(--bs-body-bg) !important;
+            border: 1px solid var(--bs-border-color) !important;
+            border-radius: 8px !important;
+            box-shadow: none !important;
+        }
+
+        .matrix-table thead th {
+            background: var(--bs-tertiary-bg) !important;
+            color: var(--bs-body-color) !important;
+            border-color: var(--bs-border-color) !important;
+        }
+
+        .matrix-table td,
+        .matrix-table th {
+            border-color: var(--bs-border-color) !important;
+        }
+
+        .matrix-section-title {
+            color: var(--accent-ui) !important;
+        }
+
+        .matrix-progress .progress-bar {
+            background-color: var(--accent-solid) !important;
+            color: var(--accent-on-solid) !important;
+        }
+
+        .matrix-tabs .nav-link {
+            color: var(--bs-secondary-color) !important;
+            border-color: transparent !important;
+        }
+
+        .matrix-tabs .nav-link:hover {
+            color: var(--accent-ui) !important;
+            border-color: var(--bs-border-color) !important;
+        }
+
+        .matrix-tabs .nav-link.active {
+            background: var(--bs-body-bg) !important;
+            border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg) !important;
+            color: var(--accent-ui) !important;
+            font-weight: 600;
+        }
+
+        .btn-outline-primary {
+            border-color: var(--accent-border) !important;
+            color: var(--accent-ui) !important;
+            background: transparent !important;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus {
+            background: var(--accent-solid) !important;
+            border-color: var(--accent-solid) !important;
+            color: var(--accent-on-solid) !important;
+        }
+    </style>
 </head>
 <body>
     <?php
@@ -124,7 +205,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
         <?php if ($error !== ''): ?>
             <div class="alert alert-danger py-2" role="alert"><?= Security::e($error) ?></div>
         <?php else: ?>
-            <nav aria-label="breadcrumb">
+            <nav class="matrix-breadcrumb mb-3" aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="matrizes.php">Matrizes</a></li>
                     <li class="breadcrumb-item active" aria-current="page"><?= Security::e($matrix['no_matriz']) ?></li>
@@ -132,7 +213,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
             </nav>
 
             <!-- Tabs Navigation -->
-            <ul class="nav nav-tabs mb-4" id="matrixTabs" role="tablist">
+            <ul class="nav nav-tabs matrix-tabs mb-4" id="matrixTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-panel" type="button" role="tab" aria-controls="info-panel" aria-selected="true">
                         <i class="bi bi-info-circle-fill me-1"></i> Informações Gerais
@@ -153,11 +234,11 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
             <div class="tab-content" id="matrixTabContent">
                 <!-- Tab 1: Informações Gerais -->
                 <div class="tab-pane fade show active" id="info-panel" role="tabpanel" aria-labelledby="info-tab">
-                    <div class="card mb-4 border-secondary-subtle shadow-sm">
+                    <div class="card mb-4 border-secondary-subtle">
                         <div class="card-body">
                             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                                 <div>
-                                    <h1 class="h3 mb-1 text-primary"><?= Security::e($matrix['no_matriz']) ?></h1>
+                                    <h1 class="h3 mb-1 matrix-section-title"><?= Security::e($matrix['no_matriz']) ?></h1>
                                     <div class="text-body-secondary small">Código da Matriz: <strong><?= Security::e($matrix['id_matriz']) ?></strong></div>
                                 </div>
                                 <div class="d-flex gap-4">
@@ -167,7 +248,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                                     </div>
                                     <div>
                                         <div class="text-body-secondary small">Classificados</div>
-                                        <div class="fs-4 fw-bold text-success"><?= number_format($matrix['total_classificados'], 0, ',', '.') ?></div>
+                                        <div class="fs-4 fw-bold text-body-emphasis"><?= number_format($matrix['total_classificados'], 0, ',', '.') ?></div>
                                     </div>
                                 </div>
                             </div>
@@ -175,18 +256,18 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                             <div class="mt-3">
                                 <div class="d-flex justify-content-between small mb-1">
                                     <span class="text-body-secondary fw-semibold">Avanço da Classificação</span>
-                                    <span class="fw-bold text-primary"><?= number_format($matrix['percentual_classificado'], 1, ',', '.') ?>%</span>
+                                    <span class="fw-bold matrix-section-title"><?= number_format($matrix['percentual_classificado'], 1, ',', '.') ?>%</span>
                                 </div>
-                                <div class="progress" style="height: 10px;" role="progressbar" aria-valuenow="<?= Security::e($matrix['percentual_classificado']) ?>" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" style="width: <?= Security::e($matrix['percentual_classificado']) ?>%"></div>
+                                <div class="progress matrix-progress" style="height: 10px;" role="progressbar" aria-valuenow="<?= Security::e($matrix['percentual_classificado']) ?>" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar" style="width: <?= Security::e($matrix['percentual_classificado']) ?>%"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Linked Specialists Card -->
-                    <div class="card border-secondary-subtle shadow-sm p-4 mb-4">
-                        <h2 class="h5 mb-3 text-primary"><i class="bi bi-people-fill"></i> Especialistas Vinculados</h2>
+                    <div class="card border-secondary-subtle p-4 mb-4">
+                        <h2 class="h5 mb-3 matrix-section-title"><i class="bi bi-people-fill"></i> Especialistas Vinculados</h2>
                         <?php if (empty($linkedSpecialists)): ?>
                             <p class="text-body-secondary mb-0">Nenhum especialista vinculado a esta matriz no momento.</p>
                         <?php else: ?>
@@ -202,8 +283,8 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                     </div>
 
                     <!-- Specifications & Metadata Panel -->
-                    <div class="card border-secondary-subtle shadow-sm p-4 mb-4">
-                        <h2 class="h5 mb-3 text-primary"><i class="bi bi-file-earmark-text-fill"></i> Especificações e Metadados da Matriz</h2>
+                    <div class="card border-secondary-subtle p-4 mb-4">
+                        <h2 class="h5 mb-3 matrix-section-title"><i class="bi bi-file-earmark-text-fill"></i> Especificações e Metadados da Matriz</h2>
                         <div class="row g-3">
                             <div class="col-12 col-md-4">
                                 <label class="small fw-semibold text-secondary d-block mb-1">Versão da Matriz</label>
@@ -287,7 +368,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                     </div>
 
                     <!-- Dynamic Filters -->
-                    <div id="filterSection" class="card mb-3 border-light-subtle shadow-sm bg-body-tertiary">
+                    <div id="filterSection" class="card mb-3 border-secondary-subtle">
                         <div class="card-body py-2 px-3">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <span class="fw-semibold small text-uppercase text-body-secondary" style="letter-spacing: 0.5px;">Filtros Dinâmicos</span>
@@ -304,9 +385,9 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                     <div id="statusMessage" class="alert alert-info py-2" role="status" hidden>Carregando classificações...</div>
 
                     <!-- Table -->
-                    <div class="table-responsive border rounded-2 bg-white shadow-sm mb-3">
-                        <table class="table table-striped table-hover align-middle mb-0" style="font-size: 0.9rem;">
-                            <thead class="table-light">
+                    <div class="table-responsive matrix-table-wrap mb-3">
+                        <table class="table table-striped table-hover align-middle matrix-table mb-0" style="font-size: 0.9rem;">
+                            <thead>
                                 <tr>
                                     <th scope="col" style="width: 80px;">Origem</th>
                                     <th scope="col" style="width: 130px;">Tipo de Objeto</th>
@@ -354,7 +435,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                     <div id="estimatesSummary" class="row g-3 mb-3"></div>
 
                     <div id="estimatesGrid" class="estimate-criteria-grid mb-5">
-                        <div class="text-center py-4 text-body-secondary border rounded bg-white">Abra a aba para carregar as estimativas.</div>
+                        <div class="matrix-empty-state text-center py-4 text-body-secondary">Abra a aba para carregar as estimativas.</div>
                     </div>
                 </div>
             </div>

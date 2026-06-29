@@ -110,44 +110,45 @@ try {
             --bg-color: #f1f5f9;
             --card-bg: rgba(255, 255, 255, 0.7);
             --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #35383d;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #64748b;
             --text-color: #1e293b;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: rgba(241, 245, 249, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --field-bg: #f8fafc;
         }
         [data-bs-theme="dark"] {
             --bg-color: #0b0f19;
             --card-bg: rgba(22, 28, 45, 0.7);
             --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: #464B51;
-            --accent-hover: #575d64;
+            --accent-color: var(--accent-ui);
+            --accent-hover: var(--brand-cinza-4);
             --text-muted: #94a3b8;
             --text-color: #f8fafc;
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: rgba(11, 15, 25, 0.85);
+            --navbar-bg: var(--bs-body-bg);
             --field-bg: #111827;
         }
         body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
-        .navbar { background-color: var(--navbar-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); }
-        .glass-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: var(--glass-shadow); }
-        .text-purple { color: var(--accent-color) !important; }
+        .navbar { background-color: var(--navbar-bg); backdrop-filter: none; border-bottom: 1px solid var(--border-color); }
+        .glass-card { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: none; }
+        .text-accent { color: var(--accent-color) !important; }
         .btn-icon { width: 40px; height: 40px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
         .metric-number { font-size: 1.75rem; font-weight: 800; line-height: 1; }
         .table { --bs-table-bg: transparent; --bs-table-color: var(--text-color); --bs-table-border-color: var(--border-color); }
         .table thead th { color: var(--text-muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
         .text-clip { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     </style>
+    <link href="../assets/css/style.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js"></script>
 </head>
 <body>
     <!-- Navbar -->
     <?php
     require_once __DIR__ . '/../../includes/navbar.php';
-    render_platform_navbar('cat', 'inspecao');
+    render_platform_navbar('cat', 'cnpjs');
     ?>
 
     <main class="container-fluid py-5 px-4">
@@ -157,12 +158,12 @@ try {
             <header class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
                 <div>
                     <div class="text-muted mb-1">Raiz da matriz</div>
-                    <h1 class="display-6 text-purple mb-2" style="font-weight: 800;"><?= h($matriz) ?></h1>
+                    <h1 class="display-6 text-accent mb-2" style="font-weight: 800;"><?= h($matriz) ?></h1>
                     <p class="lead text-secondary mb-0">Resumo consolidado das CATs e filiais vinculadas a esta matriz.</p>
                 </div>
                 <div class="d-flex gap-2">
                     <a class="btn btn-outline-secondary btn-icon" href="cnpjs.php" title="Voltar ao agregador" aria-label="Voltar ao agregador"><i class="fa-solid fa-arrow-left"></i></a>
-                    <a class="btn btn-outline-purple btn-icon" href="inspecao.php?cnpj=<?= h($matriz) ?>" title="Navegar CATs da matriz" aria-label="Navegar CATs da matriz"><i class="fa-solid fa-address-card"></i></a>
+                    <a class="btn btn-outline-accent btn-icon" href="inspecao.php?cnpj=<?= h($matriz) ?>" title="Navegar CATs da matriz" aria-label="Navegar CATs da matriz"><i class="fa-solid fa-address-card"></i></a>
                 </div>
             </header>
 
@@ -176,7 +177,7 @@ try {
             <section class="row g-4 mb-4">
                 <div class="col-xl-6">
                     <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-purple">Tipos de acidente</h2>
+                        <h2 class="h5 mb-3 text-accent">Tipos de acidente</h2>
                         <?php foreach ($topTypes as $row): ?>
                             <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-2"><span><?= h($row['label']) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
                         <?php endforeach; ?>
@@ -184,7 +185,7 @@ try {
                 </div>
                 <div class="col-xl-6">
                     <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-purple">Territorios com CAT</h2>
+                        <h2 class="h5 mb-3 text-accent">Territorios com CAT</h2>
                         <?php foreach ($topTerritories as $row): ?>
                             <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-2"><span><?= h(trim(($row['municipio'] ?? '') . ' / ' . ($row['uf'] ?? ''), ' /')) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
                         <?php endforeach; ?>
@@ -193,21 +194,21 @@ try {
             </section>
 
             <section class="glass-card p-4">
-                <h2 class="h5 mb-3 text-purple"><i class="fa-solid fa-code-branch me-2"></i>Filiais da matriz</h2>
+                <h2 class="h5 mb-3 text-accent"><i class="fa-solid fa-code-branch me-2"></i>Filiais da matriz</h2>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead><tr><th>CNPJ</th><th>Empresa</th><th>Situacao</th><th>Acidentes</th><th>Obitos</th><th>Territorio</th><th></th></tr></thead>
                         <tbody>
                             <?php foreach ($branches as $branch): ?>
                                 <tr>
-                                    <td><a class="text-purple font-monospace text-decoration-none fw-semibold" href="cnpj.php?cnpj=<?= h($branch['cnpj_digits']) ?>"><?= h(formatCnpjLocal($branch['cnpj_digits'])) ?></a></td>
+                                    <td><a class="text-accent font-monospace text-decoration-none fw-semibold" href="cnpj.php?cnpj=<?= h($branch['cnpj_digits']) ?>"><?= h(formatCnpjLocal($branch['cnpj_digits'])) ?></a></td>
                                     <td><div class="text-clip" title="<?= h($branch['razao_social'] ?: $branch['nome_fantasia'] ?: '-') ?>"><?= h($branch['razao_social'] ?: $branch['nome_fantasia'] ?: '-') ?></div></td>
                                     <td><?= h($branch['situacao'] ?? '-') ?></td>
                                     <td><?= number_format((int)$branch['acidentes'], 0, ',', '.') ?></td>
                                     <td><?= number_format((int)$branch['obitos'], 0, ',', '.') ?></td>
                                     <td><?= h(trim(($branch['municipio_empregador'] ?: $branch['opencnpj_municipio'] ?: '') . ' / ' . ($branch['uf_empregador'] ?: $branch['opencnpj_uf'] ?: ''), ' /')) ?></td>
                                     <td class="text-end">
-                                        <a class="btn btn-outline-purple btn-icon btn-sm" href="inspecao.php?cnpj=<?= h($branch['cnpj_digits']) ?>" title="Navegar CATs do CNPJ" aria-label="Navegar CATs do CNPJ"><i class="fa-solid fa-address-card"></i></a>
+                                        <a class="btn btn-outline-accent btn-icon btn-sm" href="inspecao.php?cnpj=<?= h($branch['cnpj_digits']) ?>" title="Navegar CATs do CNPJ" aria-label="Navegar CATs do CNPJ"><i class="fa-solid fa-address-card"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

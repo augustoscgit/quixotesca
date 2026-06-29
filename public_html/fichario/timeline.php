@@ -184,19 +184,15 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260615" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js"></script>
     <style>
-        body {
-            background: var(--bg-gradient);
-        }
-
         .blob {
             animation: floatBlob 12s infinite alternate ease-in-out;
         }
 
-        .blob-purple {
+        .legacy-decoration-secondary {
             animation-delay: -6s;
         }
 
@@ -443,8 +439,7 @@ try {
 </head>
 <body>
     <!-- Background Animated Blobs -->
-    <div class="blob blob-blue"></div>
-    <div class="blob blob-purple"></div>
+
 
     <?php render_navbar('timeline'); ?>
 
