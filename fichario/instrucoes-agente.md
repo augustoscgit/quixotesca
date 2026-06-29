@@ -20,7 +20,7 @@ O FichÃ¡rio AcadÃªmico consiste em uma aplicaÃ§Ã£o de cadastro bibliogr�
 
 O guia oficial de estilo, UX, interface, tema, navbar, botoes, tabelas e filtros da plataforma fica em:
 
-`docs/definicao-padroes.md`
+`docs/identidade-visual-ux.md` e `docs/desenvolvimento-seguranca.md`
 
 Os arquivos locais `assets/definicao-padroes.md`, `system_md/DESIGN.md` e `system_md/palheta.md` existem apenas como pontes de compatibilidade. Regras visuais antigas deste modulo sao historicas e nao devem orientar novas telas quando conflitarem com o guia central.
 

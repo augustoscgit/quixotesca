@@ -22,7 +22,15 @@ try {
                 SELECT p.id, p.parent_id FROM cid p JOIN ldrt_cids child ON child.parent_id = p.id
             )
             SELECT c.id, c.codigo, c.nivel, c.descricao,
-                   (SELECT COUNT(*) FROM cid sub WHERE sub.parent_id = c.id AND sub.id IN (SELECT id FROM ldrt_cids)) > 0 AS has_children
+                   (SELECT COUNT(*) FROM cid sub WHERE sub.parent_id = c.id AND sub.id IN (SELECT id FROM ldrt_cids)) > 0 AS has_children,
+                   (
+                       WITH RECURSIVE sub_cids AS (
+                           SELECT id FROM cid WHERE id = c.id
+                           UNION ALL
+                           SELECT child.id FROM cid child JOIN sub_cids p ON child.parent_id = p.id
+                       )
+                       SELECT COUNT(*) FROM agente_cid ac WHERE ac.cid_id IN (SELECT id FROM sub_cids)
+                   ) AS agente_count
             FROM cid c
             WHERE $parentCond AND c.id IN (SELECT id FROM ldrt_cids)
             ORDER BY " . ($parentId === 0 ? "c.id ASC" : "c.codigo ASC");
@@ -30,7 +38,15 @@ try {
         // Fetch all CIDs
         $sql = "
             SELECT c.id, c.codigo, c.nivel, c.descricao,
-                   (SELECT COUNT(*) FROM cid sub WHERE sub.parent_id = c.id) > 0 AS has_children
+                   (SELECT COUNT(*) FROM cid sub WHERE sub.parent_id = c.id) > 0 AS has_children,
+                   (
+                       WITH RECURSIVE sub_cids AS (
+                           SELECT id FROM cid WHERE id = c.id
+                           UNION ALL
+                           SELECT child.id FROM cid child JOIN sub_cids p ON child.parent_id = p.id
+                       )
+                       SELECT COUNT(*) FROM agente_cid ac WHERE ac.cid_id IN (SELECT id FROM sub_cids)
+                   ) AS agente_count
             FROM cid c
             WHERE $parentCond
             ORDER BY " . ($parentId === 0 ? "c.id ASC" : "c.codigo ASC");

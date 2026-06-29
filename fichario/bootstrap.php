@@ -568,19 +568,23 @@ function access_table_name(string $table): string
 
 function access_url(string $path = ''): string
 {
-    $base = rtrim((string) env_value('ACCESS_APP_URL', ''), '/');
-    if ($base === '') {
-        $base = rtrim((string) env_value('ACESSO_APP_URL', ''), '/');
+    $currentScript = $_SERVER['SCRIPT_FILENAME'] ?? '';
+    if ($currentScript !== '') {
+        $projectRootPath = realpath(dirname(__DIR__) . '/public_html');
+        $realScript = realpath($currentScript);
+        if ($projectRootPath !== false && $realScript !== false) {
+            $currentDir = str_replace('\\', '/', dirname($realScript));
+            $projectRoot = str_replace('\\', '/', $projectRootPath);
+            if (str_starts_with($currentDir, $projectRoot)) {
+                $subPath = substr($currentDir, strlen($projectRoot));
+                $subPath = trim($subPath, '/');
+                $count = $subPath === '' ? 0 : substr_count($subPath, '/') + 1;
+                $relPath = str_repeat('../', $count);
+                return $relPath . 'acesso' . ($path === '' ? '' : '/' . ltrim($path, '/'));
+            }
+        }
     }
-    if ($base === '') {
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/quixotesca/fichario/index.php')), '/');
-        $rootDir = preg_replace('~/fichario$~', '', $scriptDir) ?: '';
-        $base = $scheme . '://' . $host . $rootDir . '/acesso';
-    }
-
-    return $base . ($path === '' ? '' : '/' . ltrim($path, '/'));
+    return '../acesso' . ($path === '' ? '' : '/' . ltrim($path, '/'));
 }
 
 function redirect_to_access(string $path = 'index.php'): void

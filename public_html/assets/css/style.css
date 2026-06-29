@@ -207,6 +207,22 @@ body {
     overflow-x: hidden;
 }
 
+/* Force all Bootstrap containers to behave like container-fluid (full width) */
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl,
+.container-fluid {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-right: 1.5rem !important;
+    padding-left: 1.5rem !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+}
+
 body::before, body::after {
     display: none !important;
 }
@@ -435,7 +451,7 @@ body::before, body::after {
 
 /* Container limits */
 .landing-container {
-    max-width: 1200px;
+    max-width: 100% !important;
     width: 100%;
 }
 
@@ -1024,6 +1040,8 @@ body::before, body::after {
     height: 48px !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
     display: flex !important;
     align-items: center !important;
     box-shadow: none !important;
@@ -2283,13 +2301,13 @@ tr:hover td { background: var(--bg-surface); }
     box-shadow: none !important;
 }
 
-[data-module="fichario"] .form-switch .form-check-input {
+.form-switch .form-check-input {
     border-radius: 999px !important;
-    background: radial-gradient(circle at 0.5rem 50%, rgba(108, 117, 125, 0.95) 0 0.34rem, transparent 0.36rem) var(--bs-body-bg) no-repeat left center / 100% 100% !important;
+    background: radial-gradient(circle at 25% 50%, rgba(108, 117, 125, 0.95), rgba(108, 117, 125, 0.95) 30%, transparent 32%) var(--bs-body-bg) no-repeat left center / 100% 100% !important;
 }
 
-[data-module="fichario"] .form-switch .form-check-input:checked {
-    background: radial-gradient(circle at calc(100% - 0.5rem) 50%, #fff 0 0.34rem, transparent 0.36rem) var(--bs-primary) no-repeat right center / 100% 100% !important;
+.form-switch .form-check-input:checked {
+    background: radial-gradient(circle at 75% 50%, #fff, #fff 30%, transparent 32%) var(--bs-primary) no-repeat right center / 100% 100% !important;
 }
 
 /* Unified landing pages */

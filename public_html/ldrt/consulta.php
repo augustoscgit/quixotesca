@@ -1,17 +1,38 @@
 <?php
 require_once __DIR__ . '/../../ldrt/src/db.php';
 
-// Initialize variables
+function normalize_term($str) {
+    $str = mb_strtolower($str, 'UTF-8');
+    $accented = ['á','à','â','ã','ä','é','è','ê','ë','í','ì','î','ï','ó','ò','ô','õ','ö','ú','ù','û','ü','ç','ý','ñ'];
+    $non_accented = ['a','a','a','a','a','e','e','e','e','i','i','i','i','o','o','o','o','o','u','u','u','u','c','y','n'];
+    return str_replace($accented, $non_accented, $str);
+}
+
+// Initialize variables (support direct input search parameters as fallback)
 $selected_cid = isset($_GET['cid']) ? trim($_GET['cid']) : '';
+if (empty($selected_cid) && isset($_GET['cid_search'])) {
+    $selected_cid = trim($_GET['cid_search']);
+}
+
 $selected_cnae = isset($_GET['cnae']) ? trim($_GET['cnae']) : '';
+if (empty($selected_cnae) && isset($_GET['cnae_search'])) {
+    $selected_cnae = trim($_GET['cnae_search']);
+}
+
 $selected_cbo = isset($_GET['cbo']) ? trim($_GET['cbo']) : '';
+if (empty($selected_cbo) && isset($_GET['cbo_search'])) {
+    $selected_cbo = trim($_GET['cbo_search']);
+}
+
 $selected_agente = isset($_GET['agente']) ? trim($_GET['agente']) : '';
+if (empty($selected_agente) && isset($_GET['agente_search'])) {
+    $selected_agente = trim($_GET['agente_search']);
+}
 
 $cid_data = null;
 $cnae_data = null;
 $cbo_data = null;
 $agente_data = null;
-
 $related_agents = [];
 $related_cids = [];
 $matching_relatos = [];
@@ -22,49 +43,108 @@ if ($has_search) {
     try {
         $db = getDBConnection();
 
-        // 1. Fetch details of selected entities
+        // 1. Fetch details of selected entities using the database tables as dictionaries (match code or label)
         if (!empty($selected_cid)) {
             $stmt = $db->prepare("SELECT * FROM cid WHERE codigo = :code");
             $stmt->execute(['code' => $selected_cid]);
             $cid_data = $stmt->fetch();
+            
+            if (!$cid_data) {
+                $normalized = normalize_term($selected_cid);
+                $stmt = $db->prepare("
+                    SELECT * FROM cid 
+                    WHERE translate(lower(codigo), 'áàâãäéèêëíìîïóòôõöúùûüçýñ', 'aaaaaeeeeiiiiooooouuuucyn') LIKE :term 
+                       OR translate(lower(descricao), 'áàâãäéèêëíìîïóòôõöúùûüçýñ', 'aaaaaeeeeiiiiooooouuuucyn') LIKE :term 
+                    ORDER BY codigo ASC LIMIT 1
+                ");
+                $stmt->execute(['term' => "%$normalized%"]);
+                $cid_data = $stmt->fetch();
+            }
         }
         
         if (!empty($selected_cnae)) {
             $stmt = $db->prepare("SELECT * FROM cnae_cbo WHERE classificacao = 'cnae' AND codigo = :code");
             $stmt->execute(['code' => $selected_cnae]);
             $cnae_data = $stmt->fetch();
+            
+            if (!$cnae_data) {
+                $normalized = normalize_term($selected_cnae);
+                $stmt = $db->prepare("
+                    SELECT * FROM cnae_cbo 
+                    WHERE classificacao = 'cnae' 
+                      AND (
+                        translate(lower(codigo), 'áàâãäéèêëíìîïóòôõöúùûüçýñ', 'aaaaaeeeeiiiiooooouuuucyn') LIKE :term 
+                        OR translate(lower(descricao), 'áàâãäéèêëíìîïóòôõöúùûüçýñ', 'aaaaaeeeeiiiiooooouuuucyn') LIKE :term
+                      ) 
+                    ORDER BY codigo ASC LIMIT 1
+                ");
+                $stmt->execute(['term' => "%$normalized%"]);
+                $cnae_data = $stmt->fetch();
+            }
         }
         
         if (!empty($selected_cbo)) {
             $stmt = $db->prepare("SELECT * FROM cnae_cbo WHERE classificacao = 'cbo' AND codigo = :code");
             $stmt->execute(['code' => $selected_cbo]);
             $cbo_data = $stmt->fetch();
+            
+            if (!$cbo_data) {
+                $normalized = normalize_term($selected_cbo);
+                $stmt = $db->prepare("
+                    SELECT * FROM cnae_cbo 
+                    WHERE classificacao = 'cbo' 
+                      AND (
+                        translate(lower(codigo), 'áàâãäéèêëíìîïóòôõöúùûüçýñ', 'aaaaaeeeeiiiiooooouuuucyn') LIKE :term 
+                        OR translate(lower(descricao), 'áàâãäéèêëíìîïóòôõöúùûüçýñ', 'aaaaaeeeeiiiiooooouuuucyn') LIKE :term
+                      ) 
+                    ORDER BY codigo ASC LIMIT 1
+                ");
+                $stmt->execute(['term' => "%$normalized%"]);
+                $cbo_data = $stmt->fetch();
+            }
         }
         
         if (!empty($selected_agente)) {
             $stmt = $db->prepare("SELECT * FROM agentes WHERE id = :id");
-            $stmt->execute(['id' => $selected_agente]);
+            $id_val = is_numeric($selected_agente) ? intval($selected_agente) : 0;
+            $stmt->execute(['id' => $id_val]);
             $agente_data = $stmt->fetch();
+            
+            if (!$agente_data) {
+                $normalized = normalize_term($selected_agente);
+                $stmt = $db->prepare("
+                    SELECT * FROM agentes 
+                    WHERE translate(lower(descricao), 'áàâãäéèêëíìîïóòôõöúùûüçýñ', 'aaaaaeeeeiiiiooooouuuucyn') LIKE :term 
+                    ORDER BY id ASC LIMIT 1
+                ");
+                $stmt->execute(['term' => "%$normalized%"]);
+                $agente_data = $stmt->fetch();
+            }
         }
 
-        // 2. Fetch relations
-        // If CID selected, get related agents
+        // 2. Fetch relations (use busca hierárquica recursive CTEs for CID)
+        // If CID selected, get related agents (associated with the CID or any of its descendants)
         if ($cid_data) {
             $stmt = $db->prepare("
-                SELECT a.id, a.descricao, a.cas 
+                WITH RECURSIVE sub_cids AS (
+                    SELECT id FROM cid WHERE id = :cid_id
+                    UNION ALL
+                    SELECT c.id FROM cid c JOIN sub_cids p ON c.parent_id = p.id
+                )
+                SELECT DISTINCT a.id, a.descricao, a.cas 
                 FROM agentes a 
                 JOIN agente_cid ac ON ac.agente_id = a.id 
-                WHERE ac.cid_id = :cid_id
+                WHERE ac.cid_id IN (SELECT id FROM sub_cids)
                 ORDER BY a.descricao ASC
             ");
             $stmt->execute(['cid_id' => $cid_data['id']]);
             $related_agents = $stmt->fetchAll();
         }
 
-        // If Agent selected, get related CIDs
+        // If Agent selected, get related CIDs (no hierarchical search needed for agent per rules)
         if ($agente_data) {
             $stmt = $db->prepare("
-                SELECT c.codigo, c.descricao, c.nivel 
+                SELECT DISTINCT c.codigo, c.descricao, c.nivel 
                 FROM cid c 
                 JOIN agente_cid ac ON ac.cid_id = c.id 
                 WHERE ac.agente_id = :agente_id
@@ -74,7 +154,7 @@ if ($has_search) {
             $related_cids = $stmt->fetchAll();
         }
 
-        // 3. Fetch matching Relatos (Case Reports)
+        // 3. Fetch matching Relatos (Case Reports) using busca hierárquica recursive CTEs for CID, CNAE, and CBO
         $relato_sql = "
             SELECT r.*, 
                    c.codigo as cid_codigo, c.descricao as cid_descricao, 
@@ -89,7 +169,14 @@ if ($has_search) {
         $relato_params = [];
         
         if ($cid_data) {
-            $relato_sql .= " AND r.cid_id = :cid_id";
+            $relato_sql .= " AND r.cid_id IN (
+                WITH RECURSIVE sub_cids AS (
+                    SELECT id FROM cid WHERE id = :cid_id
+                    UNION ALL
+                    SELECT c.id FROM cid c JOIN sub_cids p ON c.parent_id = p.id
+                )
+                SELECT id FROM sub_cids
+            )";
             $relato_params['cid_id'] = $cid_data['id'];
         }
         if ($agente_data) {
@@ -97,10 +184,24 @@ if ($has_search) {
             $relato_params['agente_id'] = $agente_data['id'];
         }
         if ($cnae_data) {
-            $relato_sql .= " AND r.cnae_cbo_id = :cnae_id";
+            $relato_sql .= " AND r.cnae_cbo_id IN (
+                WITH RECURSIVE sub_cnaes AS (
+                    SELECT id FROM cnae_cbo WHERE id = :cnae_id
+                    UNION ALL
+                    SELECT c.id FROM cnae_cbo c JOIN sub_cnaes p ON c.parent_id = p.id
+                )
+                SELECT id FROM sub_cnaes
+            )";
             $relato_params['cnae_id'] = $cnae_data['id'];
         } elseif ($cbo_data) {
-            $relato_sql .= " AND r.cnae_cbo_id = :cbo_id";
+            $relato_sql .= " AND r.cnae_cbo_id IN (
+                WITH RECURSIVE sub_cbos AS (
+                    SELECT id FROM cnae_cbo WHERE id = :cbo_id
+                    UNION ALL
+                    SELECT c.id FROM cnae_cbo c JOIN sub_cbos p ON c.parent_id = p.id
+                )
+                SELECT id FROM sub_cbos
+            )";
             $relato_params['cbo_id'] = $cbo_data['id'];
         }
         
@@ -256,12 +357,16 @@ if ($has_search) {
             position: relative;
         }
 
+        .autocomplete-container:focus-within {
+            z-index: 10;
+        }
+
         .autocomplete-suggestions {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            background: #1e293b;
+            background: var(--field-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             max-height: 250px;
@@ -274,9 +379,10 @@ if ($has_search) {
         .suggestion-item {
             padding: 10px 15px;
             cursor: pointer;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--border-color);
             transition: background 0.15s ease;
             font-size: 0.9rem;
+            color: var(--text-color);
         }
 
         .suggestion-item:last-child {
@@ -286,6 +392,26 @@ if ($has_search) {
         .suggestion-item:hover {
             background-color: rgba(99, 102, 241, 0.15);
             color: var(--text-color);
+        }
+
+        .tag-input-selected {
+            background-color: var(--field-bg) !important;
+            border: 1px solid var(--border-color);
+            color: var(--text-color) !important;
+            border-radius: 8px;
+            height: 48px;
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tag-input-selected .btn-close {
+            font-size: 0.75rem;
+        }
+
+        [data-bs-theme="dark"] .tag-input-selected .btn-close {
+            filter: invert(1) grayscale(1) brightness(2);
         }
 
         .badge-custom {
@@ -352,7 +478,7 @@ if ($has_search) {
     <!-- Navbar -->
     <!-- Navbar -->
     <?php
-    require_once __DIR__ . '/../includes/navbar.php';
+    require_once __DIR__ . '/../../includes/navbar.php';
     render_platform_navbar('ldrt', 'consulta');
     ?>
 
@@ -378,52 +504,26 @@ if ($has_search) {
                     
                     <form method="GET" action="consulta.php" id="searchForm">
                         
-                        <!-- Active Filters / Tags -->
-                        <?php if ($has_search): ?>
-                            <div class="mb-3">
-                                <label class="form-label text-muted small">Filtros ativos:</label>
-                                <div class="d-flex flex-wrap">
-                                    <?php if ($cid_data): ?>
-                                        <span class="tag-pill badge-cid">
-                                            CID: <?php echo htmlspecialchars($cid_data['codigo']); ?>
-                                            <i class="fa-solid fa-times" onclick="removeFilter('cid')"></i>
-                                        </span>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($cnae_data): ?>
-                                        <span class="tag-pill badge-cnae">
-                                            CNAE: <?php echo htmlspecialchars($cnae_data['codigo']); ?>
-                                            <i class="fa-solid fa-times" onclick="removeFilter('cnae')"></i>
-                                        </span>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($cbo_data): ?>
-                                        <span class="tag-pill badge-cbo">
-                                            CBO: <?php echo htmlspecialchars($cbo_data['codigo']); ?>
-                                            <i class="fa-solid fa-times" onclick="removeFilter('cbo')"></i>
-                                        </span>
-                                    <?php endif; ?>
-                                    
-                                    <?php if ($agente_data): ?>
-                                        <span class="tag-pill badge-agent">
-                                            Agente: ID <?php echo htmlspecialchars($agente_data['id']); ?>
-                                            <i class="fa-solid fa-times" onclick="removeFilter('agente')"></i>
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-
                         <!-- CID Input -->
                         <div class="mb-3 autocomplete-container">
                             <label for="cid_search" class="form-label d-flex justify-content-between">
                                 <span><i class="fa-solid fa-virus-covid me-1 text-primary" style="color: var(--accent-color) !important;"></i> CID-10 (Doença)</span>
                                 <span class="badge badge-custom badge-cid">Doença</span>
                             </label>
-                            <input type="text" class="form-control" id="cid_search" placeholder="Ex: M51.0 ou Lombalgia" autocomplete="off" 
-                                   value="<?php echo $cid_data ? htmlspecialchars($cid_data['codigo'] . ' - ' . $cid_data['descricao']) : ''; ?>">
-                            <input type="hidden" name="cid" id="cid_val" value="<?php echo htmlspecialchars($selected_cid); ?>">
-                            <div class="autocomplete-suggestions d-none" id="cid_suggestions"></div>
+                            <?php if ($cid_data): ?>
+                                <div class="tag-input-selected form-control">
+                                    <span class="badge badge-custom badge-cid text-truncate text-start" title="<?php echo htmlspecialchars($cid_data['codigo'] . ' - ' . $cid_data['descricao']); ?>" style="max-width: calc(100% - 25px); font-size: 0.85rem; padding: 6px 10px;">
+                                        <i class="fa-solid fa-virus-covid me-1"></i>
+                                        <?php echo htmlspecialchars($cid_data['codigo'] . ' - ' . $cid_data['descricao']); ?>
+                                    </span>
+                                    <button type="button" class="btn-close" onclick="removeFilter('cid')" aria-label="Remover"></button>
+                                </div>
+                                <input type="hidden" name="cid" id="cid_val" value="<?php echo htmlspecialchars($selected_cid); ?>">
+                            <?php else: ?>
+                                <input type="text" class="form-control" id="cid_search" placeholder="Ex: M51.0 ou Lombalgia" autocomplete="off" value="">
+                                <input type="hidden" name="cid" id="cid_val" value="">
+                                <div class="autocomplete-suggestions d-none" id="cid_suggestions"></div>
+                            <?php endif; ?>
                         </div>
 
                         <!-- CNAE Input -->
@@ -432,10 +532,20 @@ if ($has_search) {
                                 <span><i class="fa-solid fa-industry me-1 text-success"></i> CNAE (Atividade Econômica)</span>
                                 <span class="badge badge-custom badge-cnae">Setor</span>
                             </label>
-                            <input type="text" class="form-control" id="cnae_search" placeholder="Ex: 9521500 ou Informática" autocomplete="off"
-                                   value="<?php echo $cnae_data ? htmlspecialchars($cnae_data['codigo'] . ' - ' . $cnae_data['descricao']) : ''; ?>">
-                            <input type="hidden" name="cnae" id="cnae_val" value="<?php echo htmlspecialchars($selected_cnae); ?>">
-                            <div class="autocomplete-suggestions d-none" id="cnae_suggestions"></div>
+                            <?php if ($cnae_data): ?>
+                                <div class="tag-input-selected form-control">
+                                    <span class="badge badge-custom badge-cnae text-truncate text-start" title="<?php echo htmlspecialchars($cnae_data['codigo'] . ' - ' . $cnae_data['descricao']); ?>" style="max-width: calc(100% - 25px); font-size: 0.85rem; padding: 6px 10px;">
+                                        <i class="fa-solid fa-industry me-1"></i>
+                                        <?php echo htmlspecialchars($cnae_data['codigo'] . ' - ' . $cnae_data['descricao']); ?>
+                                    </span>
+                                    <button type="button" class="btn-close" onclick="removeFilter('cnae')" aria-label="Remover"></button>
+                                </div>
+                                <input type="hidden" name="cnae" id="cnae_val" value="<?php echo htmlspecialchars($selected_cnae); ?>">
+                            <?php else: ?>
+                                <input type="text" class="form-control" id="cnae_search" placeholder="Ex: 9521500 ou Informática" autocomplete="off" value="">
+                                <input type="hidden" name="cnae" id="cnae_val" value="">
+                                <div class="autocomplete-suggestions d-none" id="cnae_suggestions"></div>
+                            <?php endif; ?>
                         </div>
 
                         <!-- CBO Input -->
@@ -444,10 +554,20 @@ if ($has_search) {
                                 <span><i class="fa-solid fa-user-doctor me-1 text-warning"></i> CBO (Ocupação/Profissão)</span>
                                 <span class="badge badge-custom badge-cbo">Profissão</span>
                             </label>
-                            <input type="text" class="form-control" id="cbo_search" placeholder="Ex: 3222 ou Enfermagem" autocomplete="off"
-                                   value="<?php echo $cbo_data ? htmlspecialchars($cbo_data['codigo'] . ' - ' . $cbo_data['descricao']) : ''; ?>">
-                            <input type="hidden" name="cbo" id="cbo_val" value="<?php echo htmlspecialchars($selected_cbo); ?>">
-                            <div class="autocomplete-suggestions d-none" id="cbo_suggestions"></div>
+                            <?php if ($cbo_data): ?>
+                                <div class="tag-input-selected form-control">
+                                    <span class="badge badge-custom badge-cbo text-truncate text-start" title="<?php echo htmlspecialchars($cbo_data['codigo'] . ' - ' . $cbo_data['descricao']); ?>" style="max-width: calc(100% - 25px); font-size: 0.85rem; padding: 6px 10px;">
+                                        <i class="fa-solid fa-user-doctor me-1"></i>
+                                        <?php echo htmlspecialchars($cbo_data['codigo'] . ' - ' . $cbo_data['descricao']); ?>
+                                    </span>
+                                    <button type="button" class="btn-close" onclick="removeFilter('cbo')" aria-label="Remover"></button>
+                                </div>
+                                <input type="hidden" name="cbo" id="cbo_val" value="<?php echo htmlspecialchars($selected_cbo); ?>">
+                            <?php else: ?>
+                                <input type="text" class="form-control" id="cbo_search" placeholder="Ex: 3222 ou Enfermagem" autocomplete="off" value="">
+                                <input type="hidden" name="cbo" id="cbo_val" value="">
+                                <div class="autocomplete-suggestions d-none" id="cbo_suggestions"></div>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Agent Input -->
@@ -456,10 +576,20 @@ if ($has_search) {
                                 <span><i class="fa-solid fa-biohazard me-1 text-danger"></i> Agente de Risco / Fator</span>
                                 <span class="badge badge-custom badge-agent">Agente</span>
                             </label>
-                            <input type="text" class="form-control" id="agente_search" placeholder="Ex: Ruído, Chumbo, Benzeno" autocomplete="off"
-                                   value="<?php echo $agente_data ? htmlspecialchars($agente_data['descricao']) : ''; ?>">
-                            <input type="hidden" name="agente" id="agente_val" value="<?php echo htmlspecialchars($selected_agente); ?>">
-                            <div class="autocomplete-suggestions d-none" id="agente_suggestions"></div>
+                            <?php if ($agente_data): ?>
+                                <div class="tag-input-selected form-control">
+                                    <span class="badge badge-custom badge-agent text-truncate text-start" title="<?php echo htmlspecialchars($agente_data['descricao']); ?>" style="max-width: calc(100% - 25px); font-size: 0.85rem; padding: 6px 10px;">
+                                        <i class="fa-solid fa-biohazard me-1"></i>
+                                        <?php echo htmlspecialchars($agente_data['descricao']); ?>
+                                    </span>
+                                    <button type="button" class="btn-close" onclick="removeFilter('agente')" aria-label="Remover"></button>
+                                </div>
+                                <input type="hidden" name="agente" id="agente_val" value="<?php echo htmlspecialchars($selected_agente); ?>">
+                            <?php else: ?>
+                                <input type="text" class="form-control" id="agente_search" placeholder="Ex: Ruído, Chumbo, Benzeno" autocomplete="off" value="">
+                                <input type="hidden" name="agente" id="agente_val" value="">
+                                <div class="autocomplete-suggestions d-none" id="agente_suggestions"></div>
+                            <?php endif; ?>
                         </div>
 
                         <div class="d-grid gap-2">
@@ -562,14 +692,14 @@ if ($has_search) {
                                         <div class="list-group list-group-flush rounded-3 border border-secondary overflow-hidden">
                                             <?php foreach ($related_agents as $agent): ?>
                                                 <div class="list-group-item bg-dark border-secondary p-3">
-                                                    <div class="d-flex justify-content-between align-items-start">
-                                                        <div>
-                                                            <strong class="text-light"><?php echo htmlspecialchars($agent['descricao']); ?></strong>
+                                                    <div class="d-flex justify-content-between align-items-start gap-3">
+                                                        <div style="min-width: 0; flex: 1;">
+                                                            <strong class="text-light" style="word-break: break-word; white-space: normal;"><?php echo htmlspecialchars($agent['descricao']); ?></strong>
                                                             <?php if (!empty($agent['cas'])): ?>
                                                                 <div class="text-muted small mt-1">CAS: <?php echo htmlspecialchars($agent['cas']); ?></div>
                                                             <?php endif; ?>
                                                         </div>
-                                                        <a href="consulta.php?agente=<?php echo $agent['id']; ?>&cid=<?php echo urlencode($selected_cid); ?>" class="btn btn-sm btn-outline-secondary">Filtrar por Ambos</a>
+                                                        <a href="consulta.php?agente=<?php echo $agent['id']; ?>&cid=<?php echo urlencode($selected_cid); ?>" class="btn btn-sm btn-outline-secondary flex-shrink-0">Filtrar por Ambos</a>
                                                     </div>
                                                 </div>
                                             <?php endforeach; ?>
@@ -628,19 +758,19 @@ if ($has_search) {
                                                 
                                                 <div class="border-top border-secondary pt-3 mt-3 d-flex flex-wrap gap-2 align-items-center">
                                                     <span class="text-muted small me-2">Ligações:</span>
-                                                    <?php if ($relato['cnae_cbo_codigo']): ?>
+                                                    <?php if ($relato['cnae_cbo_codigo'] && !$cnae_data && !$cbo_data): ?>
                                                         <span class="badge badge-custom <?php echo $relato['classificacao'] === 'cnae' ? 'badge-cnae' : 'badge-cbo'; ?>">
                                                             <?php echo strtoupper($relato['classificacao']) . ': ' . htmlspecialchars($relato['cnae_cbo_codigo']) . ' - ' . htmlspecialchars(substr($relato['cnae_cbo_descricao'], 0, 30)) . '...'; ?>
                                                         </span>
                                                     <?php endif; ?>
                                                     
-                                                    <?php if ($relato['agente_descricao']): ?>
+                                                    <?php if ($relato['agente_descricao'] && !$agente_data): ?>
                                                         <span class="badge badge-custom badge-agent">
                                                             Agente: <?php echo htmlspecialchars(substr($relato['agente_descricao'], 0, 30)); ?>...
                                                         </span>
                                                     <?php endif; ?>
                                                     
-                                                    <?php if ($relato['cid_codigo']): ?>
+                                                    <?php if ($relato['cid_codigo'] && !$cid_data): ?>
                                                         <span class="badge badge-custom badge-cid">
                                                             CID: <?php echo htmlspecialchars($relato['cid_codigo']) . ' - ' . htmlspecialchars(substr($relato['cid_descricao'], 0, 30)) . '...'; ?>
                                                         </span>
@@ -681,6 +811,7 @@ if ($has_search) {
             const input = document.getElementById(inputId);
             const hidden = document.getElementById(hiddenId);
             const suggestions = document.getElementById(suggestionsId);
+            if (!input) return;
             let debounceTimer;
 
             input.addEventListener('input', function() {
@@ -710,6 +841,7 @@ if ($has_search) {
                                     input.value = item.label;
                                     hidden.value = item.value;
                                     suggestions.classList.add('d-none');
+                                    document.getElementById('searchForm').submit();
                                 });
                                 suggestions.appendChild(div);
                             });
@@ -727,10 +859,23 @@ if ($has_search) {
         }
 
         function removeFilter(filterName) {
-            document.getElementById(filterName + '_val').value = '';
-            document.getElementById(filterName + '_search').value = '';
+            const valInput = document.getElementById(filterName + '_val');
+            const searchInput = document.getElementById(filterName + '_search');
+            if (valInput) valInput.value = '';
+            if (searchInput) searchInput.value = '';
             document.getElementById('searchForm').submit();
         }
+
+        // Intercept form submission to copy text searches into values (dicionário / fallback)
+        document.getElementById('searchForm').addEventListener('submit', function() {
+            ['cid', 'cnae', 'cbo', 'agente'].forEach(type => {
+                const searchInput = document.getElementById(type + '_search');
+                const valInput = document.getElementById(type + '_val');
+                if (searchInput && valInput && !valInput.value && searchInput.value.trim()) {
+                    valInput.value = searchInput.value.trim();
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -124,8 +124,8 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
         }
         .doc-meta .badge { font-size: 0.75rem; font-weight: 500; }
     </style>
-    <script src="../../assets/js/theme-switcher.js"></script>
-    <link href="../../assets/css/style.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js"></script>
+    <link href="../assets/css/style.css" rel="stylesheet">
 </head>
 <body>
     <div id="readProgress" aria-hidden="true"></div>

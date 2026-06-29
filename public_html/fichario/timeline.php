@@ -209,7 +209,6 @@ try {
         .timeline-container {
             position: relative;
             padding: 2rem 0;
-            max-width: 900px;
             margin: 2rem auto;
         }
 

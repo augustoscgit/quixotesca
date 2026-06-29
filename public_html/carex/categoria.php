@@ -49,8 +49,8 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
     <link href="../assets/favicon.png" rel="icon" type="image/png">
     <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="assets/app.css" rel="stylesheet">
-    <script src="../../assets/js/theme-switcher.js"></script>
-    <link href="../../assets/css/style.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js"></script>
+    <link href="../assets/css/style.css" rel="stylesheet">
 </head>
 <body>
     <?php

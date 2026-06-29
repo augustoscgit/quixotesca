@@ -403,7 +403,7 @@ try {
     <!-- Navbar -->
     <!-- Navbar -->
     <?php
-    require_once __DIR__ . '/../includes/navbar.php';
+    require_once __DIR__ . '/../../includes/navbar.php';
     render_platform_navbar('cat', 'inicio');
     ?>
 

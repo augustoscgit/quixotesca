@@ -210,7 +210,7 @@ try {
     <!-- Navbar -->
     <!-- Navbar -->
     <?php
-    require_once __DIR__ . '/../includes/navbar.php';
+    require_once __DIR__ . '/../../includes/navbar.php';
     render_platform_navbar('ldrt', 'explorar_cnae_cbo');
     ?>
 

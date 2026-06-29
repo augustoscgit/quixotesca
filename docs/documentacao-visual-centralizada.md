@@ -6,7 +6,7 @@ Este arquivo organiza a documentacao de aparencia, UX, design e interface da Pla
 
 A fonte geral e obrigatoria e:
 
-- `docs/definicao-padroes.md`
+- `docs/identidade-visual-ux.md`
 
 Esse guia central define regras compartilhadas para:
 
@@ -93,20 +93,20 @@ Estes arquivos podem mencionar telas ou interface, mas nao devem definir padroes
 - especificacoes de negocio;
 - planos de migracao.
 
-Quando algum deles precisar citar visual/UX, deve apontar para `docs/definicao-padroes.md` ou para uma documentacao especifica do modulo.
+Quando algum deles precisar citar visual/UX, deve apontar para `docs/identidade-visual-ux.md` ou para uma documentacao especifica do modulo.
 
 ## Regra de atualizacao
 
 Ao surgir uma nova regra de aparencia, UX, design ou interface:
 
-1. Se for geral, atualizar `docs/definicao-padroes.md`.
+1. Se for geral, atualizar `docs/identidade-visual-ux.md`.
 2. Se for especifica de modulo, registrar no documento especifico do modulo e apontar para o guia central.
 3. Se uma regra antiga conflitar com o guia central, tratar a regra antiga como legado.
 4. Nao criar novo guia paralelo de tema, paleta, botao, navbar, tabela, formulario ou layout.
 
 ## Prioridade em caso de conflito
 
-1. `docs/definicao-padroes.md`
+1. `docs/identidade-visual-ux.md`
 2. `assets/css/style.css`
 3. documento especifico do modulo, somente no que for especifico do modulo
 4. `instrucoes-agente.md` do modulo

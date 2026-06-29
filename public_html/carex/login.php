@@ -200,17 +200,17 @@ $bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap
             color: #8d99ae;
         }
     </style>
-    <script src="../../assets/js/theme-switcher.js"></script>
-    <link href="../../assets/css/style.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js"></script>
+    <link href="../assets/css/style.css" rel="stylesheet">
 </head>
 <body>
     <div class="container d-flex flex-column align-items-center">
         <main class="login-card">
             <div class="login-header">
-                <a href="../../" aria-label="Plataforma RENAST online" class="d-block">
+                <a href="../" aria-label="Plataforma RENAST online" class="d-block">
                     <img src="../assets/img/logo-fundo-claro_horizontal.png" alt="Plataforma RENAST online" class="login-logo">
                 </a>
-                <a href="../../carex/" class="text-decoration-none">
+                <a href="./" class="text-decoration-none">
                     <h1 class="login-title">Carex-BR</h1>
                 </a>
             </div>

@@ -17,7 +17,7 @@ try {
                    (SELECT COUNT(*) FROM cid sub WHERE sub.parent_id = c.id AND sub.id IN (SELECT id FROM ldrt_cids)) > 0 AS has_children
             FROM cid c
             WHERE c.parent_id IS NULL AND c.id IN (SELECT id FROM ldrt_cids)
-            ORDER BY c.id ASC
+            ORDER BY CAST(c.codigo AS INTEGER) ASC
         ");
     } else {
         $stmt = $db->query("
@@ -25,7 +25,7 @@ try {
                    (SELECT COUNT(*) FROM cid sub WHERE sub.parent_id = c.id) > 0 AS has_children
             FROM cid c
             WHERE c.parent_id IS NULL
-            ORDER BY c.id ASC
+            ORDER BY CAST(c.codigo AS INTEGER) ASC
         ");
     }
     $chapters = $stmt->fetchAll();
@@ -85,8 +85,16 @@ try {
             --navbar-bg: rgba(11, 15, 25, 0.85);
             --field-bg: #111827;
         }
+        .badge-custom {
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            flex-shrink: 0; /* Prevent badges in flex rows from shrinking */
+        }
 
-                body {
+        body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             background-image: 
@@ -101,7 +109,7 @@ try {
             font-weight: 600;
         }
 
-                .navbar {
+        .navbar {
             background-color: var(--navbar-bg);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
@@ -136,25 +144,31 @@ try {
             cursor: pointer;
             transition: all 0.15s ease;
             font-size: 0.9rem;
-            color: #cbd5e1;
+            color: var(--text-color);
+            opacity: 0.85;
+            min-width: 0; /* Ensures child text truncation works inside flexbox */
         }
 
         .tree-node-label:hover {
-            background-color: rgba(255, 255, 255, 0.04);
+            background-color: rgba(255, 255, 255, 0.08);
             color: var(--text-color);
+            opacity: 1;
         }
 
         .tree-node-label.active {
             background-color: rgba(99, 102, 241, 0.15);
             color: #a5b4fc;
             border-left: 3px solid var(--accent-color);
+            opacity: 1;
         }
 
         .tree-toggle {
             cursor: pointer;
             width: 20px;
-            display: inline-block;
-            text-align: center;
+            flex-shrink: 0; /* Prevent the toggle chevron from squeezing */
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
             margin-right: 5px;
             color: var(--text-muted);
             transition: color 0.15s ease;
@@ -162,6 +176,13 @@ try {
 
         .tree-toggle:hover {
             color: var(--text-color);
+        }
+
+        .tree-node-label .badge-cid {
+            width: 50px;
+            text-align: center;
+            flex-shrink: 0; /* Prevent the badge from squeezing */
+            display: inline-block;
         }
 
         .info-box {
@@ -172,24 +193,45 @@ try {
             margin-bottom: 20px;
         }
 
-        .badge-custom {
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
+        .autocomplete-container {
+            position: relative;
         }
-        
-        .badge-cid { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .badge-cnae { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-cbo { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-agent { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
 
-        .breadcrumb-item + .breadcrumb-item::before {
-            color: var(--text-muted);
-            content: "\f105";
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
+        .autocomplete-container:focus-within {
+            z-index: 10;
+        }
+
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--field-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            margin-top: 4px;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.15s ease;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background-color: rgba(99, 102, 241, 0.15);
+            color: var(--text-color);
         }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -199,9 +241,8 @@ try {
 <body>
 
     <!-- Navbar -->
-    <!-- Navbar -->
     <?php
-    require_once __DIR__ . '/../includes/navbar.php';
+    require_once __DIR__ . '/../../includes/navbar.php';
     render_platform_navbar('ldrt', 'explorar_cid');
     ?>
 
@@ -218,8 +259,8 @@ try {
                     
                     <!-- Search inside tree -->
                     <div class="input-group mb-2">
-                        <span class="input-group-text"><i class="fa-solid fa-search text-muted"></i></span>
-                        <input type="text" id="tree_search" class="form-control" placeholder="Buscar código ou termo na árvore...">
+                        <span class="input-group-text" id="search_btn" style="cursor: pointer;"><i class="fa-solid fa-search text-muted"></i></span>
+                        <input type="text" id="tree_search" class="form-control" placeholder="Buscar código ou termo na árvore..." autocomplete="off">
                     </div>
                     
                     <!-- Toggle Switch LDRT only -->
@@ -242,13 +283,13 @@ try {
                                         <?php else: ?>
                                             <span class="tree-toggle"></span>
                                         <?php endif; ?>
-                                        <span class="badge badge-custom badge-cid me-2"><?php echo htmlspecialchars($ch['codigo']); ?></span>
-                                        <span class="text-truncate"><?php echo htmlspecialchars($ch['descricao']); ?></span>
+                                        <span class="text-truncate"><?php echo htmlspecialchars($ch['codigo'] . ' - ' . $ch['descricao']); ?></span>
                                     </div>
                                     <ul class="p-0 d-none" id="children_of_<?php echo $ch['id']; ?>"></ul>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
+                        <ul class="p-0 d-none" id="cid_search_results"></ul>
                     </div>
                 </div>
             </div>
@@ -368,14 +409,9 @@ try {
                                     labelDiv.appendChild(emptySpan);
                                 }
                                 
-                                const codeBadge = document.createElement('span');
-                                codeBadge.classList.add('badge', 'badge-custom', 'badge-cid', 'me-2');
-                                codeBadge.textContent = child.codigo;
-                                labelDiv.appendChild(codeBadge);
-                                
                                 const textSpan = document.createElement('span');
                                 textSpan.classList.add('text-truncate');
-                                textSpan.textContent = child.descricao;
+                                textSpan.textContent = `${child.codigo} - ${child.descricao}`;
                                 labelDiv.appendChild(textSpan);
                                 
                                 childLi.appendChild(labelDiv);
@@ -462,13 +498,13 @@ try {
                         agentsEmpty.classList.add('d-none');
                         data.agents.forEach(agent => {
                             const div = document.createElement('div');
-                            div.classList.add('list-group-item', 'bg-dark', 'border-secondary', 'p-3', 'd-flex', 'justify-content-between', 'align-items-center');
+                            div.classList.add('list-group-item', 'bg-dark', 'border-secondary', 'p-3', 'd-flex', 'justify-content-between', 'align-items-start', 'gap-3');
                             div.innerHTML = `
-                                <div>
-                                    <strong class="text-light">${agent.descricao}</strong>
+                                <div style="min-width: 0; flex: 1;">
+                                    <strong class="text-light" style="word-break: break-word; white-space: normal;">${agent.descricao}</strong>
                                     ${agent.cas ? `<div class="text-muted small mt-1">CAS: ${agent.cas}</div>` : ''}
                                 </div>
-                                <a href="consulta.php?cid=${encodeURIComponent(details.codigo)}&agente=${agent.id}" class="btn btn-sm btn-outline-secondary">Consulta Completa</a>
+                                <a href="consulta.php?cid=${encodeURIComponent(details.codigo)}&agente=${agent.id}" class="btn btn-sm btn-outline-secondary flex-shrink-0">Consulta Completa</a>
                             `;
                             agentsList.appendChild(div);
                         });
@@ -518,29 +554,132 @@ try {
             }
         }
         
-        // Tree Search logic
-        document.getElementById('tree_search').addEventListener('input', function() {
-            const term = this.value.trim().toLowerCase();
-            const rootItems = document.querySelectorAll('#cid_root_list > .tree-node');
-            
-            if (term.length < 2) {
-                // Restore all root nodes
-                rootItems.forEach(item => {
-                    item.classList.remove('d-none');
-                });
-                return;
+        // Setup Tree Search
+        setupTreeSearch('tree_search', 'search_btn');
+
+        function setupTreeSearch(inputId, buttonId) {
+            const input = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+            const rootList = document.getElementById('cid_root_list');
+            const searchResults = document.getElementById('cid_search_results');
+
+            function performSearch() {
+                const query = input.value.trim();
+                if (query.length < 2) {
+                    // Restore tree view
+                    searchResults.innerHTML = '';
+                    searchResults.classList.add('d-none');
+                    rootList.classList.remove('d-none');
+                    return;
+                }
+                   // Keep tree view visible; no need to hide root list or show flat results
+                // Show a loading status in the details panel while searching
+                const defaultView = document.getElementById('details_default_view');
+                const activeView = document.getElementById('details_active_view');
+                defaultView.classList.add('d-none');
+                activeView.classList.remove('d-none');
+                document.getElementById('details_code').textContent = 'Buscando...';
+                document.getElementById('details_description').textContent = '';
+                document.getElementById('details_level_label').textContent = '';
+                document.getElementById('details_path').innerHTML = '';
+                document.getElementById('details_agents_list').innerHTML = '';
+                document.getElementById('details_relatos_list').innerHTML = '';
+
+                fetch(`api_autocomplete.php?type=cid&q=${encodeURIComponent(query)}&ldrt_only=${ldrtOnly ? '1' : '0'}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.length > 0) {
+                            const item = data[0];
+                            input.value = item.label;
+
+                            // Fetch CID details and navigate the hierarchy, expanding children automatically
+                            fetch(`api_get_cid_details.php?id=${item.id}`)
+                                .then(res => res.json())
+                                .then(detailsData => {
+                                    navigateToCidPath(detailsData.hierarchy);
+                                })
+                                .catch(err => {
+                                    console.error('Error fetching details:', err);
+                                    showSearchError(err.message);
+                                });
+                        } else {
+                            showSearchError('Nenhum resultado encontrado.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error searching:', err);
+                        showSearchError(err.message);
+                    });
             }
-            
-            // Basic filter on root items (for a deeper search, we suggest using the main "Consulta Cruzada" page)
-            rootItems.forEach(item => {
-                const labelText = item.querySelector('.tree-node-label').textContent.toLowerCase();
-                if (labelText.includes(term)) {
-                    item.classList.remove('d-none');
-                } else {
-                    item.classList.add('d-none');
+
+            function showSearchError(message) {
+                // Restore tree
+                searchResults.innerHTML = '';
+                searchResults.classList.add('d-none');
+                rootList.classList.remove('d-none');
+
+                document.getElementById('details_code').textContent = 'Não Encontrado';
+                document.getElementById('details_description').textContent = message;
+            }
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    performSearch();
                 }
             });
-        });
+
+            input.addEventListener('input', function() {
+                if (this.value.trim().length < 2) {
+                    searchResults.innerHTML = '';
+                    searchResults.classList.add('d-none');
+                    rootList.classList.remove('d-none');
+                }
+            });
+
+            if (button) {
+                button.addEventListener('click', performSearch);
+            }
+        }
+
+        async function navigateToCidPath(path) {
+            if (!path || path.length === 0) return;
+            
+            // Loop through each element in the path to expand it
+            for (let i = 0; i < path.length; i++) {
+                const node = path[i];
+                let li = document.querySelector(`.tree-node[data-id="${node.id}"]`);
+                
+                // If it's not the last element and it's not loaded, we expand it
+                if (i < path.length - 1) {
+                    const sublist = document.getElementById('children_of_' + node.id);
+                    if (sublist && sublist.classList.contains('d-none')) {
+                        const toggle = document.querySelector(`.tree-node[data-id="${node.id}"] .tree-toggle`);
+                        if (toggle) {
+                            toggle.click();
+                            // Wait for the children to be loaded
+                            await new Promise(resolve => {
+                                const checkLoaded = () => {
+                                    if (loadedNodes[node.id]) {
+                                        resolve();
+                                    } else {
+                                        setTimeout(checkLoaded, 50);
+                                    }
+                                };
+                                checkLoaded();
+                            });
+                        }
+                    }
+                } else {
+                    // It's the target node
+                    const label = document.querySelector(`.tree-node[data-id="${node.id}"] > .tree-node-label`);
+                    if (label) {
+                        selectCid(node.id, label);
+                        label.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }
+        };
     </script>
 </body>
 </html>

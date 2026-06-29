@@ -17,7 +17,7 @@ echo "   Current version: " . PHP_VERSION . "\n\n";
 
 // 2. Check Secrets & .env
 echo "2. Checking secrets directory and .env file:\n";
-$secretsDir = __DIR__ . '/secrets';
+$secretsDir = __DIR__ . '/../../ldrt/secrets';
 $envPath = $secretsDir . '/.env';
 
 if (!is_dir($secretsDir)) {

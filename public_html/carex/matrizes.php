@@ -48,8 +48,8 @@ try {
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         }
     </style>
-    <script src="../../assets/js/theme-switcher.js"></script>
-    <link href="../../assets/css/style.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js"></script>
+    <link href="../assets/css/style.css" rel="stylesheet">
 </head>
 <body>
     <?php

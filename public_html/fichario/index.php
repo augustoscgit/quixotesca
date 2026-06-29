@@ -97,7 +97,7 @@ try {
         .main-container {
             z-index: 10;
             position: relative;
-            max-width: 1100px;
+            max-width: 100% !important;
             width: 100%;
             padding: 2rem;
             margin: 0 auto;

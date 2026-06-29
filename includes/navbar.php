@@ -4,10 +4,19 @@ declare(strict_types=1);
 if (!function_exists('get_platform_root_relative_path')) {
     function get_platform_root_relative_path(): string
     {
-        $projectRoot = str_replace('\\', '/', dirname(__DIR__));
+        $projectRootPath = realpath(dirname(__DIR__) . '/public_html');
+        if ($projectRootPath === false) {
+            return './';
+        }
+        $projectRoot = str_replace('\\', '/', $projectRootPath);
+        
         $currentScript = $_SERVER['SCRIPT_FILENAME'] ?? '';
         if ($currentScript !== '') {
-            $currentDir = str_replace('\\', '/', dirname($currentScript));
+            $realScript = realpath($currentScript);
+            if ($realScript === false) {
+                return './';
+            }
+            $currentDir = str_replace('\\', '/', dirname($realScript));
             $projectRoot = rtrim($projectRoot, '/');
             $currentDir = rtrim($currentDir, '/');
             
@@ -151,7 +160,7 @@ if (!function_exists('render_platform_navbar')) {
 
         echo "\n<!-- Unified Platform Navbar -->\n";
         echo '<nav class="navbar navbar-expand-lg app-navbar sticky-top">';
-        echo '  <div class="container">';
+        echo '  <div class="container-fluid">';
         
         // Brand / Left Side (If not simplified portal landing)
         if (!$isLanding && $currentMenu) {

@@ -178,8 +178,8 @@ $csrfToken = Security::csrfToken();
         .badge-status-ativo { background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
         .badge-status-desligado { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
     </style>
-    <script src="../../assets/js/theme-switcher.js"></script>
-    <link href="../../assets/css/style.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js"></script>
+    <link href="../assets/css/style.css" rel="stylesheet">
 </head>
 <body>
     <?php
