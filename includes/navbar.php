@@ -38,6 +38,80 @@ if (!function_exists('get_platform_root_relative_path')) {
     }
 }
 
+if (!function_exists('platform_nav_canonical_role')) {
+    function platform_nav_canonical_role(array $roles = [], array $permissions = [], string $fallback = 'public'): string
+    {
+        $adminPermissions = [
+            'platform.admin',
+            'acesso.admin',
+            'fichario.admin',
+            'ldrt.admin',
+            'carex.admin',
+            'cat.admin',
+        ];
+
+        if (in_array('admin', $roles, true) || array_intersect($adminPermissions, $permissions) !== []) {
+            return 'admin';
+        }
+
+        if (in_array('user', $roles, true) || in_array('content.edit', $permissions, true)) {
+            return 'user';
+        }
+
+        return in_array($fallback, ['admin', 'user', 'public'], true) ? $fallback : 'public';
+    }
+}
+
+if (!function_exists('platform_nav_role_label')) {
+    function platform_nav_role_label(string $role): string
+    {
+        return match ($role) {
+            'admin' => 'Administrador',
+            'user' => 'Editor',
+            default => 'Usuário',
+        };
+    }
+}
+
+if (!function_exists('platform_nav_fetch_auth_profile')) {
+    function platform_nav_fetch_auth_profile(PDO $pdo, int $userId): ?array
+    {
+        $stmt = $pdo->prepare('SELECT name, email FROM acesso.users WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => $userId]);
+        $dbUser = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$dbUser) {
+            return null;
+        }
+
+        $permStmt = $pdo->prepare("
+            SELECT DISTINCT p.slug
+              FROM acesso.permissions p
+              JOIN acesso.role_permissions rp ON rp.permission_id = p.id
+              JOIN acesso.user_roles ur ON ur.role_id = rp.role_id
+             WHERE ur.user_id = :user_id
+        ");
+        $permStmt->execute(['user_id' => $userId]);
+        $permissions = array_map('strval', $permStmt->fetchAll(PDO::FETCH_COLUMN));
+
+        $roleStmt = $pdo->prepare("
+            SELECT DISTINCT r.slug
+              FROM acesso.roles r
+              JOIN acesso.user_roles ur ON ur.role_id = r.id
+             WHERE ur.user_id = :user_id
+        ");
+        $roleStmt->execute(['user_id' => $userId]);
+        $roles = array_map('strval', $roleStmt->fetchAll(PDO::FETCH_COLUMN));
+
+        return [
+            'name' => (string) ($dbUser['name'] ?? ''),
+            'email' => (string) ($dbUser['email'] ?? ''),
+            'roles' => $roles,
+            'permissions' => $permissions,
+            'role' => platform_nav_canonical_role($roles, $permissions),
+        ];
+    }
+}
+
 if (!function_exists('render_platform_navbar')) {
     function render_platform_navbar(string $module, string $activePage = '', array $extraConfig = []): void
     {
@@ -146,6 +220,53 @@ if (!function_exists('render_platform_navbar')) {
             }
         }
 
+        if ($user !== null && isset($_SESSION['_acesso_user_id'])) {
+            $user['roles'] = $user['roles'] ?? [];
+            $user['permissions'] = $user['permissions'] ?? [];
+            $user['role'] = platform_nav_canonical_role((array) $user['roles'], (array) $user['permissions'], (string) ($user['role'] ?? 'public'));
+
+            try {
+                $pdo = null;
+                if (function_exists('db')) {
+                    $pdo = db();
+                } elseif (function_exists('getDBConnection')) {
+                    $pdo = getDBConnection();
+                }
+
+                if ($pdo instanceof PDO) {
+                    $authProfile = platform_nav_fetch_auth_profile($pdo, (int) $_SESSION['_acesso_user_id']);
+                    if ($authProfile) {
+                        $user['name'] = $authProfile['name'] !== '' ? $authProfile['name'] : $user['name'];
+                        $user['email'] = $authProfile['email'];
+                        $user['roles'] = $authProfile['roles'];
+                        $user['permissions'] = $authProfile['permissions'];
+                        $user['role'] = $authProfile['role'];
+                    }
+                }
+            } catch (Throwable $e) {
+                // Keep the session/profile fallback when a module cannot reach the auth schema.
+            }
+
+            if (function_exists('current_user')) {
+                try {
+                    $profile = current_user();
+                    if ($profile) {
+                        $profilePermissions = array_map('strval', $profile['_permissions'] ?? []);
+                        $profileRoles = array_map('strval', $profile['_roles'] ?? []);
+                        $user['permissions'] = array_values(array_unique(array_merge((array) $user['permissions'], $profilePermissions)));
+                        $user['roles'] = array_values(array_unique(array_merge((array) $user['roles'], $profileRoles)));
+                        $user['role'] = platform_nav_canonical_role($user['roles'], $user['permissions'], (string) $user['role']);
+                    }
+                } catch (Throwable $e) {
+                    // Ignore DB failures on external modules.
+                }
+            }
+
+            $_SESSION['_acesso_user_name'] = (string) $user['name'];
+            $_SESSION['_acesso_user_email'] = (string) $user['email'];
+            $_SESSION['_acesso_user_role'] = (string) $user['role'];
+        }
+
         // Define menus for each module
         $menus = [
             'acesso' => [
@@ -169,10 +290,13 @@ if (!function_exists('render_platform_navbar')) {
                 'brand_label' => 'fichário',
                 'brand_url' => $relPath . 'fichario/index.php',
                 'items' => [
+                    'painel' => ['url' => $relPath . 'fichario/painel.php', 'label' => 'Painel', 'icon' => 'bi bi-speedometer2'],
                     'articles' => ['url' => $relPath . 'fichario/articles.php', 'label' => 'Artigos', 'icon' => 'bi bi-file-earmark-text'],
                     'projects' => ['url' => $relPath . 'fichario/projects.php', 'label' => 'Projetos', 'icon' => 'bi bi-folder2'],
                     'tags' => ['url' => $relPath . 'fichario/tags.php', 'label' => 'Tags', 'icon' => 'bi bi-tags'],
                     'timeline' => ['url' => $relPath . 'fichario/timeline.php', 'label' => 'Timeline', 'icon' => 'bi bi-clock-history'],
+                    'admin' => ['url' => $relPath . 'fichario/admin.php', 'label' => 'Admin', 'icon' => 'bi bi-shield-lock', 'role' => 'admin'],
+                    'docs' => ['url' => $relPath . 'fichario/admin_docs.php', 'label' => 'Documentos', 'icon' => 'bi bi-file-earmark-text', 'role' => 'admin'],
                 ]
             ],
             'ldrt' => [
@@ -191,7 +315,8 @@ if (!function_exists('render_platform_navbar')) {
                 'brand_label' => 'cat',
                 'brand_url' => $relPath . 'cat/index.php',
                 'items' => [
-                    'inicio' => ['url' => $relPath . 'cat/index.php', 'label' => 'Painel', 'icon' => 'bi bi-chart-line'],
+                    'inicio' => ['url' => $relPath . 'cat/index.php', 'label' => 'Início', 'icon' => 'bi bi-house'],
+                    'painel' => ['url' => $relPath . 'cat/painel.php', 'label' => 'Painel', 'icon' => 'bi bi-chart-line'],
                     'inspecao' => ['url' => $relPath . 'cat/inspecao.php', 'label' => 'CAT', 'icon' => 'bi bi-address-card'],
                     'fluxos' => [
                         'label' => 'Fluxos',
@@ -225,7 +350,7 @@ if (!function_exists('render_platform_navbar')) {
         ];
 
         $currentMenu = $menus[$module] ?? null;
-        $isLanding = ($module === 'portal' || $module === 'landing');
+        $isLanding = ($module === 'portal' || $module === 'landing' || $activePage === 'landing');
 
         echo "\n<!-- Unified Platform Navbar -->\n";
         echo '<nav class="navbar navbar-expand-lg app-navbar sticky-top">';
@@ -264,8 +389,11 @@ if (!function_exists('render_platform_navbar')) {
             echo '      <ul class="navbar-nav platform-module-nav mx-lg-auto mb-2 mb-lg-0 gap-2 align-items-center">';
             foreach ($currentMenu['items'] as $key => $item) {
                 // Check role restrictions
-                if (isset($item['role']) && $user && ($user['role'] ?? '') !== $item['role']) {
-                    continue;
+                if (isset($item['role'])) {
+                    $allowedRoles = (array) $item['role'];
+                    if (!$user || !in_array((string) ($user['role'] ?? 'public'), $allowedRoles, true)) {
+                        continue;
+                    }
                 }
 
                 // Check dropdowns
@@ -314,7 +442,7 @@ if (!function_exists('render_platform_navbar')) {
         if ($user) {
             $userRoleBadge = '';
             if (!empty($user['role'])) {
-                $userRoleBadge = ' <span class="badge bg-secondary-subtle text-secondary-emphasis small ms-1" style="font-size:0.6rem;">' . htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8') . '</span>';
+                $userRoleBadge = ' <span class="badge text-bg-secondary ms-1">' . htmlspecialchars(platform_nav_role_label((string) $user['role']), ENT_QUOTES, 'UTF-8') . '</span>';
             }
             echo '      <div class="dropdown">';
             echo '        <button class="btn btn-link nav-link dropdown-toggle d-flex align-items-center gap-1 text-decoration-none" id="userMenuDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">';
@@ -322,9 +450,9 @@ if (!function_exists('render_platform_navbar')) {
             echo '        </button>';
             echo '        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userMenuDropdown">';
             echo '          <li class="dropdown-header">';
-            echo '            <strong class="text-dark d-block text-truncate" style="max-width:180px;">' . htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8') . '</strong>';
+            echo '            <strong class="d-block text-truncate">' . htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8') . '</strong>';
             if ($user['email']) {
-                echo '            <span class="small text-muted d-block text-truncate" style="max-width:180px;">' . htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') . '</span>';
+                echo '            <span class="small text-body-secondary d-block text-truncate">' . htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') . '</span>';
             }
             if ($userRoleBadge) {
                 echo '            <div class="mt-1">' . $userRoleBadge . '</div>';
@@ -334,10 +462,7 @@ if (!function_exists('render_platform_navbar')) {
             echo '          <li><a class="dropdown-item" href="' . $user['profile_url'] . '"><i class="bi bi-person-gear me-2"></i>Minha Conta</a></li>';
 
             // Check if user has administrative rights
-            $isAdmin = false;
-            if (isset($_SESSION['_acesso_user_id']) && function_exists('platform_is_admin')) {
-                $isAdmin = platform_is_admin();
-            }
+            $isAdmin = (string) ($user['role'] ?? 'public') === 'admin';
             if ($isAdmin) {
                 echo '          <li><a class="dropdown-item" href="' . $relPath . 'admin/index.php"><i class="bi bi-shield-lock me-2"></i>Painel Admin</a></li>';
             }
@@ -350,18 +475,6 @@ if (!function_exists('render_platform_navbar')) {
             $loginNext = $_SERVER['REQUEST_URI'] ?? $relPath . 'index.php';
             echo '      <a class="btn btn-outline-primary btn-sm px-3 rounded-pill text-decoration-none" href="' . $relPath . 'acesso/login.php?next=' . rawurlencode($loginNext) . '">Entrar</a>';
         }
-
-        // Theme Switcher Dropdown
-        echo '      <div class="dropdown">';
-        echo '        <button class="btn btn-link nav-link dropdown-toggle d-inline-flex align-items-center justify-content-center theme-toggle-btn" id="bd-theme-' . $module . '" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Alternar tema (auto)" title="Alternar tema">';
-        echo '          <i class="theme-icon-active bi bi-circle-half"></i>';
-        echo '        </button>';
-        echo '        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="bd-theme-' . $module . '">';
-        echo '          <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="light" aria-pressed="false"><i class="bi bi-sun-fill opacity-50"></i> Claro <i class="bi bi-check2 ms-auto d-none"></i></button></li>';
-        echo '          <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="dark" aria-pressed="false"><i class="bi bi-moon-stars-fill opacity-50"></i> Escuro <i class="bi bi-check2 ms-auto d-none"></i></button></li>';
-        echo '          <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="auto" aria-pressed="true"><i class="bi bi-circle-half opacity-50"></i> Auto <i class="bi bi-check2 ms-auto d-none"></i></button></li>';
-        echo '        </ul>';
-        echo '      </div>';
 
         echo '      </div>'; // End right side
         echo '    </div>'; // End collapse navbar

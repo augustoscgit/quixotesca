@@ -1,17 +1,17 @@
-﻿# InstruÃ§Ãµes para o Agente Especializado - MÃ³dulo LDRT
+# Instruções para o Agente Especializado - Módulo LDRT
 
-Este documento orienta o desenvolvimento e manutenÃ§Ã£o do mÃ³dulo **LDRT** (Lista de DoenÃ§as Relacionadas ao Trabalho - Portaria GM/MS 1.999/2023) de forma integrada e harmonizada com a plataforma principal.
+Este documento orienta o desenvolvimento e manutenção do módulo **LDRT** (Lista de Doenças Relacionadas ao Trabalho - Portaria GM/MS 1.999/2023) de forma integrada e harmonizada com a plataforma principal.
 
 ---
 
-## 1. Escopo do MÃ³dulo
-O LDRT consiste em uma aplicaÃ§Ã£o de consulta de doenÃ§as ocupacionais e agentes de risco para profissionais de saÃºde e como fonte de RAG para Agentes de IA. O agente deste mÃ³dulo deve focar no desenvolvimento das seguintes frentes:
-1. **Consulta Cruzada**: Busca inteligente de doenÃ§as (Lista B por CID-10) e agentes de risco (Lista A).
-2. **ExploraÃ§Ã£o de Dados**: Telas para explorar termos por CID e CNAE/CBO.
-3. **API e IntegraÃ§Ã£o RAG**: Fornecer endpoints (`api_rag.php`, `rag.php`) otimizados para busca semÃ¢ntica e autocompletes rÃ¡pidos.
+## 1. Escopo do Módulo
+O LDRT consiste em uma aplicação de consulta de doenças ocupacionais e agentes de risco para profissionais de saúde e como fonte de RAG para Agentes de IA. O agente deste módulo deve focar no desenvolvimento das seguintes frentes:
+1. **Consulta Cruzada**: Busca inteligente de doenças (Lista B por CID-10) e agentes de risco (Lista A).
+2. **Exploração de Dados**: Telas para explorar termos por CID e CNAE/CBO.
+3. **API e Integração RAG**: Fornecer endpoints (`api_rag.php`, `rag.php`) otimizados para busca semântica e autocompletes rápidos.
 
 > [!IMPORTANT]
-> **Limite de Escopo**: O repositÃ³rio da Plataforma gerencia apenas a pÃ¡gina inicial de apresentaÃ§Ã£o do mÃ³dulo (`index.php`), a pÃ¡gina pÃºblica correspondente (`public/index.php`) e suas diretrizes estÃ©ticas bÃ¡sicas. Toda a lÃ³gica de busca semÃ¢ntica, integraÃ§Ã£o RAG de IA, gerenciamento de banco de dados PostgreSQL, exploraÃ§Ã£o de tabelas CID/CNAE/CBO, rotas e APIs sÃ£o de responsabilidade e escopo exclusivo do desenvolvimento deste mÃ³dulo (LDRT).
+> **Limite de Escopo**: O repositório da Plataforma gerencia apenas a página inicial de apresentação do módulo (`index.php`), a página pública correspondente (`public/index.php`) e suas diretrizes estéticas básicas. Toda a lógica de busca semântica, integração RAG de IA, gerenciamento de banco de dados PostgreSQL, exploração de tabelas CID/CNAE/CBO, rotas e APIs são de responsabilidade e escopo exclusivo do desenvolvimento deste módulo (LDRT).
 
 
 ---
@@ -20,15 +20,15 @@ O LDRT consiste em uma aplicaÃ§Ã£o de consulta de doenÃ§as ocupacionais e 
 
 O guia oficial de estilo, UX, interface, tema, navbar, botoes, tabelas e filtros da plataforma fica em:
 
-`docs/identidade-visual-ux.md` e `docs/desenvolvimento-seguranca.md`
+`../docs/identidade-visual-ux.md`, `../docs/tema-css-bootstrap-modulos.md` e `../docs/desenvolvimento-seguranca.md`
 
-O arquivo local `assets/definicao-padroes.md` existe apenas como ponte de compatibilidade. Regras visuais antigas deste modulo sao historicas e nao devem orientar novas telas quando conflitarem com o guia central.
+Arquivos historicos de definicao visual local, quando reaparecerem em migrações antigas, devem ser tratados apenas como legado. Regras visuais antigas deste modulo nao devem orientar novas telas quando conflitarem com o guia central.
 
 ---
 
 ## 3. Logotipo e Link de Retorno
-Para garantir uma experiÃªncia de navegaÃ§Ã£o integrada e fluida:
-- O logotipo horizontal oficial (`assets/logo-fundo-escuro-horizontal.png`) foi adicionado na barra de navegaÃ§Ã£o no lugar/lado do Ã­cone de texto, envolto por um link de retorno.
+Para garantir uma experiência de navegação integrada e fluida:
+- O logotipo horizontal oficial (`assets/logo-fundo-escuro-horizontal.png`) foi adicionado na barra de navegação no lugar/lado do ícone de texto, envolto por um link de retorno.
 - **index.php na Raiz**: O link de retorno aponta para `../` (plataforma principal):
   ```html
   <a class="navbar-brand d-flex align-items-center gap-3" href="../">
@@ -48,11 +48,11 @@ Para garantir uma experiÃªncia de navegaÃ§Ã£o integrada e fluida:
 
 ---
 
-## 4. Banco de Dados e ConexÃ£o
-- O banco de dados utilizado Ã© **PostgreSQL** (verificar arquivo `src/db.php` e funÃ§Ã£o `getDBConnection()`).
-- O schema PostgreSQL padrÃ£o do mÃ³dulo Ã© `ldrt`.
-- VariÃ¡veis de ambiente sÃ£o lidas de `secrets/.env`.
-- Falhas de conexÃ£o com a base de dados na landing page principal devem ser tratadas silenciosamente via `try-catch`, exibindo o status de conexÃ£o "Desconectado" e os contadores zerados para que a pÃ¡gina inicial continue respondendo ao usuÃ¡rio.
+## 4. Banco de Dados e Conexão
+- O banco de dados utilizado é **PostgreSQL** (verificar arquivo `src/db.php` e função `getDBConnection()`).
+- O schema PostgreSQL padrão do módulo é `ldrt`.
+- Variáveis de ambiente são lidas de `secrets/.env`.
+- Falhas de conexão com a base de dados na landing page principal devem ser tratadas silenciosamente via `try-catch`, exibindo o status de conexão "Desconectado" e os contadores zerados para que a página inicial continue respondendo ao usuário.
 
 
 

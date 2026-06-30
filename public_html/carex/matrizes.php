@@ -11,8 +11,8 @@ $config = require dirname(__DIR__, 2) . '/carex' . '/src/bootstrap.php';
 Security::applyHeaders();
 Security::allowReadOnlyRequest();
 
-$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
-$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js';
+$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css';
+$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js';
 $matrices = [];
 $error = '';
 
@@ -28,26 +28,14 @@ try {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light">
     <title>CAREX | Matrizes</title>
     <link href="../assets/favicon.png" rel="icon" type="image/png">
-    <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="assets/app.css" rel="stylesheet">
-    <style>
-        .matrix-grid-card {
-            background: var(--bs-body-bg);
-            border: 1px solid var(--bs-border-color-translucent);
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .matrix-grid-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-        }
-    </style>
-    <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+<script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <?php
@@ -84,8 +72,8 @@ try {
                                     <h2 class="h5 mb-1 text-body-emphasis fw-bold">
                                         <a href="<?= Security::e($allUrl) ?>" class="text-decoration-none text-body-emphasis hover-primary"><?= Security::e($matrix['no_matriz']) ?></a>
                                     </h2>
-                                    <span class="badge bg-secondary-subtle text-secondary-emphasis font-monospace text-uppercase" style="font-size: 0.7rem;">Código: <?= Security::e($matrix['id_matriz']) ?></span>
-                                    <span class="badge bg-primary-subtle text-primary border-primary-subtle font-monospace" style="font-size: 0.7rem;">Versão: <?= Security::e($matrix['versao']) ?></span>
+                                    <span class="badge bg-secondary-subtle text-secondary-emphasis font-monospace text-uppercase">Código: <?= Security::e($matrix['id_matriz']) ?></span>
+                                    <span class="badge bg-primary-subtle text-primary border-primary-subtle font-monospace">Versão: <?= Security::e($matrix['versao']) ?></span>
                                 </div>
                             </div>
                             
@@ -121,8 +109,8 @@ try {
                                     <span>Avanço Geral</span>
                                     <span class="text-primary"><?= number_format($percent, 1, ',', '.') ?>%</span>
                                 </div>
-                                <div class="progress work-progress" style="height: 8px;" role="progressbar" aria-valuenow="<?= Security::e($progress) ?>" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar" style="width: <?= Security::e($progress) ?>%"></div>
+                                <div class="progress work-progress" role="progressbar" aria-valuenow="<?= Security::e($progress) ?>" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar"></div>
                                 </div>
                             </div>
 
@@ -136,6 +124,6 @@ try {
         </section>
     </main>
 
-    <script src="<?= Security::e($bootstrapJs) ?>" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="<?= Security::e($bootstrapJs) ?>" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

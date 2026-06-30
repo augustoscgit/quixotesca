@@ -39,173 +39,10 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAT - Agregador por CNPJ</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root, [data-bs-theme="light"] {
-            --bg-color: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #64748b;
-            --text-color: #1e293b;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #f8fafc;
-            --skeleton-base: #e2e8f0;
-            --skeleton-wave: #f8fafc;
-        }
-        [data-bs-theme="dark"] {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #94a3b8;
-            --text-color: #f8fafc;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #111827;
-            --skeleton-base: #1f2937;
-            --skeleton-wave: #374151;
-        }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Inter', sans-serif;
-        }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
-        .navbar {
-            background-color: var(--navbar-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: none;
-        }
-        .form-control,
-        .form-select {
-            background-color: var(--field-bg) !important;
-            color: var(--text-color) !important;
-            border-color: var(--border-color) !important;
-        }
-        .form-control::placeholder {
-            color: var(--text-muted);
-            opacity: 0.78;
-        }
-        .form-control:focus,
-        .form-select:focus {
-            background-color: var(--field-bg) !important;
-            color: var(--text-color) !important;
-            border-color: var(--accent-color) !important;
-            box-shadow: 0 0 0 0.2rem rgba(70, 75, 81, 0.18);
-        }
-        .text-accent { color: var(--accent-color) !important; }
-        .btn-accent {
-            background-color: var(--accent-solid);
-            border-color: var(--accent-border);
-            color: var(--accent-on-solid);
-            font-weight: 500;
-        }
-        .btn-accent:hover,
-        .btn-accent:focus {
-            background-color: var(--accent-solid-hover);
-            border-color: var(--accent-solid-hover);
-            color: var(--accent-on-solid);
-        }
-        .btn-outline-accent {
-            border-color: var(--accent-border);
-            color: var(--accent-color);
-            font-weight: 500;
-        }
-        .btn-outline-accent:hover,
-        .btn-outline-accent:focus {
-            background-color: var(--accent-solid);
-            border-color: var(--accent-border);
-            color: var(--accent-on-solid);
-        }
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            padding: 0 !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 auto;
-        }
-        .table {
-            --bs-table-bg: transparent;
-            --bs-table-color: var(--text-color);
-            --bs-table-border-color: var(--border-color);
-        }
-        .table thead th {
-            color: var(--text-muted);
-            font-size: 0.76rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .cnpj-link {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 700;
-        }
-        .cnpj-link:hover { color: var(--accent-color); }
-        .sort-button {
-            border: 0;
-            background: transparent;
-            color: inherit;
-            font: inherit;
-            padding: 0;
-            text-transform: inherit;
-            letter-spacing: inherit;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-        .sort-button:hover { color: var(--accent-color); }
-        .actions-inline {
-            display: inline-flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 0.35rem;
-            white-space: nowrap;
-            flex-wrap: nowrap;
-        }
-        .text-clip {
-            display: inline-block;
-            max-width: 220px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: bottom;
-        }
-        .skeleton-line {
-            display: block;
-            min-height: 1rem;
-            border-radius: 999px;
-            background: linear-gradient(90deg, var(--skeleton-base), var(--skeleton-wave), var(--skeleton-base));
-            background-size: 200% 100%;
-            animation: skeleton-wave 1.1s ease-in-out infinite;
-        }
-        @keyframes skeleton-wave {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-    </style>
-    <link href="../assets/css/style.css" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
+<script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <!-- Navbar -->
@@ -218,44 +55,44 @@ try {
         <header class="mb-4">
             <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                 <div>
-                    <h1 class="display-6 text-accent mb-2" style="font-weight: 800;">Agregador por CNPJ</h1>
+                    <h1 class="display-6 text-primary mb-2">Agregador por CNPJ</h1>
                     <p class="lead text-secondary mb-0">Resumo de acidentes por CNPJ do empregador, raiz da matriz e código da filial.</p>
                 </div>
             </div>
         </header>
 
         <?php if ($db_error): ?>
-            <div class="alert alert-danger glass-card border-danger"><?= htmlspecialchars($db_error) ?></div>
+            <div class="alert alert-danger card border-danger"><?= htmlspecialchars($db_error) ?></div>
         <?php endif; ?>
 
         <section class="row g-4 mb-4">
             <div class="col-6 col-xl-3">
-                <div class="glass-card p-3">
+                <div class="card p-3">
                     <div class="text-muted small">CNPJs com CAT</div>
                     <div class="h4 mb-0"><?= number_format($total_cnpjs, 0, ',', '.') ?></div>
                 </div>
             </div>
             <div class="col-6 col-xl-3">
-                <div class="glass-card p-3">
+                <div class="card p-3">
                     <div class="text-muted small">Matrizes distintas</div>
                     <div class="h4 mb-0"><?= number_format($total_matrizes, 0, ',', '.') ?></div>
                 </div>
             </div>
             <div class="col-6 col-xl-3">
-                <div class="glass-card p-3">
+                <div class="card p-3">
                     <div class="text-muted small">Acidentes com CNPJ válido</div>
                     <div class="h4 mb-0"><?= number_format($total_acidentes_cnpj, 0, ',', '.') ?></div>
                 </div>
             </div>
             <div class="col-6 col-xl-3">
-                <div class="glass-card p-3">
+                <div class="card p-3">
                     <div class="text-muted small">Óbitos</div>
                     <div class="h4 mb-0"><?= number_format($total_obitos_cnpj, 0, ',', '.') ?></div>
                 </div>
             </div>
         </section>
 
-        <section class="glass-card p-3 mb-4">
+        <section class="card p-3 mb-4">
             <form class="row g-3 align-items-end" onsubmit="event.preventDefault(); applySearch();">
                 <div class="col-12 col-lg-5">
                     <label for="cnpj-search" class="form-label text-muted small">Busca livre</label>
@@ -288,17 +125,17 @@ try {
                     <input id="filter-situacao" class="form-control" autocomplete="off" placeholder="Ativa">
                 </div>
                 <div class="col-12 col-lg-auto d-flex gap-2">
-                    <button type="submit" class="btn btn-accent btn-icon" title="Buscar" aria-label="Buscar">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                    <button type="submit" class="btn btn-primary btn-icon" title="Buscar" aria-label="Buscar">
+                        <i class="bi bi-search"></i>
                     </button>
                     <button type="button" class="btn btn-outline-secondary btn-icon" onclick="clearSearch()" title="Limpar busca" aria-label="Limpar busca">
-                        <i class="fa-solid fa-eraser"></i>
+                        <i class="bi bi-eraser"></i>
                     </button>
                     <button type="button" class="btn btn-outline-secondary btn-icon" onclick="refreshAggregates()" title="Atualizar agregação" aria-label="Atualizar agregação">
-                        <i class="fa-solid fa-rotate"></i>
+                        <i class="bi bi-arrow-clockwise"></i>
                     </button>
                     <button type="button" class="btn btn-outline-secondary btn-icon" onclick="enrichSelectedCnpjs()" title="Atualizar selecionados na OpenCNPJ" aria-label="Atualizar selecionados na OpenCNPJ">
-                        <i class="fa-solid fa-cloud-arrow-down"></i>
+                        <i class="bi bi-cloud-arrow-down"></i>
                     </button>
                 </div>
                 <div class="col-12 col-lg">
@@ -313,7 +150,7 @@ try {
             </form>
         </section>
 
-        <section class="glass-card p-3">
+        <section class="card p-3">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead>
@@ -324,12 +161,12 @@ try {
                             <th>Filial</th>
                             <th>
                                 <button type="button" class="sort-button" onclick="setSort('acidentes')" title="Ordenar por acidentes" aria-label="Ordenar por acidentes">
-                                    <span>Acidentes</span><i class="fa-solid fa-sort" data-sort-icon="acidentes"></i>
+                                    <span>Acidentes</span><i class="bi bi-arrow-down-up" data-sort-icon="acidentes"></i>
                                 </button>
                             </th>
                             <th>
                                 <button type="button" class="sort-button" onclick="setSort('obitos')" title="Ordenar por obitos" aria-label="Ordenar por obitos">
-                                    <span>Obitos</span><i class="fa-solid fa-sort" data-sort-icon="obitos"></i>
+                                    <span>Obitos</span><i class="bi bi-arrow-down-up" data-sort-icon="obitos"></i>
                                 </button>
                             </th>
                             <th>Período</th>
@@ -359,24 +196,24 @@ try {
                 <div class="text-muted small" id="page-summary">-</div>
                 <div class="d-flex align-items-center gap-2" role="navigation" aria-label="Paginacao de CNPJs">
                 <button type="button" class="btn btn-outline-secondary btn-icon" id="page-first" onclick="goToPage('first')" title="Primeira pagina" aria-label="Primeira pagina">
-                    <i class="fa-solid fa-angles-left"></i>
+                    <i class="bi bi-chevron-double-left"></i>
                 </button>
                 <button type="button" class="btn btn-outline-secondary btn-icon" id="page-prev" onclick="goToPage('prev')" title="Página anterior" aria-label="Página anterior">
-                    <i class="fa-solid fa-chevron-left"></i>
+                    <i class="bi bi-chevron-left"></i>
                 </button>
                 <div class="text-muted small" id="page-index">-</div>
                 <button type="button" class="btn btn-outline-secondary btn-icon" id="page-next" onclick="goToPage('next')" title="Próxima página" aria-label="Próxima página">
-                    <i class="fa-solid fa-chevron-right"></i>
+                    <i class="bi bi-chevron-right"></i>
                 </button>
                 <button type="button" class="btn btn-outline-secondary btn-icon" id="page-last" onclick="goToPage('last')" title="Ultima pagina" aria-label="Ultima pagina">
-                    <i class="fa-solid fa-angles-right"></i>
+                    <i class="bi bi-chevron-double-right"></i>
                 </button>
                 </div>
             </div>
         </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script>
         let pageSize = 100;
         let currentOffset = 0;
@@ -449,19 +286,19 @@ try {
             const body = document.getElementById('cnpj-table-body');
             body.innerHTML = Array.from({ length: 8 }).map(() => `
                 <tr>
-                    <td><span class="skeleton-line" style="width: 20px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 150px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 80px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 54px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 48px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 40px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 120px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 180px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 140px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 80px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 180px;"></span></td>
-                    <td><span class="skeleton-line" style="width: 80px;"></span></td>
-                    <td><span class="skeleton-line ms-auto" style="width: 40px;"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line"></span></td>
+                    <td><span class="skeleton-line ms-auto"></span></td>
                 </tr>
             `).join('');
         }
@@ -546,10 +383,10 @@ try {
                         <td class="text-end">
                             <span class="actions-inline">
                             <button type="button" class="btn btn-outline-secondary btn-icon btn-sm" onclick="fetchSingleOpenCnpj('${escapeHtml(cnpj)}', true)" title="Atualizar OpenCNPJ" aria-label="Atualizar OpenCNPJ">
-                                <i class="fa-solid fa-cloud-arrow-down"></i>
+                                <i class="bi bi-cloud-arrow-down"></i>
                             </button>
-                            <a class="btn btn-outline-accent btn-icon btn-sm" href="inspecao.php?cnpj=${encodeURIComponent(cnpj)}" title="Navegar acidentes" aria-label="Navegar acidentes">
-                                <i class="fa-solid fa-address-card"></i>
+                            <a class="btn btn-outline-primary btn-icon btn-sm" href="inspecao.php?cnpj=${encodeURIComponent(cnpj)}" title="Navegar acidentes" aria-label="Navegar acidentes">
+                                <i class="bi bi-card-text"></i>
                             </a>
                             </span>
                         </td>
@@ -591,8 +428,8 @@ try {
             document.querySelectorAll('[data-sort-icon]').forEach(icon => {
                 const field = icon.getAttribute('data-sort-icon');
                 icon.className = field === currentSort
-                    ? `fa-solid ${currentDir === 'desc' ? 'fa-sort-down' : 'fa-sort-up'}`
-                    : 'fa-solid fa-sort';
+                    ? `bi ${currentDir === 'desc' ? 'bi-sort-down' : 'bi-sort-up'}`
+                    : 'bi bi-arrow-down-up';
             });
         }
 

@@ -67,3 +67,12 @@ Trocar a senha em `Usuarios` depois do primeiro acesso.
 - Ativar confirmacao de e-mail usando `email_verifications`.
 - Integrar CAREX, Fichario e LDRT ao login comum por etapas, sem quebrar URLs atuais.
 - Adicionar politicas de senha e bloqueio por tentativas quando aprovado.
+
+## Documentacao visual e tema
+
+As regras de tema, CSS, Bootstrap, navbar, botoes, formularios e contraste do Acesso ficam centralizadas em:
+
+- `../docs/identidade-visual-ux.md`
+- `../docs/tema-css-bootstrap-modulos.md`
+
+O Acesso aplica essas regras principalmente em `acesso/src/bootstrap.php`, que tambem serve de base para a Administracao (`data-module="admin"`).

@@ -1,5 +1,14 @@
 # Fichario Academico
 
+## Documentacao visual e tema
+
+As regras de tema, CSS, Bootstrap, navbar, botoes, tags, nuvem de palavras, grafo e contraste do Fichario ficam centralizadas em:
+
+- `../docs/identidade-visual-ux.md`
+- `../docs/tema-css-bootstrap-modulos.md`
+
+O Fichario pode manter CSS local para layout e visualizacoes (`public_html/fichario/assets/app.css` e `public_html/fichario/assets/tag-visualizations.css`), mas paleta, tags, navbar e tema claro devem obedecer ao guia central Bootstrap-first.
+
 Sistema pessoal de fichamento de artigos academicos, com cadastro bibliografico, texto completo em texto simples, referencias, tags tematicas, comentarios e base em PostgreSQL.
 
 ## Stack atual
@@ -83,4 +92,3 @@ Antes de realizar o push para produção ou disponibilizar publicamente, certifi
    - Configure a diretiva `APP_URL` com `https://` no arquivo `.env` para garantir a geração de URLs seguras e o tráfego criptografado de dados de login e sessões.
 4. **Permissões de Arquivos no Servidor**:
    - Garanta permissão de escrita (`chmod 775` ou equivalente do usuário de execução do PHP/Apache) para o diretório `/private/sessions` e `/data` (caso arquivos de migração ou logs precisem ser gerados) para gravação de sessões, mantendo o restante dos scripts PHP apenas com permissão de leitura.
-

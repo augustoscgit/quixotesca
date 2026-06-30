@@ -314,7 +314,7 @@ function render_article_list_alerts_button(array $articleTags): string
     ?>
     <div class="d-inline-block" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="<?= h($tooltipText) ?>">
         <button class="btn <?= $hasAlerts ? 'btn-alert-active' : 'btn-alert-inactive' ?> rounded-circle d-flex align-items-center justify-content-center"
-                style="width: 22px; height: 22px; padding: 0; font-weight: bold; font-size: 0.75rem; line-height: 1;"
+               
                 <?= $hasAlerts ? '' : 'disabled' ?>>
             !
         </button>
@@ -464,131 +464,11 @@ function selected_attr(string $current, string $value): string
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Artigos - Fichário Acadêmico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts: Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <style>
-        .blob {
-            animation: floatBlob 12s infinite alternate ease-in-out;
-        }
-
-        .legacy-decoration-secondary {
-            animation-delay: -6s;
-        }
-
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 40px) scale(1.15); }
-        }
-
-        .article-title a {
-            color: #ffffff;
-            text-decoration: none;
-            transition: color 0.2s;
-            font-weight: 600;
-        }
-
-        .article-title a:hover {
-            color: #3b82f6;
-        }
-
-        .metric {
-            color: #9ca3af;
-            background: rgba(255, 255, 255, 0.02);
-            padding: 0.25rem 0.65rem;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            white-space: nowrap;
-        }
-
-        .project-badge {
-            background: rgba(245, 158, 11, 0.08);
-            color: #d97706;
-            border: 1px solid rgba(245, 158, 11, 0.25) !important;
-            font-weight: 500;
-            font-size: 0.72rem;
-            padding: 0.25rem 0.55rem;
-            border-radius: 6px;
-            transition: all 0.2s ease-in-out;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .project-badge:hover {
-            background: rgba(245, 158, 11, 0.15);
-            color: #b45309;
-            border-color: rgba(245, 158, 11, 0.45) !important;
-            transform: translateY(-1px);
-        }
-
-        .project-badge-count {
-            background: rgba(245, 158, 11, 0.15);
-            color: #b45309;
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 1px 5px;
-            border-radius: 4px;
-            margin-left: 5px;
-            display: inline-block;
-            line-height: 1;
-        }
-
-        [data-bs-theme="dark"] .project-badge {
-            background: rgba(245, 158, 11, 0.12);
-            color: #fbbf24;
-            border-color: rgba(245, 158, 11, 0.25) !important;
-        }
-
-        [data-bs-theme="dark"] .project-badge:hover {
-            background: rgba(245, 158, 11, 0.22);
-            color: #f59e0b;
-            border-color: rgba(245, 158, 11, 0.4) !important;
-        }
-
-        [data-bs-theme="dark"] .project-badge-count {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
-        }
-        .btn-alert-active {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
-            color: #000000 !important;
-            border: none !important;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
-            animation: pulseAlertGlow 2s infinite ease-in-out;
-        }
-        .btn-alert-active:hover {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-            color: #000000 !important;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
-        }
-        .btn-alert-inactive {
-            background: transparent !important;
-            color: #9ca3af !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            font-weight: bold;
-        }
-        .btn-alert-inactive:hover {
-            color: #ffffff !important;
-            background: rgba(255, 255, 255, 0.05) !important;
-            border-color: rgba(255, 255, 255, 0.3) !important;
-        }
-        @keyframes pulseAlertGlow {
-            0% {
-                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
-            }
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <!-- Background Animated Blobs -->
@@ -601,14 +481,14 @@ function selected_attr(string $current, string $value): string
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page">Artigos</li>
+                <li class="breadcrumb-item active text-body" aria-current="page">Artigos</li>
             </ol>
         </nav>
 
         <!-- Top heading -->
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
             <div>
-                <h1 class="h3 mb-1 text-white fw-bold">Artigos Acadêmicos</h1>
+                <h1 class="h3 mb-1 text-body fw-bold">Artigos Acadêmicos</h1>
                 <p class="text-secondary mb-0">Busca inteligente, filtragem temática e leitura do acervo bibliográfico.</p>
             </div>
             <?php if (can_edit_content()): ?>
@@ -621,7 +501,7 @@ function selected_attr(string $current, string $value): string
         </div>
 
         <!-- Filter Form -->
-        <form class="glass-card article-filter-card p-4 mb-4" method="get">
+        <form class="card article-filter-card p-4 mb-4" method="get">
             <div class="row g-3">
                 <div class="col-12">
                     <label class="form-label" for="q">Busca inteligente</label>
@@ -729,7 +609,7 @@ function selected_attr(string $current, string $value): string
                                 $cColor = get_tag_colors($tagInfo['category'] ?? '');
                             ?>
                             <span class="badge border tag-badge d-inline-flex align-items-center gap-1 py-1 px-2"
-                                  style="background:<?= $cColor['bg'] ?>; color:<?= $cColor['text'] ?>; border-color:<?= $cColor['border'] ?> !important;"
+                                 
                                   <?= tag_tooltip_attrs($tagInfo) ?>>
                                 <?= h($tagInfo['name']) ?>
                                 <button type="button" class="tag-chip-remove" data-tag-id="<?= $tId ?>" aria-label="Remover tag">&times;</button>
@@ -783,8 +663,8 @@ function selected_attr(string $current, string $value): string
                     </select>
                 </div>
 
-                <div class="col-12 d-flex justify-content-between align-items-center mt-3 border-top border-secondary pt-3">
-                    <div style="width: 250px;">
+                <div class="col-12 d-flex justify-content-between align-items-center mt-3 border-top border pt-3">
+                    <div>
                         <label class="form-label" for="sort">Ordenar por</label>
                         <select class="form-select" name="sort" id="sort">
                             <?php if ($tokens !== []): ?>
@@ -811,12 +691,12 @@ function selected_attr(string $current, string $value): string
         <!-- Search Results -->
         <section>
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
-                <h2 class="h5 mb-0 text-white fw-bold">Resultados</h2>
+                <h2 class="h5 mb-0 text-body fw-bold">Resultados</h2>
                 <span class="text-secondary"><?= count($articles) ?> artigo(s) encontrado(s)</span>
             </div>
 
             <?php if ($articles === []): ?>
-                <div class="glass-card p-5 text-center text-secondary">
+                <div class="card p-5 text-center text-secondary">
                     <p class="mb-0">Nenhum artigo encontrado com os filtros selecionados.</p>
                 </div>
             <?php else: ?>
@@ -927,12 +807,12 @@ function selected_attr(string $current, string $value): string
                         $articleTags = $articleTagsMap[(int)$article['id']] ?? [];
                         $articleProjects = $articleProjectsMap[(int)$article['id']] ?? [];
                         ?>
-                        <article class="glass-card p-4">
+                        <article class="card p-4">
                             <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
                                 <div class="flex-grow-1">
                                     <h3 class="h5 article-title mb-2">
                                         <?php if ((string) ($article['year'] ?? '') !== ''): ?>
-                                            <span class="text-secondary me-2 fw-normal" style="font-size: 0.95rem;">[<?= h((string) $article['year']) ?>]</span>
+                                            <span class="text-secondary me-2 fw-normal">[<?= h((string) $article['year']) ?>]</span>
                                         <?php endif; ?>
                                         <a href="view.php?id=<?= h((string) $article['id']) ?>"><?= h($article['title']) ?></a>
                                     </h3>
@@ -940,7 +820,7 @@ function selected_attr(string $current, string $value): string
                                     <div class="text-secondary small mb-2">
                                         <strong><?= h($article['authors']) ?></strong>
                                         <?php if ((string) ($article['journal'] ?? '') !== ''): ?>
-                                            <span class="mx-2">|</span><em class="text-white-50"><?= h($article['journal']) ?></em>
+                                            <span class="mx-2">|</span><em class="text-body-secondary"><?= h($article['journal']) ?></em>
                                         <?php endif; ?>
                                         <?php 
                                             $hasStart = !empty($article['data_year_start']);
@@ -948,7 +828,7 @@ function selected_attr(string $current, string $value): string
                                         ?>
                                         <?php if ($hasStart || $hasEnd): ?>
                                             <span class="mx-2">|</span>
-                                            <span class="text-white-50" title="Período dos dados de coleta">
+                                            <span class="text-body-secondary" title="Período dos dados de coleta">
                                                 📅 Dados: 
                                                 <?php if ($hasStart && $hasEnd): ?>
                                                     <?= h((string) $article['data_year_start']) ?> a <?= h((string) $article['data_year_end']) ?>
@@ -963,8 +843,8 @@ function selected_attr(string $current, string $value): string
                                     
                                     <!-- Badges -->
                                      <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
-                                         <span class="text-secondary small d-flex align-items-center gap-1" style="font-size: 0.78rem;">
-                                             <i class="bi bi-tags" style="font-size: 0.85rem; vertical-align: middle;"></i> Tags:
+                                         <span class="text-secondary small d-flex align-items-center gap-1">
+                                             <i class="bi bi-tags"></i> Tags:
                                          </span>
                                          <?php if ($articleTags !== []): ?>
                                              <?php foreach ($articleTags as $tag): ?>
@@ -974,11 +854,11 @@ function selected_attr(string $current, string $value): string
                                                  $hasCommentOrQuote = (trim($tag['tag_quote'] ?? '') !== '' || trim($tag['tag_comment'] ?? '') !== '');
                                                  ?>
                                                  <a href="tag_view.php?tag_id=<?= (int)$tag['id'] ?>" class="badge border tag-badge text-decoration-none" 
-                                                       style="background:<?= $cColor['bg'] ?>; color:<?= $cColor['text'] ?>; border-color:<?= $cColor['border'] ?> !important;"
+                                                      
                                                        <?= tag_tooltip_attrs($tag) ?>>
                                                      <?= h($tag['name']) ?>
                                                      <?php if ($hasCommentOrQuote): ?>
-                                                         <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.8; vertical-align:-1px; margin-left: 2px;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                                                         <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
                                                      <?php else: ?>
                                                          <span class="ms-1 fw-bold text-warning" title="Sem citação ou observação">!</span>
                                                      <?php endif; ?>
@@ -993,8 +873,8 @@ function selected_attr(string $current, string $value): string
                                     <!-- Projects Badges -->
                                     <?php if ($articleProjects !== []): ?>
                                         <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
-                                            <span class="text-secondary small d-flex align-items-center gap-1" style="font-size: 0.78rem;">
-                                                <i class="bi bi-folder2-open" style="font-size: 0.85rem; vertical-align: middle;"></i> Projetos:
+                                            <span class="text-secondary small d-flex align-items-center gap-1">
+                                                <i class="bi bi-folder2-open"></i> Projetos:
                                             </span>
                                             <?php foreach ($articleProjects as $project): ?>
                                                 <a href="project.php?id=<?= (int)$project['id'] ?>" class="project-badge text-decoration-none">
@@ -1005,10 +885,10 @@ function selected_attr(string $current, string $value): string
                                         </div>
                                     <?php endif; ?>
                             <?php if ($snippet !== ''): ?>
-                                <p class="text-white-50 small mt-3 mb-0" style="line-height: 1.6; border-left: 2px solid #3b82f6; padding-left: 10px;"><?= h($snippet) ?></p>
+                                <p class="text-body-secondary small mt-3 mb-0"><?= h($snippet) ?></p>
                             <?php endif; ?>
 
-                            <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top border border-opacity-10">
                                 <div class="d-flex flex-wrap gap-3 text-secondary small">
                                     <?php if (is_logged_in()): ?>
                                         <span class="metric">Texto Completo: <?= count_words($article['full_text'] ?? '') ?> palavras</span>
@@ -1037,7 +917,7 @@ function selected_attr(string $current, string $value): string
                                 </div>
                                 <div class="d-flex gap-2 mt-2 mt-sm-0 ms-auto">
                                     <?php if (trim((string) ($article['url'] ?? '')) !== ''): ?>
-                                        <a class="btn btn-sm btn-outline-primary px-3 rounded-pill d-inline-flex align-items-center gap-1" style="font-size:0.75rem;"
+                                        <a class="btn btn-sm btn-outline-primary px-3 rounded-pill d-inline-flex align-items-center gap-1"
                                            href="<?= h($article['url']) ?>" 
                                            target="_blank" 
                                            rel="noopener noreferrer" 
@@ -1047,7 +927,7 @@ function selected_attr(string $current, string $value): string
                                         </a>
                                     <?php endif; ?>
                                     <?php if (trim((string) ($article['pdf_url'] ?? '')) !== ''): ?>
-                                        <a class="btn btn-sm btn-outline-primary px-3 rounded-pill d-inline-flex align-items-center gap-1" style="font-size:0.75rem;"
+                                        <a class="btn btn-sm btn-outline-primary px-3 rounded-pill d-inline-flex align-items-center gap-1"
                                            href="<?= h($article['pdf_url']) ?>" 
                                            target="_blank" 
                                            rel="noopener noreferrer" 
@@ -1057,7 +937,7 @@ function selected_attr(string $current, string $value): string
                                         </a>
                                     <?php endif; ?>
                                                               <?php if (trim((string) ($article['abstract'] ?? '')) !== ''): ?>
-                                        <button class="btn btn-sm btn-outline-info px-3 rounded-pill d-inline-flex align-items-center gap-1" style="font-size:0.75rem;"
+                                        <button class="btn btn-sm btn-outline-info px-3 rounded-pill d-inline-flex align-items-center gap-1"
                                                 type="button"
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#abstractModal<?= (int) $article['id'] ?>"
@@ -1065,7 +945,7 @@ function selected_attr(string $current, string $value): string
                                             <i class="bi bi-book-half"></i> Resumo
                                         </button>
                                     <?php endif; ?>
-                                    <a class="btn btn-sm btn-primary px-3 rounded-pill" style="font-size:0.75rem;" href="view.php?id=<?= h((string) $article['id']) ?>"><?= is_logged_in() ? 'Fichar & Ler' : 'Ficha' ?></a>
+                                    <a class="btn btn-sm btn-primary px-3 rounded-pill" href="view.php?id=<?= h((string) $article['id']) ?>"><?= is_logged_in() ? 'Fichar & Ler' : 'Ficha' ?></a>
                                  </div>
                              </div>
                          </article>
@@ -1082,25 +962,25 @@ function selected_attr(string $current, string $value): string
                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                                          </div>
                                          <div class="modal-body py-4 text-start">
-                                             <h6 class="text-secondary small mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em; font-weight: 700; text-transform: uppercase;">Título do Artigo</h6>
-                                             <p class="fw-semibold mb-3" style="font-size: 1.1rem; line-height: 1.4; color: var(--text-color);"><?= h($article['title']) ?></p>
+                                             <h6 class="text-secondary small mb-1">Título do Artigo</h6>
+                                             <p class="fw-semibold mb-3"><?= h($article['title']) ?></p>
                                              
                                              <div class="row g-2 mb-3">
                                                  <div class="col-sm-4">
-                                                     <h6 class="text-secondary small mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em; font-weight: 700; text-transform: uppercase;">Autores</h6>
-                                                     <p class="small mb-0" style="color: var(--text-muted);"><?= h($article['authors']) ?></p>
+                                                     <h6 class="text-secondary small mb-1">Autores</h6>
+                                                     <p class="small mb-0"><?= h($article['authors']) ?></p>
                                                  </div>
                                                  <div class="col-sm-2">
-                                                     <h6 class="text-secondary small mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em; font-weight: 700; text-transform: uppercase;">Ano</h6>
-                                                     <p class="small mb-0" style="color: var(--text-muted);"><?= h((string)($article['year'] ?? '-')) ?></p>
+                                                     <h6 class="text-secondary small mb-1">Ano</h6>
+                                                     <p class="small mb-0"><?= h((string)($article['year'] ?? '-')) ?></p>
                                                  </div>
                                                  <div class="col-sm-3">
-                                                     <h6 class="text-secondary small mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em; font-weight: 700; text-transform: uppercase;">Fonte / Revista</h6>
-                                                     <p class="small mb-0" style="color: var(--text-muted);"><?= h((string)($article['journal'] ?? '-')) ?></p>
+                                                     <h6 class="text-secondary small mb-1">Fonte / Revista</h6>
+                                                     <p class="small mb-0"><?= h((string)($article['journal'] ?? '-')) ?></p>
                                                  </div>
                                                  <div class="col-sm-3">
-                                                     <h6 class="text-secondary small mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em; font-weight: 700; text-transform: uppercase;">Período dos dados</h6>
-                                                     <p class="small mb-0" style="color: var(--text-muted);">
+                                                     <h6 class="text-secondary small mb-1">Período dos dados</h6>
+                                                     <p class="small mb-0">
                                                          <?php 
                                                              $hasStart = !empty($article['data_year_start']);
                                                              $hasEnd = !empty($article['data_year_end']);
@@ -1119,12 +999,12 @@ function selected_attr(string $current, string $value): string
                                              </div>
 
                                              <?php if (trim((string)($article['keywords'] ?? '')) !== ''): ?>
-                                                 <h6 class="text-secondary small mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em; font-weight: 700; text-transform: uppercase;">Palavras-chave</h6>
-                                                 <p class="small mb-3" style="color: var(--text-muted);"><?= h($article['keywords']) ?></p>
+                                                 <h6 class="text-secondary small mb-1">Palavras-chave</h6>
+                                                 <p class="small mb-3"><?= h($article['keywords']) ?></p>
                                              <?php endif; ?>
                                              
-                                             <h6 class="text-secondary small mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em; font-weight: 700; text-transform: uppercase;">Resumo / Abstract</h6>
-                                             <p style="line-height: 1.8; font-size: 1rem; white-space: pre-wrap; text-align: justify; color: var(--text-color);"><?= h($article['abstract']) ?></p>
+                                             <h6 class="text-secondary small mb-1">Resumo / Abstract</h6>
+                                             <p><?= h($article['abstract']) ?></p>
                                          </div>
                                          <div class="modal-footer">
                                              <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Fechar</button>
@@ -1201,7 +1081,7 @@ function selected_attr(string $current, string $value): string
         </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=20260615"></script>
     <script>
         // Initialize tooltips
@@ -1408,52 +1288,10 @@ function selected_attr(string $current, string $value): string
                 <path d="M19 2v10a7 7 0 0 1-14 0V2"></path>
                 <path d="M5 22v-10a7 7 0 0 1 14 0v10"></path>
             </svg>
-            <span class="text-white fw-medium small tracking-wide">Aguarde...</span>
+            <span class="text-body fw-medium small tracking-wide">Aguarde...</span>
         </div>
     </div>
-    
-    <style>
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            opacity: 0;
-            transition: opacity 0.25s ease-in-out;
-            pointer-events: none;
-        }
-        .loading-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .loading-hourglass {
-            color: #f59e0b;
-            animation: rotateHourglass 2s infinite ease-in-out;
-        }
-        @keyframes rotateHourglass {
-            0% {
-                transform: rotate(0deg);
-            }
-            40% {
-                transform: rotate(180deg);
-            }
-            60% {
-                transform: rotate(180deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
-
-    <script>
+<script>
         (function() {
             let fetchTimer = null;
             let activeFetchCount = 0;

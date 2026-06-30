@@ -90,6 +90,34 @@ function objectItemsFor(inventory, key) {
   return Array.isArray(inventory[key]) ? inventory[key] : [];
 }
 
+function syncBootstrapResetMetrics(root = document) {
+  root.querySelectorAll('[data-progress-percent]').forEach((element) => {
+    const value = Number.parseFloat(element.getAttribute('data-progress-percent') || '0');
+    const percent = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
+    element.style.width = `${percent}%`;
+  });
+
+  root.querySelectorAll('[data-placeholder-width]').forEach((element) => {
+    const value = Number.parseFloat(element.getAttribute('data-placeholder-width') || '100');
+    const percent = Math.max(10, Math.min(100, Number.isFinite(value) ? value : 100));
+    element.style.width = `${percent}%`;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  syncBootstrapResetMetrics();
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node instanceof Element) {
+          syncBootstrapResetMetrics(node);
+        }
+      });
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+
 function escapeHtml(value) {
   return String(value ?? '')
     .replaceAll('&', '&amp;')
@@ -108,7 +136,7 @@ function showTableSkeleton(columnCount = 5, rowCount = 8) {
       cells.push(`
         <td>
           <div class="placeholder-glow">
-            <span class="placeholder col-12" style="height: 16px; border-radius: 4px; width: ${widthPercent}%;"></span>
+            <span class="placeholder col-12 placeholder-line" data-placeholder-width="${widthPercent}"></span>
           </div>
         </td>
       `);
@@ -143,7 +171,7 @@ function showObjectTableSkeleton(columnCount = 5, rowCount = 10) {
       cells.push(`
         <td>
           <div class="placeholder-glow">
-            <span class="placeholder col-12 object-table-placeholder" style="width: ${widthPercent}%;"></span>
+            <span class="placeholder col-12 object-table-placeholder" data-placeholder-width="${widthPercent}"></span>
           </div>
         </td>
       `);
@@ -192,6 +220,11 @@ async function fetchJson(url) {
 }
 
 const docFiles = [
+  { name: 'Bootstrap-first: planejamento', path: 'platform/docs/bootstrap-first-planejamento.md', desc: 'Fonte de verdade para a reconstrucao visual com Bootstrap vanilla, sem paleta ou tema paralelo.' },
+  { name: 'Bootstrap-first: exemplos', path: 'platform/docs/bootstrap-first-exemplos.md', desc: 'Exemplos de pagina, card, tabela, filtro, abas, modal, estado vazio e progresso usando Bootstrap.' },
+  { name: 'Diretrizes visuais RENAST', path: 'platform/docs/diretrizes-visuais-renast.md', desc: 'Referencia visual para boxes, botoes, componentes, cores e tema claro.' },
+  { name: 'Documentacao visual centralizada', path: 'platform/docs/documentacao-visual-centralizada.md', desc: 'Indice operacional da documentacao visual e dos documentos substituidos.' },
+  { name: 'Tema e CSS por modulo', path: 'platform/docs/tema-css-bootstrap-modulos.md', desc: 'Contrato por modulo durante a fase Bootstrap-first.' },
   { name: 'README.md', path: 'README.md', desc: 'Guia de entrada do projeto com instruções de execução local, configuração e segurança.' },
   { name: 'landing.md', path: 'landing.md', desc: 'Página de apresentação inicial da ferramenta com informações institucionais.' },
   { name: 'sobre.md', path: 'sobre.md', desc: 'Apresentação do projeto CAREX, contextualização de saúde pública e objetivos da matriz.' },
@@ -218,7 +251,7 @@ function parseSimpleMarkdown(md) {
       if (inCodeBlock) {
         // End of code block
         inCodeBlock = false;
-        parsedLines.push(`<pre class="bg-light border rounded p-3 my-3" style="font-family: monospace; font-size: 0.85rem; overflow-x: auto;"><code>${escapeHtml(codeBlockLines.join('\n'))}</code></pre>`);
+        parsedLines.push(`<pre class="bg-body-tertiary border rounded p-3 my-3 font-monospace small overflow-auto"><code>${escapeHtml(codeBlockLines.join('\n'))}</code></pre>`);
         codeBlockLines = [];
       } else {
         inCodeBlock = true;
@@ -295,9 +328,9 @@ function renderDocsList() {
       <button type="button" class="list-group-item list-group-item-action flex-column align-items-start py-2 px-3" data-doc-path="${escapeHtml(doc.path)}">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1 h6 text-primary fw-bold">${escapeHtml(doc.name)}</h5>
-          <small class="text-body-secondary" style="font-size: 0.75rem;">${doc.path.includes('/') ? 'Subpasta' : 'Raiz'}</small>
+          <small class="text-body-secondary">${doc.path.includes('/') ? 'Subpasta' : 'Raiz'}</small>
         </div>
-        <p class="mb-1 text-body-secondary small" style="line-height: 1.4;">${escapeHtml(doc.desc)}</p>
+        <p class="mb-1 text-body-secondary small">${escapeHtml(doc.desc)}</p>
       </button>
     `;
   }).join('');
@@ -784,7 +817,7 @@ async function addFilterRow(preselectedColumn = '', preselectedValues = []) {
 
   const rowHtml = `
     <div class="d-flex flex-wrap gap-2 align-items-center bg-body p-2 border rounded shadow-sm" id="${filterId}">
-      <div class="flex-grow-1" style="min-width: 150px;">
+      <div class="flex-grow-1 filter-column-field">
         <select class="form-select form-select-sm filter-column-select">
           <option value="">Selecione o campo...</option>
           ${columns.map(col => {
@@ -793,12 +826,12 @@ async function addFilterRow(preselectedColumn = '', preselectedValues = []) {
           }).join('')}
         </select>
       </div>
-      <div class="flex-grow-1" style="min-width: 250px;">
+      <div class="flex-grow-1 filter-values-field">
         <div class="dropdown filter-values-dropdown w-100">
           <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" ${preselectedColumn ? '' : 'disabled'}>
             <span>Selecione valores...</span>
           </button>
-          <ul class="dropdown-menu p-2 shadow-sm" style="max-height: 200px; overflow-y: auto; min-width: 250px;">
+          <ul class="dropdown-menu p-2 shadow-sm dropdown-menu-scroll">
           </ul>
         </div>
       </div>
@@ -1015,7 +1048,7 @@ function showColumnsModal(tableName) {
               ${nullable ? 'Sim' : 'Nao'}
             </span>
           </td>
-          <td><span class="badge text-bg-light border">${escapeHtml(position)}</span></td>
+          <td><span class="badge text-bg-secondary">${escapeHtml(position)}</span></td>
         </tr>
       `;
     }).join('');
@@ -1035,6 +1068,7 @@ async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     const targetTable = urlParams.get('table');
     const filtersParam = urlParams.get('filters');
+    const requestedView = urlParams.get('view');
 
     let initialTable = '';
     if (targetTable) {
@@ -1076,7 +1110,14 @@ async function init() {
       setStatus('Nenhum objeto consultavel encontrado.', 'warning');
     }
 
-    if (targetTable) {
+    if (requestedView === 'docs') {
+      setView('docs');
+      if (docFiles.length > 0) {
+        await selectDoc(docFiles[0].path);
+      }
+    } else if (requestedView === 'ambiente') {
+      setView('ambiente');
+    } else if (targetTable) {
       setView('data');
     } else {
       setView('objects');

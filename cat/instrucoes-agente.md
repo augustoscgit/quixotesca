@@ -1,17 +1,17 @@
-﻿# InstruÃ§Ãµes para o Agente Especializado - MÃ³dulo CAT
+# Instruções para o Agente Especializado - Módulo CAT
 
-Este documento orienta o desenvolvimento e manutenÃ§Ã£o do mÃ³dulo **CAT** (ComunicaÃ§Ã£o de Acidente de Trabalho) de forma integrada e harmonizada com a plataforma principal.
+Este documento orienta o desenvolvimento e manutenção do módulo **CAT** (Comunicação de Acidente de Trabalho) de forma integrada e harmonizada com a plataforma principal.
 
 ---
 
-## 1. Escopo do MÃ³dulo
-O CAT consiste em um sistema de controle de comunicaÃ§Ãµes de acidente de trabalho que extrai e processa dados abertos pÃºblicos do INSS via ETL. O agente deste mÃ³dulo deve focar nas seguintes frentes:
-1. **Listagem e Status do ETL**: VisualizaÃ§Ã£o dos arquivos de dados abertos disponÃ­veis na API CKAN do INSS com situaÃ§Ã£o de extraÃ§Ã£o e carga no banco de dados.
+## 1. Escopo do Módulo
+O CAT consiste em um sistema de controle de comunicações de acidente de trabalho que extrai e processa dados abertos públicos do INSS via ETL. O agente deste módulo deve focar nas seguintes frentes:
+1. **Listagem e Status do ETL**: Visualização dos arquivos de dados abertos disponíveis na API CKAN do INSS com situação de extração e carga no banco de dados.
 2. **Processamento em Lotes (Batching)**: Pipeline AJAX incremental para extrair, ler, converter linhas de CSV em JSON normalizado e carregar na tabela de staging.
-3. **Gerenciamento de Cache**: EliminaÃ§Ã£o automÃ¡tica de arquivos temporÃ¡rios ZIP/CSV do servidor local apÃ³s a carga bem-sucedida.
+3. **Gerenciamento de Cache**: Eliminação automática de arquivos temporários ZIP/CSV do servidor local após a carga bem-sucedida.
 
 > [!IMPORTANT]
-> **Limite de Escopo**: O repositÃ³rio da Plataforma gerencia apenas a pÃ¡gina inicial de apresentaÃ§Ã£o do mÃ³dulo (`index.php`) e suas diretrizes estÃ©ticas bÃ¡sicas. Toda a lÃ³gica de extraÃ§Ã£o de ZIP, parsing de CSV, normalizaÃ§Ã£o de campos para lowercase snake_case, banco de dados remoto PostgreSQL (esquema `cat`), autenticaÃ§Ã£o e rotas internas sÃ£o de responsabilidade e escopo exclusivo do desenvolvimento deste mÃ³dulo (CAT).
+> **Limite de Escopo**: O repositório da Plataforma gerencia apenas a página inicial de apresentação do módulo (`index.php`) e suas diretrizes estéticas básicas. Toda a lógica de extração de ZIP, parsing de CSV, normalização de campos para lowercase snake_case, banco de dados remoto PostgreSQL (esquema `cat`), autenticação e rotas internas são de responsabilidade e escopo exclusivo do desenvolvimento deste módulo (CAT).
 
 ---
 
@@ -19,14 +19,14 @@ O CAT consiste em um sistema de controle de comunicaÃ§Ãµes de acidente de tr
 
 O guia oficial de estilo, UX, interface, tema, navbar, botoes, tabelas e filtros da plataforma fica em:
 
-`docs/identidade-visual-ux.md` e `docs/desenvolvimento-seguranca.md`
+`../docs/identidade-visual-ux.md`, `../docs/tema-css-bootstrap-modulos.md` e `../docs/desenvolvimento-seguranca.md`
 
 As regras especificas do modulo CAT ficam em `README.md` e `docs/agregadores_hierarquicos.md`, apenas para fluxos, agregadores, vocabularios e comportamento analitico do modulo. Regras visuais antigas deste modulo sao historicas e nao devem orientar novas telas quando conflitarem com o guia central.
 
 ---
 
 ## 3. Logotipo e Link de Retorno
-Para garantir uma experiÃªncia de navegaÃ§Ã£o integrada e fluida:
+Para garantir uma experiência de navegação integrada e fluida:
 - O logotipo horizontal oficial (`assets/logo-fundo-escuro-horizontal.png`) deve estar envolvido por um link apontando de volta para a landing page da plataforma principal:
   ```html
   <a class="navbar-brand d-flex align-items-center gap-3" href="../">
@@ -38,11 +38,11 @@ Para garantir uma experiÃªncia de navegaÃ§Ã£o integrada e fluida:
 
 ---
 
-## 4. Banco de Dados e ConexÃ£o
-- O banco de dados utilizado Ã© **PostgreSQL** (verificar arquivo `src/db.php` e funÃ§Ã£o `getDBConnection()`).
-- O schema PostgreSQL padrÃ£o do mÃ³dulo Ã© `cat`.
-- VariÃ¡veis de ambiente sÃ£o lidas de `secrets/.env`.
-- Em caso de falha de conexÃ£o com a base de dados, a landing page principal (`index.php`) deve tratar o erro silenciosamente via `try-catch`, exibindo o status de conexÃ£o "Desconectado" e os contadores zerados para que a navegaÃ§Ã£o do usuÃ¡rio nÃ£o seja interrompida.
+## 4. Banco de Dados e Conexão
+- O banco de dados utilizado é **PostgreSQL** (verificar arquivo `src/db.php` e função `getDBConnection()`).
+- O schema PostgreSQL padrão do módulo é `cat`.
+- Variáveis de ambiente são lidas de `secrets/.env`.
+- Em caso de falha de conexão com a base de dados, a landing page principal (`index.php`) deve tratar o erro silenciosamente via `try-catch`, exibindo o status de conexão "Desconectado" e os contadores zerados para que a navegação do usuário não seja interrompida.
 ---
 
 ## 5. Regras Funcionais Atuais

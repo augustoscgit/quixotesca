@@ -4,6 +4,6 @@ O antigo material de "claymorphism" foi descontinuado como fonte de decisão vis
 
 Use o guia central:
 
-`../../docs/definicao-padroes.md`
+`../../docs/identidade-visual-ux.md` e `../../docs/tema-css-bootstrap-modulos.md`
 
 Novos padrões de UI, UX, tema, tokens, paleta, navbar ou logos devem ser registrados primeiro no guia central.

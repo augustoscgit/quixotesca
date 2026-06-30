@@ -77,7 +77,7 @@ render_header('Redefinir senha');
 
     <?php if (!$validReset): ?>
         <p class="muted">Este link nao existe, ja foi usado ou expirou.</p>
-        <a class="btn btn-light" href="forgot_password.php">Solicitar novo link</a>
+        <a class="btn btn-outline-primary" href="forgot_password.php">Solicitar novo link</a>
     <?php else: ?>
         <p class="muted">Defina uma nova senha para <?= h($validReset['email']) ?>.</p>
         <form method="post" class="d-grid gap-3">
@@ -91,7 +91,7 @@ render_header('Redefinir senha');
                 <label class="form-label" for="password_confirm">Confirmar nova senha</label>
                 <input class="form-control" id="password_confirm" name="password_confirm" type="password" autocomplete="new-password" required>
             </div>
-            <button class="btn btn-light" type="submit">Atualizar senha</button>
+            <button class="btn btn-primary" type="submit">Atualizar senha</button>
         </form>
     <?php endif; ?>
 </section>

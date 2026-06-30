@@ -64,36 +64,11 @@ $projects = $stmt->fetchAll() ?: [];
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Projetos - Fichario Academico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <style>
-        .project-card-link {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .project-card-link:hover .project-title {
-            color: #93c5fd;
-        }
-
-        .project-title {
-            transition: color 0.2s;
-        }
-
-        .project-metric {
-            color: #cbd5e1;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 999px;
-            padding: 0.28rem 0.7rem;
-            font-size: 0.82rem;
-            white-space: nowrap;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
@@ -104,13 +79,13 @@ $projects = $stmt->fetchAll() ?: [];
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page">Projetos</li>
+                <li class="breadcrumb-item active text-body" aria-current="page">Projetos</li>
             </ol>
         </nav>
 
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
             <div>
-                <h1 class="h3 mb-1 text-white fw-bold">Projetos</h1>
+                <h1 class="h3 mb-1 text-body fw-bold">Projetos</h1>
                 <p class="text-secondary mb-0">Organize notas de fichamento em seções com contexto próprio.</p>
             </div>
         </div>
@@ -127,8 +102,8 @@ $projects = $stmt->fetchAll() ?: [];
             </div>
         <?php endif; ?>
 
-        <section class="glass-card p-4 mb-4">
-            <h2 class="h5 text-white fw-bold mb-3">Novo projeto</h2>
+        <section class="card p-4 mb-4">
+            <h2 class="h5 text-body fw-bold mb-3">Novo projeto</h2>
             <form method="post" class="row g-3">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="create_project">
@@ -148,24 +123,24 @@ $projects = $stmt->fetchAll() ?: [];
 
         <section>
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
-                <h2 class="h5 mb-0 text-white fw-bold">Meus projetos</h2>
+                <h2 class="h5 mb-0 text-body fw-bold">Meus projetos</h2>
                 <span class="text-secondary"><?= count($projects) ?> projeto(s)</span>
             </div>
 
             <?php if ($projects === []): ?>
-                <div class="glass-card p-5 text-center text-secondary">
+                <div class="card p-5 text-center text-secondary">
                     <p class="mb-0">Nenhum projeto criado ainda.</p>
                 </div>
             <?php else: ?>
                 <div class="vstack gap-3">
                     <?php foreach ($projects as $project): ?>
                         <a class="project-card-link" href="project.php?id=<?= (int) $project['id'] ?>">
-                            <article class="glass-card p-4">
+                            <article class="card p-4">
                                 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
                                     <div class="flex-grow-1">
-                                        <h3 class="h5 project-title text-white fw-bold mb-2"><?= h($project['title']) ?></h3>
+                                        <h3 class="h5 project-title text-body fw-bold mb-2"><?= h($project['title']) ?></h3>
                                         <?php if (trim((string) ($project['description'] ?? '')) !== ''): ?>
-                                            <p class="text-white-50 mb-0"><?= h(text_teaser((string) $project['description'], 220)) ?></p>
+                                            <p class="text-body-secondary mb-0"><?= h(text_teaser((string) $project['description'], 220)) ?></p>
                                         <?php else: ?>
                                             <p class="text-secondary mb-0">Sem descricao.</p>
                                         <?php endif; ?>
@@ -184,7 +159,7 @@ $projects = $stmt->fetchAll() ?: [];
         </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=20260608-projects"></script>
 </body>
 </html>

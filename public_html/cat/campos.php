@@ -63,142 +63,10 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAT - Campos por Arquivo</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root, [data-bs-theme="light"] {
-            --bg-color: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #64748b;
-            --text-color: #1e293b;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #f8fafc;
-        }
-
-        [data-bs-theme="dark"] {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #94a3b8;
-            --text-color: #f8fafc;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #111827;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Inter', sans-serif;
-        }
-
-        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
-
-        .navbar {
-            background-color: var(--navbar-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: none;
-        }
-
-        .form-control,
-        .form-select {
-            background-color: var(--field-bg) !important;
-            color: var(--text-color) !important;
-            border-color: var(--border-color) !important;
-        }
-        .form-control::placeholder {
-            color: var(--text-muted);
-            opacity: 0.78;
-        }
-        .form-control:focus,
-        .form-select:focus {
-            background-color: var(--field-bg) !important;
-            color: var(--text-color) !important;
-            border-color: var(--accent-color) !important;
-            box-shadow: 0 0 0 0.2rem rgba(70, 75, 81, 0.18);
-        }
-        .form-select option {
-            background-color: var(--field-bg);
-            color: var(--text-color);
-        }
-        [data-bs-theme="light"] input[type="date"] { color-scheme: light; }
-        [data-bs-theme="dark"] input[type="date"] { color-scheme: dark; }
-
-        .text-accent { color: var(--accent-color) !important; }
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            padding: 0 !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 auto;
-        }
-        .btn-icon.btn-sm {
-            width: 34px;
-            height: 34px;
-        }
-
-        .btn-accent {
-            background-color: var(--accent-solid);
-            border-color: var(--accent-border);
-            color: var(--accent-on-solid);
-            font-weight: 500;
-        }
-
-        .field-matrix {
-            min-width: 1200px;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        .field-matrix th,
-        .field-matrix td {
-            border-color: var(--border-color);
-            vertical-align: top;
-        }
-
-        .field-matrix thead th {
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            background: var(--field-bg);
-            color: var(--text-color);
-        }
-
-        .field-matrix .field-col {
-            position: sticky;
-            left: 0;
-            z-index: 3;
-            background: var(--field-bg);
-            min-width: 260px;
-        }
-
-        .file-col { min-width: 190px; }
-        .cell-note { font-size: 0.72rem; line-height: 1.25; }
-    </style>
-    <link href="../assets/css/style.css" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
+<script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <!-- Navbar -->
@@ -211,39 +79,39 @@ try {
         <header class="mb-4">
             <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                 <div>
-                    <h1 class="display-6 text-accent mb-2" style="font-weight: 800;">Matriz de Campos por Arquivo</h1>
+                    <h1 class="display-6 text-primary mb-2">Matriz de Campos por Arquivo</h1>
                     <p class="lead text-secondary mb-0">Compare presença, preenchimento e formatos de data entre os arquivos documentados da base CAT.</p>
                 </div>
             </div>
         </header>
 
         <?php if ($db_error): ?>
-            <div class="alert alert-danger glass-card border-danger"><?= htmlspecialchars($db_error) ?></div>
+            <div class="alert alert-danger card border-danger"><?= htmlspecialchars($db_error) ?></div>
         <?php endif; ?>
 
         <section class="row g-4 mb-4">
             <div class="col-6 col-md-3">
-                <div class="glass-card p-3">
+                <div class="card p-3">
                     <div class="text-muted small">Arquivos catalogados</div>
                     <div class="h4 mb-0"><?= number_format(count($files), 0, ',', '.') ?></div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="glass-card p-3">
+                <div class="card p-3">
                     <div class="text-muted small">Campos distintos</div>
                     <div class="h4 mb-0"><?= number_format(count($fields), 0, ',', '.') ?></div>
                 </div>
             </div>
             <div class="col-12 col-md-6">
-                <div class="glass-card p-3">
+                <div class="card p-3">
                     <div class="text-muted small">Legenda</div>
                     <div><span class="badge text-bg-success">Presente</span> campo encontrado no arquivo documentado <span class="badge text-bg-secondary ms-2">Ausente</span> campo não encontrado no arquivo</div>
                 </div>
             </div>
         </section>
 
-        <div class="glass-card p-3">
-            <div class="table-responsive" style="max-height: 70vh;">
+        <div class="card p-3">
+            <div class="table-responsive">
                 <table class="table table-sm table-hover field-matrix mb-0">
                     <thead>
                         <tr>
@@ -298,6 +166,6 @@ try {
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@ O sistema trabalha sobre uma base PostgreSQL considerada de producao. A regra ge
 - Marca principal: Plataforma RENAST online.
 - Produto/modulo: CAREX.
 - Ativos publicos em `public/assets/`.
-- Diretrizes registradas em `docs/identidade-visual.md`.
+- Diretrizes visuais gerais registradas em `../../docs/bootstrap-first-planejamento.md`, `../../docs/bootstrap-first-exemplos.md` e `../../docs/tema-css-bootstrap-modulos.md`; a ponte local fica em `docs/identidade-visual.md`.
 
 ## Modulos atuais
 

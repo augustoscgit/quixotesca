@@ -46,195 +46,12 @@ try {
     <title>LDRT - Explorador CID-10</title>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-                :root, [data-bs-theme="light"] {
-            --bg-color: #f1f5f9;
-            --bg-glow-1: transparent;
-            --bg-glow-2: transparent;
-            --card-bg: rgba(255, 255, 255, 0.65);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-laranja-4);
-            --text-muted: #64748b;
-            --text-color: #1e293b;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: rgba(241, 245, 249, 0.85);
-            --field-bg: #ffffff;
-        }
-
-        [data-bs-theme="dark"] {
-            --bg-color: #0b0f19;
-            --bg-glow-1: transparent;
-            --bg-glow-2: transparent;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-laranja-4);
-            --text-muted: #94a3b8;
-            --text-color: #f8fafc;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: rgba(11, 15, 25, 0.85);
-            --field-bg: #111827;
-        }
-        .badge-custom {
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            flex-shrink: 0; /* Prevent badges in flex rows from shrinking */
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            background-image: none;
-            color: var(--text-color);
-            min-height: 100vh;
-        }
-
-        h1, h2, h3, h4, h5 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-        }
-
-        .navbar {
-            background-color: var(--navbar-bg);
-            backdrop-filter: none;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: none;
-        }
-
-        .tree-container {
-            max-height: calc(100vh - 220px);
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .tree-node {
-            list-style: none;
-            padding-left: 15px;
-            margin-top: 5px;
-        }
-
-        .tree-node-label {
-            display: flex;
-            align-items: center;
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.85;
-            min-width: 0; /* Ensures child text truncation works inside flexbox */
-        }
-
-        .tree-node-label:hover {
-            background-color: rgba(255, 255, 255, 0.08);
-            color: var(--text-color);
-            opacity: 1;
-        }
-
-        .tree-node-label.active {
-            background-color: var(--bs-tertiary-bg);
-            color: var(--accent-ui);
-            border-left: 3px solid var(--accent-border);
-            opacity: 1;
-        }
-
-        .tree-toggle {
-            cursor: pointer;
-            width: 20px;
-            flex-shrink: 0; /* Prevent the toggle chevron from squeezing */
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 5px;
-            color: var(--text-muted);
-            transition: color 0.15s ease;
-        }
-
-        .tree-toggle:hover {
-            color: var(--text-color);
-        }
-
-        .tree-node-label .badge-cid {
-            width: 50px;
-            text-align: center;
-            flex-shrink: 0; /* Prevent the badge from squeezing */
-            display: inline-block;
-        }
-
-        .info-box {
-            background: rgba(255, 255, 255, 0.02);
-            border-left: 3px solid var(--accent-border);
-            padding: 15px;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 20px;
-        }
-
-        .autocomplete-container {
-            position: relative;
-        }
-
-        .autocomplete-container:focus-within {
-            z-index: 10;
-        }
-
-        .autocomplete-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--field-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            max-height: 250px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-            margin-top: 4px;
-        }
-
-        .suggestion-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-            transition: background 0.15s ease;
-            font-size: 0.9rem;
-            color: var(--text-color);
-        }
-
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-
-        .suggestion-item:hover {
-            background-color: var(--bs-tertiary-bg);
-            color: var(--text-color);
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
@@ -249,22 +66,22 @@ try {
             
             <!-- Left Panel: CID-10 Tree Explorer -->
             <div class="col-lg-5 col-xl-4">
-                <div class="glass-card p-4">
+                <div class="card p-4">
                     <h4 class="mb-3 d-flex align-items-center gap-2">
-                        <i class="fa-solid fa-folder-tree text-primary" style="color: var(--accent-color) !important;"></i>
+                        <i class="bi bi-folder-symlink text-primary"></i>
                         Árvore CID-10
                     </h4>
                     
                     <!-- Search inside tree -->
                     <div class="input-group mb-2">
-                        <span class="input-group-text" id="search_btn" style="cursor: pointer;"><i class="fa-solid fa-search text-muted"></i></span>
+                        <span class="input-group-text" id="search_btn"><i class="bi bi-search text-muted"></i></span>
                         <input type="text" id="tree_search" class="form-control" placeholder="Buscar código ou termo na árvore..." autocomplete="off">
                     </div>
                     
                     <!-- Toggle Switch LDRT only -->
                     <div class="form-check form-switch mb-3">
                         <input class="form-check-input" type="checkbox" id="ldrt_switch" <?php echo $ldrtOnly ? 'checked' : ''; ?>>
-                        <label class="form-check-label text-light small" for="ldrt_switch">
+                        <label class="form-check-label text-body small" for="ldrt_switch">
                             Apenas CIDs relacionados à LDRT
                         </label>
                     </div>
@@ -276,7 +93,7 @@ try {
                                     <div class="tree-node-label" onclick="selectCid(<?php echo $ch['id']; ?>, this)">
                                         <?php if ($ch['has_children']): ?>
                                             <span class="tree-toggle" onclick="toggleNode(event, <?php echo $ch['id']; ?>, this)">
-                                                <i class="fa-solid fa-chevron-right"></i>
+                                                <i class="bi bi-chevron-right"></i>
                                             </span>
                                         <?php else: ?>
                                             <span class="tree-toggle"></span>
@@ -294,11 +111,11 @@ try {
 
             <!-- Right Panel: CID details and relations -->
             <div class="col-lg-7 col-xl-8">
-                <div class="glass-card p-4 h-100" id="details_panel">
+                <div class="card p-4 h-100" id="details_panel">
                     <div class="text-center py-5" id="details_default_view">
-                        <i class="fa-solid fa-circle-info text-muted mb-4" style="font-size: 4rem; opacity: 0.25;"></i>
+                        <i class="bi bi-info-circle text-muted mb-4"></i>
                         <h3>Selecione um item da árvore</h3>
-                        <p class="text-muted mx-auto" style="max-width: 480px;">
+                        <p class="text-muted mx-auto">
                             Navegue na árvore hierárquica do CID-10 à esquerda. Expanda os capítulos e grupos até chegar na categoria ou subcategory desejada para visualizar os riscos ocupacionais e os relatos associados na LDRT.
                         </p>
                     </div>
@@ -313,14 +130,14 @@ try {
                         <div class="info-box">
                             <div class="text-muted small font-weight-bold" id="details_level_label">SUBCATEGORIA</div>
                             <h3 class="mt-1 text-primary" id="details_code">M51.0</h3>
-                            <h5 class="text-light" id="details_description">Transtornos de discos lombares e de outros discos intervertebrais com mielopatia</h5>
+                            <h5 class="text-body" id="details_description">Transtornos de discos lombares e de outros discos intervertebrais com mielopatia</h5>
                         </div>
 
                         <div class="row g-4 mt-2">
                             <!-- Associated Agents -->
                             <div class="col-12">
-                                <h5 class="section-title"><i class="fa-solid fa-biohazard"></i> Agentes de Risco Relacionados (LDRT Lista B)</h5>
-                                <div id="details_agents_list" class="list-group list-group-flush rounded border border-secondary overflow-hidden">
+                                <h5 class="section-title"><i class="bi bi-radioactive"></i> Agentes de Risco Relacionados (LDRT Lista B)</h5>
+                                <div id="details_agents_list" class="list-group list-group-flush rounded border border overflow-hidden">
                                     <!-- Dynamic content -->
                                 </div>
                                 <p id="details_agents_empty" class="text-muted small d-none">Nenhum agente causador direto mapeado especificamente para este código.</p>
@@ -328,7 +145,7 @@ try {
 
                             <!-- Associated Case Reports -->
                             <div class="col-12 mt-4">
-                                <h5 class="section-title"><i class="fa-solid fa-file-medical"></i> Relatos de Casos</h5>
+                                <h5 class="section-title"><i class="bi bi-file-earmark-medical"></i> Relatos de Casos</h5>
                                 <div id="details_relatos_list">
                                     <!-- Dynamic content -->
                                 </div>
@@ -343,14 +160,14 @@ try {
     </div>
 
     <!-- Footer -->
-    <footer class="text-center py-4 border-top border-secondary mt-5" style="background-color: rgba(11, 15, 25, 0.5);">
+    <footer class="text-center py-4 border-top border mt-5">
         <div class="container">
             <p class="mb-1 text-muted small">LDRT Explorador CID-10 &copy; 2026 - Conforme Portaria GM/MS 1.999/2023</p>
         </div>
     </footer>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
     <!-- Tree Explorer JS -->
     <script>
@@ -372,11 +189,11 @@ try {
             if (sublist.classList.contains('d-none')) {
                 // Expanding node
                 sublist.classList.remove('d-none');
-                icon.classList.replace('fa-chevron-right', 'fa-chevron-down');
+                icon.classList.replace('bi-chevron-right', 'bi-chevron-down');
                 
                 // Load children via AJAX if not already loaded
                 if (!loadedNodes[nodeId]) {
-                    sublist.innerHTML = '<li class="tree-node text-muted small ps-3 py-1"><i class="fa-solid fa-spinner fa-spin me-2"></i>Carregando...</li>';
+                    sublist.innerHTML = '<li class="tree-node text-muted small ps-3 py-1"><i class="bi bi-arrow-clockwise bootstrap-spin me-2"></i>Carregando...</li>';
                     fetch(`api_get_children.php?parent_id=${nodeId}&ldrt_only=${ldrtOnly ? '1' : '0'}`)
                         .then(res => res.json())
                         .then(data => {
@@ -399,7 +216,7 @@ try {
                                     const toggleSpan = document.createElement('span');
                                     toggleSpan.classList.add('tree-toggle');
                                     toggleSpan.setAttribute('onclick', `toggleNode(event, ${child.id}, this)`);
-                                    toggleSpan.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+                                    toggleSpan.innerHTML = '<i class="bi bi-chevron-right"></i>';
                                     labelDiv.appendChild(toggleSpan);
                                 } else {
                                     const emptySpan = document.createElement('span');
@@ -433,7 +250,7 @@ try {
             } else {
                 // Collapsing node
                 sublist.classList.add('d-none');
-                icon.classList.replace('fa-chevron-down', 'fa-chevron-right');
+                icon.classList.replace('bi-chevron-down', 'bi-chevron-right');
             }
         }
 
@@ -479,7 +296,7 @@ try {
                             li.setAttribute('aria-current', 'page');
                             li.textContent = node.codigo;
                         } else {
-                            li.innerHTML = `<a href="#" class="text-indigo text-decoration-none" onclick="navigateToCid(${node.id})">${node.codigo}</a>`;
+                            li.innerHTML = `<a href="#" class="text-primary text-decoration-none" onclick="navigateToCid(${node.id})">${node.codigo}</a>`;
                         }
                         pathContainer.appendChild(li);
                     });
@@ -496,10 +313,10 @@ try {
                         agentsEmpty.classList.add('d-none');
                         data.agents.forEach(agent => {
                             const div = document.createElement('div');
-                            div.classList.add('list-group-item', 'bg-dark', 'border-secondary', 'p-3', 'd-flex', 'justify-content-between', 'align-items-start', 'gap-3');
+                            div.classList.add('list-group-item', 'bg-body-tertiary', 'border', 'p-3', 'd-flex', 'justify-content-between', 'align-items-start', 'gap-3');
                             div.innerHTML = `
-                                <div style="min-width: 0; flex: 1;">
-                                    <strong class="text-light" style="word-break: break-word; white-space: normal;">${agent.descricao}</strong>
+                                <div>
+                                    <strong class="text-body">${agent.descricao}</strong>
                                     ${agent.cas ? `<div class="text-muted small mt-1">CAS: ${agent.cas}</div>` : ''}
                                 </div>
                                 <a href="consulta.php?cid=${encodeURIComponent(details.codigo)}&agente=${agent.id}" class="btn btn-sm btn-outline-secondary flex-shrink-0">Consulta Completa</a>
@@ -518,17 +335,17 @@ try {
                         relatosEmpty.classList.add('d-none');
                         data.relatos.forEach(rel => {
                             const card = document.createElement('div');
-                            card.classList.add('card', 'bg-dark', 'border-secondary', 'mb-3');
+                            card.classList.add('card', 'bg-body-tertiary', 'border', 'mb-3');
                             card.innerHTML = `
-                                <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                                <div class="card-header border d-flex justify-content-between align-items-center">
                                     <h6 class="mb-0 text-primary-emphasis">${rel.titulo}</h6>
                                     <span class="badge bg-secondary font-monospace">${rel.old_id}</span>
                                 </div>
                                 <div class="card-body">
-                                    <p class="card-text small text-light-emphasis" style="white-space: pre-wrap;">${rel.relato}</p>
-                                    <div class="border-top border-secondary pt-3 mt-3 d-flex gap-2">
+                                    <p class="card-text small text-body-secondary">${rel.relato}</p>
+                                    <div class="border-top border pt-3 mt-3 d-flex gap-2">
                                         <span class="text-muted small">CNAE/CBO vinculado:</span>
-                                        <span class="badge badge-custom ${rel.classificacao === 'cnae' ? 'badge-cnae' : 'badge-cbo'}">
+                                        <span class="badge text-bg-secondary ${rel.classificacao === 'cnae' ? 'badge-cnae' : 'badge-cbo'}">
                                             ${rel.classificacao.toUpperCase()}: ${rel.cnae_cbo_codigo} - ${rel.cnae_cbo_descricao.substring(0, 30)}...
                                         </span>
                                     </div>

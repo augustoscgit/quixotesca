@@ -1,5 +1,14 @@
 # LDRT - Lista de Doenças Relacionadas ao Trabalho
 
+## Documentacao visual e tema
+
+As regras de tema, CSS, Bootstrap, navbar, botoes, tabelas, badges e contraste do LDRT ficam centralizadas em:
+
+- `../docs/identidade-visual-ux.md`
+- `../docs/tema-css-bootstrap-modulos.md`
+
+Documentos locais do LDRT devem concentrar regras funcionais, dados, API e RAG. Acento laranja, tabelas, cards de resultado, breadcrumbs e badges devem herdar do CSS canonico da plataforma.
+
 Este projeto consiste em uma aplicação web de consulta e preparação de banco de dados baseada na **Portaria GM/MS nº 1.999, de 27 de novembro de 2023**, que atualiza a **Lista de Doenças Relacionadas ao Trabalho (LDRT)** no Brasil. 
 
 A aplicação foi desenvolvida em PHP (com Bootstrap 5 no front-end) e PostgreSQL, sendo otimizada tanto para uso por profissionais de saúde e segurança do trabalho quanto para atuar como fonte de **RAG (Retrieval-Augmented Generation)** em Agentes de Inteligência Artificial.

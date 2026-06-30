@@ -40,290 +40,13 @@ try {
     <title>CAT - Registros de CAT</title>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        :root, [data-bs-theme="light"] {
-            --bg-color: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #64748b;
-            --text-color: #1e293b;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #f8fafc;
-        }
-
-        [data-bs-theme="dark"] {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #94a3b8;
-            --text-color: #f8fafc;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #111827;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .navbar {
-            background-color: var(--navbar-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: none;
-        }
-
-        .form-control,
-        .form-select {
-            background-color: var(--field-bg) !important;
-            color: var(--text-color) !important;
-            border-color: var(--border-color) !important;
-        }
-        .form-control::placeholder {
-            color: var(--text-muted);
-            opacity: 0.78;
-        }
-        .form-control:focus,
-        .form-select:focus {
-            background-color: var(--field-bg) !important;
-            color: var(--text-color) !important;
-            border-color: var(--accent-color) !important;
-            box-shadow: 0 0 0 0.2rem rgba(70, 75, 81, 0.18);
-        }
-        .form-select option {
-            background-color: var(--field-bg);
-            color: var(--text-color);
-        }
-        [data-bs-theme="light"] input[type="date"] { color-scheme: light; }
-        [data-bs-theme="dark"] input[type="date"] { color-scheme: dark; }
-        .inspect-position-input {
-            background-color: transparent !important;
-            border: 0 !important;
-            color: var(--bs-body-color) !important;
-            box-shadow: none !important;
-            outline: none !important;
-        }
-
-        /* Buttons & Color Overrides */
-        .btn-accent {
-            background-color: var(--accent-solid);
-            border-color: var(--accent-border);
-            color: var(--accent-on-solid);
-            font-weight: 500;
-        }
-        .btn-accent:hover, .btn-accent:focus {
-            background-color: var(--accent-solid-hover);
-            border-color: var(--accent-solid-hover);
-            color: var(--accent-on-solid);
-        }
-        .btn-outline-accent {
-            border-color: var(--accent-border);
-            color: var(--accent-color);
-            font-weight: 500;
-        }
-        .btn-outline-accent:hover {
-            background-color: var(--accent-solid);
-            border-color: var(--accent-border);
-            color: var(--accent-on-solid);
-        }
-        .text-accent {
-            color: var(--accent-color) !important;
-        }
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            padding: 0 !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 auto;
-        }
-        .btn-icon.btn-sm {
-            width: 34px;
-            height: 34px;
-        }
-
-        /* CAT Details Styling */
-        .inspect-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-bottom: 2px solid var(--accent-border);
-            padding-bottom: 8px;
-            margin-bottom: 20px;
-            color: var(--text-color);
-        }
-
-        .inspect-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .inspect-value {
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--text-color);
-            background-color: var(--field-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 14px;
-            min-height: 43px;
-            word-break: break-word;
-        }
-
-        .inspect-value-empty {
-            color: var(--text-muted);
-            font-style: italic;
-        }
-        .semantic-section {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1.25rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 1rem;
-        }
-        .semantic-section > h6,
-        .semantic-section > .row,
-        .semantic-section .wide-field {
-            grid-column: 1 / -1;
-        }
-        .semantic-section .mb-3,
-        .company-profile-grid .mb-3 {
-            margin-bottom: 0 !important;
-        }
-        .semantic-section + .semantic-section {
-            padding-top: 0.25rem;
-        }
-        #inspect-content .col-12.mt-2:has(#val-cbo-cod):has(#val-cid-cod) {
-            display: none !important;
-        }
-
-        .hash-line {
-            min-width: 100%;
-        }
-        .hash-duplicate-badge {
-            white-space: nowrap;
-        }
-        .extra-field-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-        }
-        .extra-field-card {
-            background-color: var(--field-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 14px;
-            min-height: 76px;
-        }
-        .extra-field-value {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text-color);
-            word-break: break-word;
-        }
-        .company-profile-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 1rem;
-        }
-        .company-profile-grid .wide-field {
-            grid-column: 1 / -1;
-        }
-        .entity-link-row {
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-            min-width: 0;
-        }
-        .entity-link-row .entity-value {
-            min-width: 0;
-            overflow-wrap: anywhere;
-        }
-        .opencnpj-status {
-            align-self: flex-start;
-            white-space: nowrap;
-        }
-        .raw-json-panel {
-            background: var(--console-bg, #0f172a);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: #d1d5db;
-            max-height: 420px;
-            overflow: auto;
-            padding: 1rem;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-        .skeleton-block {
-            position: relative;
-            overflow: hidden;
-            background: rgba(148, 163, 184, 0.16);
-            border-radius: 8px;
-        }
-        .skeleton-block::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            transform: translateX(-100%);
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
-            animation: skeleton-shimmer 1.35s infinite;
-        }
-        .skeleton-line {
-            height: 12px;
-            margin-bottom: 12px;
-        }
-        .skeleton-card {
-            height: 72px;
-        }
-        @keyframes skeleton-shimmer {
-            100% { transform: translateX(100%); }
-        }
-
-        .hover-accent {
-            transition: color 0.2s ease;
-        }
-        .hover-accent:hover {
-            color: var(--accent-ui) !important;
-        }
-    </style>
-    <link href="../assets/css/style.css" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
+<script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
@@ -340,7 +63,7 @@ try {
         <!-- Header Section -->
         <header class="row mb-4 align-items-center">
             <div class="col-md-9">
-                <h1 class="display-5 text-accent mb-2" style="font-weight: 800;">Registros de CAT</h1>
+                <h1 class="display-5 text-primary mb-2">Registros de CAT</h1>
                 <p class="lead text-secondary">
                     Faça filtros cruzados sobre as comunicações de acidentes de trabalho e navegue individualmente pelos registros brutos da CAT.
                 </p>
@@ -352,8 +75,8 @@ try {
             
             <!-- Sidebar: Filters -->
             <div class="col-lg-3">
-                <div class="glass-card p-4">
-                    <h5 class="mb-4 text-white-50"><i class="fa-solid fa-filter me-2"></i>Filtros de Busca</h5>
+                <div class="card p-4">
+                    <h5 class="mb-4 text-body-secondary"><i class="bi bi-funnel me-2"></i>Filtros de Busca</h5>
                     <form id="filter-form" onsubmit="event.preventDefault(); applyFilters();">
                         <div class="mb-3">
                             <label class="form-label inspect-label">Arquivo de Origem</label>
@@ -426,11 +149,11 @@ try {
                         </div>
                         
                         <div class="d-flex gap-2 mt-4">
-                            <button type="submit" id="btn-inspect-filter" class="btn btn-accent btn-icon rounded-circle" title="Filtrar" aria-label="Filtrar">
-                                <i class="fa-solid fa-magnifying-glass"></i>
+                            <button type="submit" id="btn-inspect-filter" class="btn btn-primary btn-icon rounded-circle" title="Filtrar" aria-label="Filtrar">
+                                <i class="bi bi-search"></i>
                             </button>
                             <button type="button" onclick="clearFilters()" class="btn btn-outline-secondary btn-icon rounded-circle" title="Limpar filtros" aria-label="Limpar filtros">
-                                <i class="fa-solid fa-filter-circle-xmark"></i>
+                                <i class="bi bi-funnel"></i>
                             </button>
                         </div>
                     </form>
@@ -439,21 +162,21 @@ try {
             
             <!-- Main Content: Record Viewer -->
             <div class="col-lg-9">
-                <div class="glass-card p-4 h-100 d-flex flex-column">
+                <div class="card p-4 h-100 d-flex flex-column">
                     
                     <!-- Search Results Summary Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 pb-3 border-bottom border-secondary">
-                        <h4 class="mb-0 text-light"><i class="fa-solid fa-address-card text-accent me-2"></i>CAT individual</h4>
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 pb-3 border-bottom border">
+                        <h4 class="mb-0 text-body"><i class="bi bi-card-text text-primary me-2"></i>CAT individual</h4>
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <span class="badge bg-accent-subtle text-accent border border-accent-subtle px-3 py-2 rounded-pill font-monospace" id="inspect-total-badge">0 registros encontrados</span>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill font-monospace" id="inspect-total-badge">0 registros encontrados</span>
                             <button type="button" id="btn-raw-json" class="btn btn-outline-secondary btn-icon rounded-circle" onclick="openRawJsonModal()" title="Mostrar JSON bruto" aria-label="Mostrar JSON bruto">
-                                <i class="fa-solid fa-code"></i>
+                                <i class="bi bi-code-slash"></i>
                             </button>
                         </div>
                     </div>
 
                     <div id="inspect-loading" class="d-none">
-                        <div class="skeleton-block skeleton-line" style="width: 45%;"></div>
+                        <div class="skeleton-block skeleton-line"></div>
                         <div class="row g-4 mb-4">
                             <div class="col-md-6">
                                 <div class="skeleton-block skeleton-card mb-3"></div>
@@ -475,15 +198,15 @@ try {
                     <div id="inspect-content" class="flex-fill d-none">
                         
                         <!-- File Source Info -->
-                        <div class="alert alert-secondary glass-card py-2 px-3 border border-secondary mb-4 small d-flex align-items-center flex-wrap gap-2">
-                            <i class="fa-solid fa-file-csv text-muted me-2 fs-5"></i>
-                            <span class="text-muted">Origem: <strong class="text-light" id="val-arquivo-origem">-</strong></span>
-                            <span class="ms-auto text-muted">ID rastreável: <strong class="text-light font-monospace" id="val-registro-origem">-</strong></span>
+                        <div class="alert alert-secondary card py-2 px-3 border border mb-4 small d-flex align-items-center flex-wrap gap-2">
+                            <i class="bi bi-filetype-csv text-muted me-2 fs-5"></i>
+                            <span class="text-muted">Origem: <strong class="text-body" id="val-arquivo-origem">-</strong></span>
+                            <span class="ms-auto text-muted">ID rastreável: <strong class="text-body font-monospace" id="val-registro-origem">-</strong></span>
                             <span class="hash-line text-muted d-flex align-items-center flex-wrap gap-2">
-                                <span>Hash extended: <strong class="text-light font-monospace" id="val-hash-extended">-</strong></span>
+                                <span>Hash extended: <strong class="text-body font-monospace" id="val-hash-extended">-</strong></span>
                                 <span id="val-duplicate-status" class="badge rounded-pill text-bg-secondary hash-duplicate-badge">Duplicidade não verificada</span>
                                 <button type="button" id="btn-hash-duplicates" class="btn btn-outline-warning btn-sm btn-icon rounded d-none" onclick="showHashDuplicates()" title="Ver registros com o mesmo hash" aria-label="Ver registros com o mesmo hash">
-                                    <i class="fa-solid fa-copy"></i>
+                                    <i class="bi bi-copy"></i>
                                 </button>
                             </span>
                         </div>
@@ -491,7 +214,7 @@ try {
                         <div class="row g-4 mb-4">
                             <!-- 1. Dados do trabalhador -->
                             <div class="col-12 semantic-section">
-                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-user me-2"></i>Dados do trabalhador</h6>
+                                <h6 class="mb-3 text-primary"><i class="bi bi-person me-2"></i>Dados do trabalhador</h6>
                                 
                                 <div class="mb-3">
                                     <div class="inspect-label">Sexo / Gênero</div>
@@ -508,18 +231,18 @@ try {
                                 <div class="mb-3">
                                     <div class="inspect-label d-flex justify-content-between align-items-center">
                                         <span>CBO (OcupaÃ§Ã£o)</span>
-                                        <button id="btn-cbo-hierarchy" class="btn btn-sm p-0 text-accent d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCboHierarchy()" title="Mostrar/ocultar hierarquia CBO" aria-label="Mostrar/ocultar hierarquia CBO">
-                                            <i class="fa-solid fa-sitemap"></i>
+                                        <button id="btn-cbo-hierarchy" class="btn btn-sm p-0 text-primary d-none" type="button" onclick="toggleCboHierarchy()" title="Mostrar/ocultar hierarquia CBO" aria-label="Mostrar/ocultar hierarquia CBO">
+                                            <i class="bi bi-diagram-3"></i>
                                         </button>
                                     </div>
                                     <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                        <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cbo-cod">-</span>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace me-1" id="val-cbo-cod">-</span>
                                         <span class="small" id="val-cbo-desc">-</span>
-                                        <div id="cbo-hierarchy-container" class="d-none mt-2 pt-2 border-top border-secondary w-100" style="font-size: 0.75rem; line-height: 1.4;">
-                                            <div class="mb-1 text-muted"><strong class="text-white-50">Grande Grupo:</strong> <span id="val-cbo-gg">-</span></div>
-                                            <div class="mb-1 text-muted"><strong class="text-white-50">Subgrupo Principal:</strong> <span id="val-cbo-sp">-</span></div>
-                                            <div class="mb-1 text-muted"><strong class="text-white-50">Subgrupo:</strong> <span id="val-cbo-sg">-</span></div>
-                                            <div class="mb-1 text-muted"><strong class="text-white-50">FamÃ­lia:</strong> <span id="val-cbo-fa">-</span></div>
+                                        <div id="cbo-hierarchy-container" class="d-none mt-2 pt-2 border-top border w-100">
+                                            <div class="mb-1 text-muted"><strong class="text-body-secondary">Grande Grupo:</strong> <span id="val-cbo-gg">-</span></div>
+                                            <div class="mb-1 text-muted"><strong class="text-body-secondary">Subgrupo Principal:</strong> <span id="val-cbo-sp">-</span></div>
+                                            <div class="mb-1 text-muted"><strong class="text-body-secondary">Subgrupo:</strong> <span id="val-cbo-sg">-</span></div>
+                                            <div class="mb-1 text-muted"><strong class="text-body-secondary">FamÃ­lia:</strong> <span id="val-cbo-fa">-</span></div>
                                         </div>
                                     </div>
                                 </div>
@@ -527,7 +250,7 @@ try {
                             
                             <!-- 2. Dados do acidente -->
                             <div class="col-12 semantic-section">
-                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-calendar-check me-2"></i>Dados do acidente</h6>
+                                <h6 class="mb-3 text-primary"><i class="bi bi-calendar-check me-2"></i>Dados do acidente</h6>
                                 
                                 <div class="row g-3">
                                     <div class="col-6">
@@ -570,17 +293,17 @@ try {
                                 <div class="mb-3">
                                     <div class="inspect-label d-flex justify-content-between align-items-center">
                                          <span>CID-10 (DiagnÃ³stico)</span>
-                                         <button id="btn-cid-hierarchy" class="btn btn-sm p-0 text-accent d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCidHierarchy()" title="Mostrar/ocultar hierarquia CID-10" aria-label="Mostrar/ocultar hierarquia CID-10">
-                                             <i class="fa-solid fa-sitemap"></i>
+                                         <button id="btn-cid-hierarchy" class="btn btn-sm p-0 text-primary d-none" type="button" onclick="toggleCidHierarchy()" title="Mostrar/ocultar hierarquia CID-10" aria-label="Mostrar/ocultar hierarquia CID-10">
+                                             <i class="bi bi-diagram-3"></i>
                                          </button>
                                      </div>
                                      <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                         <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cid-cod">-</span>
+                                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace me-1" id="val-cid-cod">-</span>
                                          <span class="small" id="val-cid-desc">-</span>
-                                         <div id="cid-hierarchy-container" class="d-none mt-2 pt-2 border-top border-secondary w-100" style="font-size: 0.75rem; line-height: 1.4;">
-                                             <div class="mb-1 text-muted"><strong class="text-white-50">CapÃ­tulo:</strong> <span id="val-cid-cap">-</span></div>
-                                             <div class="mb-1 text-muted"><strong class="text-white-50">Grupo:</strong> <span id="val-cid-grup">-</span></div>
-                                             <div class="mb-1 text-muted"><strong class="text-white-50">Categoria:</strong> <span id="val-cid-cat">-</span></div>
+                                         <div id="cid-hierarchy-container" class="d-none mt-2 pt-2 border-top border w-100">
+                                             <div class="mb-1 text-muted"><strong class="text-body-secondary">CapÃ­tulo:</strong> <span id="val-cid-cap">-</span></div>
+                                             <div class="mb-1 text-muted"><strong class="text-body-secondary">Grupo:</strong> <span id="val-cid-grup">-</span></div>
+                                             <div class="mb-1 text-muted"><strong class="text-body-secondary">Categoria:</strong> <span id="val-cid-cat">-</span></div>
                                          </div>
                                      </div>
                                 </div>
@@ -599,53 +322,53 @@ try {
 
                             <!-- 3. Classificações relacionadas -->
                             <div class="col-12 mt-2">
-                                <hr class="border-secondary my-4">
-                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-stethoscope me-2"></i>Códigos com dicionários</h6>
+                                <hr class="border my-4">
+                                <h6 class="mb-3 text-primary"><i class="bi bi-clipboard2-pulse me-2"></i>Códigos com dicionários</h6>
                                 
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <div class="inspect-label d-flex justify-content-between align-items-center">
                                             <span>CBO (Ocupação)</span>
-                                            <button id="btn-cbo-hierarchy" class="btn btn-sm p-0 text-accent d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCboHierarchy()" title="Mostrar/ocultar hierarquia CBO" aria-label="Mostrar/ocultar hierarquia CBO">
-                                                <i class="fa-solid fa-sitemap"></i>
+                                            <button id="btn-cbo-hierarchy" class="btn btn-sm p-0 text-primary d-none" type="button" onclick="toggleCboHierarchy()" title="Mostrar/ocultar hierarquia CBO" aria-label="Mostrar/ocultar hierarquia CBO">
+                                                <i class="bi bi-diagram-3"></i>
                                             </button>
                                         </div>
                                         <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                            <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cbo-cod">-</span>
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace me-1" id="val-cbo-cod">-</span>
                                             <span class="small" id="val-cbo-desc">-</span>
                                             
                                             <!-- Collapsible CBO Hierarchy Tree -->
-                                            <div id="cbo-hierarchy-container" class="d-none mt-2 pt-2 border-top border-secondary w-100" style="font-size: 0.75rem; line-height: 1.4;">
-                                                <div class="mb-1 text-muted"><strong class="text-white-50">Grande Grupo:</strong> <span id="val-cbo-gg">-</span></div>
-                                                <div class="mb-1 text-muted"><strong class="text-white-50">Subgrupo Principal:</strong> <span id="val-cbo-sp">-</span></div>
-                                                <div class="mb-1 text-muted"><strong class="text-white-50">Subgrupo:</strong> <span id="val-cbo-sg">-</span></div>
-                                                <div class="mb-1 text-muted"><strong class="text-white-50">Família:</strong> <span id="val-cbo-fa">-</span></div>
+                                            <div id="cbo-hierarchy-container" class="d-none mt-2 pt-2 border-top border w-100">
+                                                <div class="mb-1 text-muted"><strong class="text-body-secondary">Grande Grupo:</strong> <span id="val-cbo-gg">-</span></div>
+                                                <div class="mb-1 text-muted"><strong class="text-body-secondary">Subgrupo Principal:</strong> <span id="val-cbo-sp">-</span></div>
+                                                <div class="mb-1 text-muted"><strong class="text-body-secondary">Subgrupo:</strong> <span id="val-cbo-sg">-</span></div>
+                                                <div class="mb-1 text-muted"><strong class="text-body-secondary">Família:</strong> <span id="val-cbo-fa">-</span></div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="inspect-label">CNAE (Atividade)</div>
                                         <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                            <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cnae-cod">-</span>
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace me-1" id="val-cnae-cod">-</span>
                                             <span class="small" id="val-cnae-desc">-</span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="inspect-label d-flex justify-content-between align-items-center">
                                              <span>CID-10 (Diagnóstico)</span>
-                                             <button id="btn-cid-hierarchy" class="btn btn-sm p-0 text-accent d-none" type="button" style="font-size: 0.65rem;" onclick="toggleCidHierarchy()" title="Mostrar/ocultar hierarquia CID-10" aria-label="Mostrar/ocultar hierarquia CID-10">
-                                                 <i class="fa-solid fa-sitemap"></i>
+                                             <button id="btn-cid-hierarchy" class="btn btn-sm p-0 text-primary d-none" type="button" onclick="toggleCidHierarchy()" title="Mostrar/ocultar hierarquia CID-10" aria-label="Mostrar/ocultar hierarquia CID-10">
+                                                 <i class="bi bi-diagram-3"></i>
                                              </button>
                                          </div>
                                          <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                             <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cid-cod">-</span>
+                                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace me-1" id="val-cid-cod">-</span>
                                              <span class="small" id="val-cid-desc">-</span>
                                              
                                              <!-- Collapsible CID Hierarchy Tree -->
-                                             <div id="cid-hierarchy-container" class="d-none mt-2 pt-2 border-top border-secondary w-100" style="font-size: 0.75rem; line-height: 1.4;">
-                                                 <div class="mb-1 text-muted"><strong class="text-white-50">Capítulo:</strong> <span id="val-cid-cap">-</span></div>
-                                                 <div class="mb-1 text-muted"><strong class="text-white-50">Grupo:</strong> <span id="val-cid-grup">-</span></div>
-                                                 <div class="mb-1 text-muted"><strong class="text-white-50">Categoria:</strong> <span id="val-cid-cat">-</span></div>
+                                             <div id="cid-hierarchy-container" class="d-none mt-2 pt-2 border-top border w-100">
+                                                 <div class="mb-1 text-muted"><strong class="text-body-secondary">Capítulo:</strong> <span id="val-cid-cap">-</span></div>
+                                                 <div class="mb-1 text-muted"><strong class="text-body-secondary">Grupo:</strong> <span id="val-cid-grup">-</span></div>
+                                                 <div class="mb-1 text-muted"><strong class="text-body-secondary">Categoria:</strong> <span id="val-cid-cat">-</span></div>
                                              </div>
                                          </div>
                                     </div>
@@ -654,18 +377,18 @@ try {
 
                             <!-- 4. Grouped JSON fields -->
                             <div class="col-12 mt-2">
-                                <hr class="border-secondary my-4">
-                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-building me-2"></i>Dados da empresa</h6>
+                                <hr class="border my-4">
+                                <h6 class="mb-3 text-primary"><i class="bi bi-building me-2"></i>Dados da empresa</h6>
                                 <div class="company-profile-grid mb-3">
                                     <div>
                                         <div class="inspect-label">CNPJ do empregador</div>
                                         <div class="inspect-value entity-link-row">
                                             <span class="font-monospace entity-value" id="val-cnpj-empresa">-</span>
-                                            <a id="btn-cnpj-page" class="btn btn-outline-accent btn-icon btn-sm d-none" href="#" title="Abrir pagina do CNPJ" aria-label="Abrir pagina do CNPJ">
-                                                <i class="fa-solid fa-building-user"></i>
+                                            <a id="btn-cnpj-page" class="btn btn-outline-primary btn-icon btn-sm d-none" href="#" title="Abrir pagina do CNPJ" aria-label="Abrir pagina do CNPJ">
+                                                <i class="bi bi-building-gear"></i>
                                             </a>
                                             <button id="btn-cnpj-refresh" class="btn btn-outline-secondary btn-icon btn-sm d-none" type="button" onclick="refreshCurrentCompanyCnpj()" title="Atualizar OpenCNPJ" aria-label="Atualizar OpenCNPJ">
-                                                <i class="fa-solid fa-cloud-arrow-down"></i>
+                                                <i class="bi bi-cloud-arrow-down"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -673,8 +396,8 @@ try {
                                         <div class="inspect-label">Matriz</div>
                                         <div class="inspect-value entity-link-row">
                                             <span class="font-monospace entity-value" id="val-cnpj-matriz">-</span>
-                                            <a id="btn-matriz-page" class="btn btn-outline-accent btn-icon btn-sm d-none" href="#" title="Abrir pagina da matriz" aria-label="Abrir pagina da matriz">
-                                                <i class="fa-solid fa-sitemap"></i>
+                                            <a id="btn-matriz-page" class="btn btn-outline-primary btn-icon btn-sm d-none" href="#" title="Abrir pagina da matriz" aria-label="Abrir pagina da matriz">
+                                                <i class="bi bi-diagram-3"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -689,14 +412,14 @@ try {
                                     <div class="wide-field">
                                         <div class="inspect-label">CNAE (Atividade)</div>
                                         <div class="inspect-value d-flex flex-column align-items-start gap-1">
-                                            <span class="badge bg-accent-subtle text-accent border border-accent-subtle font-monospace me-1" id="val-cnae-cod">-</span>
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace me-1" id="val-cnae-cod">-</span>
                                             <span class="small" id="val-cnae-desc">-</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="company-profile-grid mb-3">
                                     <div class="wide-field d-flex justify-content-between align-items-center gap-2">
-                                        <h6 class="mb-0 text-accent" style="font-weight:600;"><i class="fa-solid fa-cloud me-2"></i>Enriquecimento OpenCNPJ</h6>
+                                        <h6 class="mb-0 text-primary"><i class="bi bi-cloud me-2"></i>Enriquecimento OpenCNPJ</h6>
                                         <span id="val-opencnpj-status" class="badge text-bg-secondary opencnpj-status">nao consultado</span>
                                     </div>
                                     <div class="wide-field">
@@ -723,34 +446,34 @@ try {
                                 <div id="company-fields-grid" class="extra-field-grid"></div>
                             </div>
                             <div class="col-12 mt-2">
-                                <hr class="border-secondary my-4">
-                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-landmark me-2"></i>Dados da unidade administrativa</h6>
+                                <hr class="border my-4">
+                                <h6 class="mb-3 text-primary"><i class="bi bi-bank me-2"></i>Dados da unidade administrativa</h6>
                                 <div id="admin-fields-grid" class="extra-field-grid"></div>
                             </div>
                             <div class="col-12 mt-2">
-                                <hr class="border-secondary my-4">
-                                <h6 class="mb-3 text-accent" style="font-weight:600;"><i class="fa-solid fa-list-check me-2"></i>Outros</h6>
+                                <hr class="border my-4">
+                                <h6 class="mb-3 text-primary"><i class="bi bi-list-check me-2"></i>Outros</h6>
                                 <div id="other-fields-grid" class="extra-field-grid"></div>
                             </div>
                             <div class="col-12 mt-2">
-                                <hr class="border-secondary my-4">
-                                <div class="d-flex align-items-center justify-content-center gap-3 bg-dark bg-opacity-25 px-3 py-2 rounded-pill border border-secondary border-opacity-10 shadow-sm mx-auto" style="max-width: 360px;">
-                                    <button onclick="navigateRecord('first')" class="btn btn-link btn-sm p-0 text-white-50 hover-accent" title="Primeiro registro" aria-label="Primeiro registro">
-                                        <i class="fa-solid fa-angles-left"></i>
+                                <hr class="border my-4">
+                                <div class="d-flex align-items-center justify-content-center gap-3 bg-body-tertiary bg-opacity-25 px-3 py-2 rounded-pill border border border-opacity-10 shadow-sm mx-auto">
+                                    <button onclick="navigateRecord('first')" class="btn btn-link btn-sm p-0 text-body-secondary hover-accent" title="Primeiro registro" aria-label="Primeiro registro">
+                                        <i class="bi bi-chevron-double-left"></i>
                                     </button>
-                                    <button onclick="navigateRecord('prev')" class="btn btn-link btn-sm p-0 text-white-50 hover-accent" title="Registro anterior" aria-label="Registro anterior">
-                                        <i class="fa-solid fa-angle-left"></i>
+                                    <button onclick="navigateRecord('prev')" class="btn btn-link btn-sm p-0 text-body-secondary hover-accent" title="Registro anterior" aria-label="Registro anterior">
+                                        <i class="bi bi-chevron-left"></i>
                                     </button>
-                                    <div class="d-flex align-items-center gap-1 font-monospace text-light small">
-                                        <input type="text" class="form-control form-control-sm text-center p-0 fw-semibold inspect-position-input" id="inspect-current" style="width: 60px;" value="0">
-                                        <span class="text-white-50">/</span>
+                                    <div class="d-flex align-items-center gap-1 font-monospace text-body small">
+                                        <input type="text" class="form-control form-control-sm text-center p-0 fw-semibold inspect-position-input" id="inspect-current" value="0">
+                                        <span class="text-body-secondary">/</span>
                                         <span id="inspect-total" class="fw-semibold">0</span>
                                     </div>
-                                    <button onclick="navigateRecord('next')" class="btn btn-link btn-sm p-0 text-white-50 hover-accent" title="Próximo registro" aria-label="Próximo registro">
-                                        <i class="fa-solid fa-angle-right"></i>
+                                    <button onclick="navigateRecord('next')" class="btn btn-link btn-sm p-0 text-body-secondary hover-accent" title="Próximo registro" aria-label="Próximo registro">
+                                        <i class="bi bi-chevron-right"></i>
                                     </button>
-                                    <button onclick="navigateRecord('last')" class="btn btn-link btn-sm p-0 text-white-50 hover-accent" title="Último registro" aria-label="Último registro">
-                                        <i class="fa-solid fa-angles-right"></i>
+                                    <button onclick="navigateRecord('last')" class="btn btn-link btn-sm p-0 text-body-secondary hover-accent" title="Último registro" aria-label="Último registro">
+                                        <i class="bi bi-chevron-double-right"></i>
                                     </button>
                                 </div>
                             </div>
@@ -760,7 +483,7 @@ try {
 
                     <!-- Empty State -->
                     <div id="inspect-empty" class="text-center py-5 text-secondary my-auto">
-                        <i class="fa-solid fa-magnifying-glass display-4 mb-3 d-block text-muted"></i>
+                        <i class="bi bi-search display-4 mb-3 d-block text-muted"></i>
                         <p class="mb-0">Nenhum registro correspondente aos filtros selecionados foi encontrado.</p>
                     </div>
 
@@ -773,17 +496,17 @@ try {
 
     <div class="modal fade" id="rawJsonModal" tabindex="-1" aria-labelledby="rawJsonModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
-            <div class="modal-content glass-card border border-secondary">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title text-accent" id="rawJsonModalLabel"><i class="fa-solid fa-code me-2"></i>JSON bruto da CAT</h5>
+            <div class="modal-content card border border">
+                <div class="modal-header border">
+                    <h5 class="modal-title text-primary" id="rawJsonModalLabel"><i class="bi bi-code-slash me-2"></i>JSON bruto da CAT</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <pre id="raw-json-panel" class="raw-json-panel mb-0"></pre>
                 </div>
-                <div class="modal-footer border-secondary">
+                <div class="modal-footer border">
                     <button type="button" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar">
-                        <i class="fa-solid fa-xmark"></i>
+                        <i class="bi bi-x-lg"></i>
                     </button>
                 </div>
             </div>
@@ -791,7 +514,7 @@ try {
     </div>
 
     <!-- Bootstrap 5 Bundle JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
     <!-- Javascript Actions and AJAX CAT Record Engine -->
     <script>
@@ -1052,7 +775,7 @@ try {
                 const emptyArea = document.getElementById('inspect-empty');
                 if (emptyArea) {
                     emptyArea.classList.remove('d-none');
-                    emptyArea.innerHTML = '<i class="fa-solid fa-triangle-exclamation display-4 mb-3 d-block text-danger"></i><p class="mb-0">Não foi possível carregar o registro solicitado.</p><p class="small text-muted mt-2 mb-0">' + htmlspecialchars(error.message || String(error)) + '</p>';
+                    emptyArea.innerHTML = '<i class="bi bi-exclamation-triangle display-4 mb-3 d-block text-danger"></i><p class="mb-0">Não foi possível carregar o registro solicitado.</p><p class="small text-muted mt-2 mb-0">' + htmlspecialchars(error.message || String(error)) + '</p>';
                 }
             } finally {
                 setCatLoading(false);
@@ -1073,7 +796,7 @@ try {
             filterButton.disabled = isLoading;
             filterButton.setAttribute('title', isLoading ? 'Consultando registros' : 'Filtrar');
             filterButton.setAttribute('aria-label', isLoading ? 'Consultando registros' : 'Filtrar');
-            filterButton.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
+            filterButton.innerHTML = '<i class="bi bi-search"></i>';
         }
 
         function openRawJsonModal() {

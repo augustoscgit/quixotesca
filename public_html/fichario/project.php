@@ -663,39 +663,11 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= h((string) ($project['title'] ?? 'Projeto')) ?> - Projetos - Fichario Academico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <style>
-        .project-layout {
-            display: block;
-        }
-
-        .section-context {
-            min-height: 9rem;
-        }
-
-        .note-meta {
-            color: #94a3b8;
-            font-size: 0.78rem;
-        }
-
-
-        .icon-button {
-            width: 2rem;
-            height: 2rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            border-radius: 999px;
-        }
-
-        /* Media query removed since sidebar layout is single-column block now */
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
@@ -708,15 +680,18 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
                 <li class="breadcrumb-item"><a href="projects.php">Projetos</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page"><?= h((string) ($project['title'] ?? 'Projeto')) ?></li>
+                <li class="breadcrumb-item active text-body" aria-current="page"><?= h((string) ($project['title'] ?? 'Projeto')) ?></li>
             </ol>
         </nav>
 
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
             <div>
-                <h1 class="h3 mb-1 text-white fw-bold"><?= h((string) ($project['title'] ?? 'Projeto')) ?></h1>
+                <h1 class="h3 mb-1 text-body fw-bold"><?= h((string) ($project['title'] ?? 'Projeto')) ?></h1>
             </div>
-            <div class="d-flex gap-2">
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-outline-primary rounded-pill px-4 d-flex align-items-center gap-2" href="export_project.php?id=<?= $projectId ?>">
+                    <i class="bi bi-robot"></i> Exportar para agente
+                </a>
                 <button class="btn btn-outline-primary rounded-pill px-4 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#editProjectModal">
                     <i class="bi bi-pencil"></i> Editar projeto
                 </button>
@@ -739,32 +714,32 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
             </div>
         <?php endif; ?>
 
-        <section class="glass-card p-4 mb-4">
+        <section class="card p-4 mb-4">
             <!-- Sobre o Projeto -->
             <div class="mb-4">
-                <h2 class="h5 text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                <h2 class="h5 text-body fw-bold mb-3 d-flex align-items-center gap-2">
                     <i class="bi bi-info-circle text-primary"></i> Sobre o Projeto
                 </h2>
                 <?php if (trim((string) ($project['description'] ?? '')) !== ''): ?>
-                    <div class="text-white-50 small mb-0" style="white-space: pre-wrap; line-height: 1.6; font-size: 0.88rem;"><?= h((string) $project['description']) ?></div>
+                    <div class="text-body-secondary small mb-0"><?= h((string) $project['description']) ?></div>
                 <?php else: ?>
                     <div class="text-secondary small mb-0">Sem descrição cadastrada.</div>
                 <?php endif; ?>
             </div>
 
-            <hr class="border-secondary border-opacity-25 my-4">
+            <hr class="border border-opacity-25 my-4">
 
             <!-- Tags do projeto -->
             <div>
                 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
                     <div>
-                        <h2 class="h5 text-white fw-bold mb-1">Tags do projeto</h2>
+                        <h2 class="h5 text-body fw-bold mb-1">Tags do projeto</h2>
                         <p class="text-secondary mb-0 small">Conceitos gerais que orientam o projeto como um todo.</p>
                     </div>
                 </div>
 
             <?php if ($projectTags === []): ?>
-                <div class="p-3 rounded-3 bg-black bg-opacity-25 text-secondary text-center mb-3">
+                <div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">
                     Nenhuma tag vinculada ao projeto.
                 </div>
             <?php else: ?>
@@ -775,14 +750,14 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                             $tagColor = get_tag_colors((string) ($tag['category'] ?? ''));
                         ?>
                         <div class="d-inline-flex align-items-center gap-2 badge border tag-badge"
-                             style="background:<?= $tagColor['bg'] ?>; color:<?= $tagColor['text'] ?>; border-color:<?= $tagColor['border'] ?> !important;"
+                            
                              <?= tag_tooltip_attrs($tag) ?>>
-                            <a class="text-decoration-none" style="color: inherit;" href="tag_view.php?tag_id=<?= $tagId ?>"><?= h((string) $tag['name']) ?></a>
+                            <a class="text-decoration-none" href="tag_view.php?tag_id=<?= $tagId ?>"><?= h((string) $tag['name']) ?></a>
                             <form method="post" class="m-0" data-confirm-message="Remover esta tag do projeto?">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="unlink_project_tag">
                                 <input type="hidden" name="tag_id" value="<?= $tagId ?>">
-                                <button class="btn btn-link btn-sm p-0 border-0 text-danger" type="submit" title="Remover tag" style="line-height: 1;">&times;</button>
+                                <button class="btn btn-link btn-sm p-0 border-0 text-danger" type="submit" title="Remover tag">&times;</button>
                             </form>
                         </div>
                     <?php endforeach; ?>
@@ -816,7 +791,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
         <div class="project-layout">
             <section class="vstack gap-4">
                 <div class="d-flex justify-content-end align-items-center gap-2 mb-1">
-                    <button class="btn btn-sm btn-outline-secondary rounded-pill text-white px-3" type="button" onclick="toggleAllSections(this)">
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill text-body px-3" type="button" onclick="toggleAllSections(this)">
                         Recolher todas as seções
                     </button>
                     <button class="btn btn-primary btn-sm rounded-pill px-3 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#newSectionModal">
@@ -824,11 +799,11 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                     </button>
                 </div>
                 <!-- Notas vinculadas diretamente ao projeto -->
-                <article class="glass-card p-4" id="section-general">
+                <article class="card p-4" id="section-general">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
                         <div>
-                            <h2 class="h5 text-white fw-bold mb-1">
-                                <button class="btn btn-link p-0 text-white text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse('general')">
+                            <h2 class="h5 text-body fw-bold mb-1">
+                                <button class="btn btn-link p-0 text-body text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse('general')">
                                     <i class="bi bi-chevron-down section-toggle-icon" id="section-toggle-icon-general"></i>
                                     Notas vinculadas diretamente ao projeto
                                     <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2 rounded-pill"><?= count($generalNotes) ?> nota(s)</span>
@@ -838,7 +813,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                         </div>
                         <?php if ($generalNotes !== []): ?>
                             <div class="d-flex align-items-center gap-3">
-                                <button class="btn btn-sm btn-link p-0 text-secondary text-decoration-none" style="font-size: 0.72rem;" type="button" onclick="toggleAllMarkings(this, '.glass-card')">
+                                <button class="btn btn-sm btn-link p-0 text-secondary text-decoration-none" type="button" onclick="toggleAllMarkings(this, '.card')">
                                     Expandir todas
                                 </button>
                                 <span class="text-secondary small"><?= count($generalNotes) ?> nota(s)</span>
@@ -848,7 +823,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
 
                     <div id="section-body-general" class="section-body">
                         <?php if ($generalNotes === []): ?>
-                        <div class="p-3 rounded-3 bg-black bg-opacity-25 text-secondary text-center mb-3">
+                        <div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">
                             Nenhuma nota vinculada diretamente ao projeto.
                         </div>
                     <?php else: ?>
@@ -859,10 +834,10 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                     $quoteText = trim((string) ($note['quote_text'] ?? ''));
                                     $comment = trim((string) ($note['comment'] ?? ''));
                                 ?>
-                                <div id="note-card-<?= $generalSectionId ?>-<?= $noteId ?>" class="note-card p-2 rounded-3 border border-secondary border-opacity-25 bg-black bg-opacity-25 small text-white-50">
+                                <div id="note-card-<?= $generalSectionId ?>-<?= $noteId ?>" class="note-card p-2 rounded-3 border border border-opacity-25 bg-body-tertiary bg-opacity-25 small text-body-secondary">
                                     <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
                                         <div class="min-w-0">
-                                            <a class="text-white fw-semibold text-decoration-none" href="view.php?id=<?= (int) $note['article_id'] ?>">
+                                            <a class="text-body fw-semibold text-decoration-none" href="view.php?id=<?= (int) $note['article_id'] ?>">
                                                 <?= h((string) $note['article_title']) ?>
                                             </a>
                                             <?php if (trim((string) ($note['year'] ?? '')) !== ''): ?>
@@ -884,7 +859,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                         ?>
                                                         <a href="tag_view.php?tag_id=<?= (int) $noteTag['id'] ?>"
                                                            class="badge border tag-badge text-decoration-none"
-                                                           style="background:<?= $nColor['bg'] ?>; color:<?= $nColor['text'] ?>; border-color:<?= $nColor['border'] ?> !important;"
+                                                          
                                                            <?= tag_tooltip_attrs($noteTag) ?>>
                                                             <?= h($noteTag['name']) ?>
                                                         </a>
@@ -899,7 +874,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 <input type="hidden" name="section_id" value="<?= $generalSectionId ?>">
                                                 <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                 <input type="hidden" name="direction" value="up">
-                                                <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Subir nota">↑</button>
+                                                <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Subir nota">↑</button>
                                             </form>
                                             <form method="post" class="m-0" data-busy-ignore="1">
                                                 <?= csrf_field() ?>
@@ -907,7 +882,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 <input type="hidden" name="section_id" value="<?= $generalSectionId ?>">
                                                 <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                 <input type="hidden" name="direction" value="down">
-                                                <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Descer nota">↓</button>
+                                                <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Descer nota">↓</button>
                                             </form>
                                             <form method="post" class="m-0 d-inline-block">
                                                 <?= csrf_field() ?>
@@ -923,7 +898,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                     <?php endforeach; ?>
                                                 </select>
                                             </form>
-                                            <button class="btn btn-outline-secondary icon-button text-white" 
+                                            <button class="btn btn-outline-secondary icon-button text-body" 
                                                     type="button" 
                                                     title="Editar nota" 
                                                     data-bs-toggle="modal" 
@@ -964,7 +939,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                 </article>
 
                 <?php if ($normalSections === []): ?>
-                    <div class="glass-card p-5 text-center text-secondary">
+                    <div class="card p-5 text-center text-secondary">
                         <p class="mb-0">Nenhuma seção criada. Comece pelo painel lateral.</p>
                     </div>
                 <?php else: ?>
@@ -974,12 +949,12 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                             $sectionNotes = $notesBySection[$sectionId] ?? [];
                             $linkedInSection = $linkedNoteIdsBySection[$sectionId] ?? [];
                         ?>
-                        <article class="glass-card p-4" id="section-<?= $sectionId ?>">
+                        <article class="card p-4" id="section-<?= $sectionId ?>">
                             <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
                                 <div>
                                     <div class="text-secondary small fw-semibold mb-1">Seção <?= $index + 1 ?></div>
-                                    <h2 class="h4 text-white fw-bold mb-0">
-                                        <button class="btn btn-link p-0 text-white text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse(<?= $sectionId ?>)">
+                                    <h2 class="h4 text-body fw-bold mb-0">
+                                        <button class="btn btn-link p-0 text-body text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse(<?= $sectionId ?>)">
                                             <i class="bi bi-chevron-down section-toggle-icon" id="section-toggle-icon-<?= $sectionId ?>"></i>
                                             <?= h((string) $section['title']) ?>
                                             <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2 rounded-pill"><?= count($sectionNotes) ?> nota(s)</span>
@@ -992,16 +967,16 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                         <input type="hidden" name="action" value="move_section">
                                         <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                         <input type="hidden" name="direction" value="up">
-                                        <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Subir seção">↑</button>
+                                        <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Subir seção">↑</button>
                                     </form>
                                     <form method="post" data-busy-ignore="1">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="action" value="move_section">
                                         <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                         <input type="hidden" name="direction" value="down">
-                                        <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Descer seção">↓</button>
+                                        <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Descer seção">↓</button>
                                     </form>
-                                    <button class="btn btn-outline-secondary icon-button text-white" 
+                                    <button class="btn btn-outline-secondary icon-button text-body" 
                                             type="button" 
                                             title="Editar seção" 
                                             data-bs-toggle="modal" 
@@ -1022,14 +997,14 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
 
                             <div id="section-body-<?= $sectionId ?>" class="section-body">
                                 <?php if (trim((string) ($section['context'] ?? '')) !== ''): ?>
-                                <p class="text-white-50 small mb-4" style="white-space: pre-wrap; line-height: 1.6; font-size: 0.88rem;"><?= h((string) $section['context']) ?></p>
+                                <p class="text-body-secondary small mb-4"><?= h((string) $section['context']) ?></p>
                             <?php endif; ?>
 
-                            <div class="border-top border-secondary border-opacity-25 pt-4">
+                            <div class="border-top border border-opacity-25 pt-4">
                                  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
-                                     <h3 class="h5 text-white fw-bold mb-0">Notas vinculadas</h3>
+                                     <h3 class="h5 text-body fw-bold mb-0">Notas vinculadas</h3>
                                      <div class="d-flex align-items-center gap-3">
-                                         <button class="btn btn-sm btn-link p-0 text-secondary text-decoration-none" style="font-size: 0.72rem;" type="button" onclick="toggleAllMarkings(this, '.border-top')">
+                                         <button class="btn btn-sm btn-link p-0 text-secondary text-decoration-none" type="button" onclick="toggleAllMarkings(this, '.border-top')">
                                              Expandir todas
                                          </button>
                                          <span class="text-secondary small"><?= count($sectionNotes) ?> nota(s)</span>
@@ -1037,7 +1012,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                  </div>
 
                                 <?php if ($sectionNotes === []): ?>
-                                    <div class="p-3 rounded-3 bg-black bg-opacity-25 text-secondary text-center mb-3">
+                                    <div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">
                                         Nenhuma nota vinculada a esta seção.
                                     </div>
                                 <?php else: ?>
@@ -1048,10 +1023,10 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 $quoteText = trim((string) ($note['quote_text'] ?? ''));
                                                 $comment = trim((string) ($note['comment'] ?? ''));
                                             ?>
-                                            <div id="note-card-<?= $sectionId ?>-<?= $noteId ?>" class="note-card p-2 rounded-3 border border-secondary border-opacity-25 bg-black bg-opacity-25 small text-white-50">
+                                            <div id="note-card-<?= $sectionId ?>-<?= $noteId ?>" class="note-card p-2 rounded-3 border border border-opacity-25 bg-body-tertiary bg-opacity-25 small text-body-secondary">
                                                 <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
                                                     <div class="min-w-0">
-                                                        <a class="text-white fw-semibold text-decoration-none" href="view.php?id=<?= (int) $note['article_id'] ?>">
+                                                        <a class="text-body fw-semibold text-decoration-none" href="view.php?id=<?= (int) $note['article_id'] ?>">
                                                             <?= h((string) $note['article_title']) ?>
                                                         </a>
                                                         <?php if (trim((string) ($note['year'] ?? '')) !== ''): ?>
@@ -1073,7 +1048,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                                     ?>
                                                                     <a href="tag_view.php?tag_id=<?= (int) $noteTag['id'] ?>"
                                                                        class="badge border tag-badge text-decoration-none"
-                                                                       style="background:<?= $nColor['bg'] ?>; color:<?= $nColor['text'] ?>; border-color:<?= $nColor['border'] ?> !important;"
+                                                                      
                                                                        <?= tag_tooltip_attrs($noteTag) ?>>
                                                                         <?= h($noteTag['name']) ?>
                                                                     </a>
@@ -1088,7 +1063,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                             <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                                             <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                             <input type="hidden" name="direction" value="up">
-                                                            <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Subir nota">↑</button>
+                                                            <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Subir nota">↑</button>
                                                         </form>
                                                         <form method="post" class="m-0" data-busy-ignore="1">
                                                             <?= csrf_field() ?>
@@ -1096,7 +1071,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                             <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                                             <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                             <input type="hidden" name="direction" value="down">
-                                                            <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Descer nota">↓</button>
+                                                            <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Descer nota">↓</button>
                                                         </form>
                                                         <form method="post" class="m-0 d-inline-block">
                                                             <?= csrf_field() ?>
@@ -1112,7 +1087,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                                 <?php endforeach; ?>
                                                             </select>
                                                         </form>
-                                                        <button class="btn btn-outline-secondary icon-button text-white" 
+                                                        <button class="btn btn-outline-secondary icon-button text-body" 
                                                                 type="button" 
                                                                 title="Editar nota" 
                                                                 data-bs-toggle="modal" 
@@ -1163,9 +1138,9 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
     <!-- Modal: Editar Projeto -->
     <div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content glass-card">
-                <div class="modal-header border-secondary border-opacity-25">
-                    <h5 class="modal-title text-white fw-bold" id="editProjectModalLabel">Editar Dados do Projeto</h5>
+            <div class="modal-content card">
+                <div class="modal-header border border-opacity-25">
+                    <h5 class="modal-title text-body fw-bold" id="editProjectModalLabel">Editar Dados do Projeto</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form method="post">
@@ -1181,7 +1156,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                             <textarea class="form-control" id="project-modal-description" name="description" rows="5"><?= h((string) ($project['description'] ?? '')) ?></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer border-secondary border-opacity-25">
+                    <div class="modal-footer border border-opacity-25">
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar alterações</button>
                     </div>
@@ -1193,9 +1168,9 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
     <!-- Modal: Nova Seção -->
     <div class="modal fade" id="newSectionModal" tabindex="-1" aria-labelledby="newSectionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content glass-card">
-                <div class="modal-header border-secondary border-opacity-25">
-                    <h5 class="modal-title text-white fw-bold" id="newSectionModalLabel">Nova Seção</h5>
+            <div class="modal-content card">
+                <div class="modal-header border border-opacity-25">
+                    <h5 class="modal-title text-body fw-bold" id="newSectionModalLabel">Nova Seção</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form method="post">
@@ -1211,7 +1186,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                             <textarea class="form-control" id="new-section-modal-context" name="context" rows="6" placeholder="Texto longo de contexto da seção..."></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer border-secondary border-opacity-25">
+                    <div class="modal-footer border border-opacity-25">
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary rounded-pill px-4">Criar seção</button>
                     </div>
@@ -1223,9 +1198,9 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
     <!-- Modal: Editar Seção -->
     <div class="modal fade" id="editSectionModal" tabindex="-1" aria-labelledby="editSectionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content glass-card">
-                <div class="modal-header border-secondary border-opacity-25">
-                    <h5 class="modal-title text-white fw-bold" id="editSectionModalLabel">Editar Seção</h5>
+            <div class="modal-content card">
+                <div class="modal-header border border-opacity-25">
+                    <h5 class="modal-title text-body fw-bold" id="editSectionModalLabel">Editar Seção</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form method="post" data-busy-ignore="1">
@@ -1242,7 +1217,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                             <textarea class="form-control" id="edit-section-context" name="context" rows="6" placeholder="Contexto longo desta seção..."></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer border-secondary border-opacity-25">
+                    <div class="modal-footer border border-opacity-25">
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar alterações</button>
                     </div>
@@ -1254,9 +1229,9 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
     <!-- Modal: Editar Nota -->
     <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content glass-card">
-                <div class="modal-header border-secondary border-opacity-25">
-                    <h5 class="modal-title text-white fw-bold" id="editNoteModalLabel">Editar Nota</h5>
+            <div class="modal-content card">
+                <div class="modal-header border border-opacity-25">
+                    <h5 class="modal-title text-body fw-bold" id="editNoteModalLabel">Editar Nota</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form method="post" id="editNoteForm" data-busy-ignore="1">
@@ -1265,15 +1240,15 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                     <input type="hidden" name="note_id" id="edit-note-id" value="">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label text-white-50" for="edit-note-quote">Citação</label>
+                            <label class="form-label text-body-secondary" for="edit-note-quote">Citação</label>
                             <textarea class="form-control" id="edit-note-quote" name="quote_text" rows="5" placeholder="Texto da citação..."></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-white-50" for="edit-note-comment">Observação</label>
+                            <label class="form-label text-body-secondary" for="edit-note-comment">Observação</label>
                             <textarea class="form-control" id="edit-note-comment" name="comment" rows="5" placeholder="Observações/Comentários..."></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer border-secondary border-opacity-25">
+                    <div class="modal-footer border border-opacity-25">
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar alterações</button>
                     </div>
@@ -1282,7 +1257,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=20260625e"></script>
     <script>
         const editSectionModal = document.getElementById('editSectionModal');

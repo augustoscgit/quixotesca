@@ -78,7 +78,7 @@ function render_markdown(string $markdown): string
             $flushParagraph();
             $closeList();
             $level = strlen($m[1]);
-            $class = $level === 1 ? 'h3 text-white fw-bold mt-0' : ($level === 2 ? 'h5 text-white fw-semibold mt-4' : 'h6 text-secondary text-uppercase mt-3');
+            $class = $level === 1 ? 'h3 text-body fw-bold mt-0' : ($level === 2 ? 'h5 text-body fw-semibold mt-4' : 'h6 text-secondary text-uppercase mt-3');
             $html .= '<h' . $level . ' class="' . $class . '">' . h($m[2]) . '</h' . $level . '>';
             continue;
         }
@@ -143,57 +143,23 @@ $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : ''
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Documentação - Fichário Acadêmico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <style>
-        .blob { animation: floatBlob 12s infinite alternate ease-in-out; }
-        .legacy-decoration-secondary { animation-delay: -6s; }
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 40px) scale(1.15); }
-        }
-        .markdown-preview p,
-        .markdown-preview li {
-            color: #d1d5db;
-            line-height: 1.65;
-        }
-        .markdown-preview code {
-            color: #bfdbfe;
-            background: rgba(59, 130, 246, 0.12);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 6px;
-            padding: 0.1rem 0.35rem;
-        }
-        .doc-editor {
-            min-height: min(72vh, 860px);
-            font-family: Consolas, Monaco, monospace;
-            font-size: 0.92rem;
-            line-height: 1.55;
-            resize: vertical;
-        }
-        .doc-actions .btn {
-            min-width: 2.4rem;
-        }
-        .markdown-preview {
-            min-height: min(64vh, 760px);
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
 
     <?php render_admin_navbar('docs'); ?>
-    <main class="container py-4 main-container" style="position: relative; z-index: 10;">
+    <main class="container py-4 main-container">
         <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-center mb-4">
             <div>
-                <h1 class="h3 text-white fw-bold mb-1">Documentação</h1>
+                <h1 class="h3 text-body fw-bold mb-1">Documentação</h1>
                 <p class="text-secondary mb-0">Requisitos, manutenção e orientações internas editáveis em Markdown.</p>
             </div>
-            <a class="btn btn-outline-secondary text-white rounded-pill px-3" href="admin.php">Voltar ao painel</a>
+            <a class="btn btn-outline-secondary text-body rounded-pill px-3" href="admin.php">Voltar ao painel</a>
         </div>
 
         <?php if ($notice !== ''): ?>
@@ -211,11 +177,11 @@ $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : ''
 
         <div class="row g-4">
             <aside class="col-lg-3">
-                <div class="glass-card p-3">
-                    <h2 class="h6 text-white fw-bold mb-3">Arquivos</h2>
+                <div class="card p-3">
+                    <h2 class="h6 text-body fw-bold mb-3">Arquivos</h2>
                     <div class="vstack gap-2">
                         <?php foreach ($docs as $key => $item): ?>
-                            <a class="btn text-start rounded-3 <?= $selected === $key ? 'btn-primary' : 'btn-outline-secondary text-white' ?>" href="admin_docs.php?doc=<?= h($key) ?>">
+                            <a class="btn text-start rounded-3 <?= $selected === $key ? 'btn-primary' : 'btn-outline-secondary text-body' ?>" href="admin_docs.php?doc=<?= h($key) ?>">
                                 <span class="fw-semibold d-block"><?= h($item['title']) ?></span>
                                 <span class="small opacity-75"><?= h($item['description']) ?></span>
                             </a>
@@ -225,12 +191,12 @@ $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : ''
             </aside>
 
             <section class="col-lg-9">
-                <form method="post" class="glass-card p-4">
+                <form method="post" class="card p-4">
                     <?= csrf_field() ?>
                     <input type="hidden" name="doc" value="<?= h($selected) ?>">
                     <div class="d-flex flex-column flex-md-row justify-content-between gap-3 align-items-md-start mb-3">
                         <div>
-                            <h2 class="h5 text-white fw-bold mb-1"><?= h($doc['title']) ?></h2>
+                            <h2 class="h5 text-body fw-bold mb-1"><?= h($doc['title']) ?></h2>
                             <p class="text-secondary small mb-0"><?= h(str_replace(__DIR__ . DIRECTORY_SEPARATOR, '', $doc['path'])) ?></p>
                         </div>
                         <div class="d-flex gap-2 doc-actions">
@@ -242,7 +208,7 @@ $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : ''
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
                                 <span class="ms-1">Salvar</span>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary text-white rounded-pill px-3 d-none" id="btn-doc-cancel" title="Cancelar edição">
+                            <button type="button" class="btn btn-outline-secondary text-body rounded-pill px-3 d-none" id="btn-doc-cancel" title="Cancelar edição">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                 <span class="ms-1">Cancelar</span>
                             </button>
@@ -260,7 +226,7 @@ $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : ''
             </section>
         </div>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=20260603c"></script>
     <script>
         const docPreview = document.getElementById('doc-preview');

@@ -19,21 +19,22 @@ $currentClientId = $config['google']['client_id'] ?? '';
 $isOAuthDummy    = str_starts_with($currentClientId, 'dummy') || $currentClientId === '';
 $isEnvLocal      = ($config['app']['env'] ?? '') === 'local';
 
-$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
-$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js';
+$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css';
+$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js';
 ?>
 <!doctype html>
 <html lang="pt-BR" data-module="carex">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light">
     <title>CAREX | Desenvolvimento</title>
     <link href="../assets/favicon.png" rel="icon" type="image/png">
-    <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="assets/app.css" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <?php
@@ -56,9 +57,9 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
             <li class="nav-item ms-auto">
                 <button id="ambienteTab" class="nav-link d-flex align-items-center gap-1" type="button" data-view="ambiente">
                     <?php if ($isOAuthDummy && $isEnvLocal): ?>
-                        <span class="badge bg-warning rounded-circle p-1" style="width:8px;height:8px;display:inline-block;"></span>
+                        <span class="badge bg-warning rounded-circle p-1"></span>
                     <?php else: ?>
-                        <span class="badge bg-success rounded-circle p-1" style="width:8px;height:8px;display:inline-block;"></span>
+                        <span class="badge bg-success rounded-circle p-1"></span>
                     <?php endif; ?>
                     Ambiente
                 </button>
@@ -90,8 +91,8 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                 <div id="filterSection" class="card mb-3 border-light-subtle shadow-sm bg-body-tertiary" hidden>
                     <div class="card-body py-2 px-3">
                         <div class="d-flex align-items-center justify-content-between mb-2">
-                            <span class="fw-semibold small text-uppercase text-body-secondary" style="letter-spacing: 0.5px;">Filtros Dinâmicos</span>
-                            <button id="addFilterBtn" class="btn btn-xs btn-outline-primary py-1 px-2 small" style="font-size: 0.75rem;" type="button">
+                            <span class="fw-semibold small text-uppercase text-body-secondary">Filtros Dinâmicos</span>
+                            <button id="addFilterBtn" class="btn btn-xs btn-outline-primary py-1 px-2 small" type="button">
                                 <strong>+ Adicionar Filtro</strong>
                             </button>
                         </div>
@@ -129,7 +130,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
 
                 <ul id="objectTypeTabs" class="nav nav-tabs mb-3" aria-label="Tipos de objetos da base"></ul>
                 
-                <div class="mb-3" style="max-width: 350px;">
+                <div class="mb-3">
                     <input id="objectsFilter" class="form-control form-control-sm" type="search" placeholder="Buscar objetos da base..." autocomplete="off">
                 </div>
 
@@ -163,8 +164,8 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                             <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                 <span class="fw-bold text-primary" id="docViewerTitle">Selecione um documento</span>
                             </div>
-                            <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
-                                <div id="docViewerContent" class="text-body" style="font-size: 0.95rem; line-height: 1.6;">
+                            <div class="card-body">
+                                <div id="docViewerContent" class="text-body">
                                     <p class="text-body-secondary mb-0">Selecione um dos documentos markdown ao lado para visualizar seu conteúdo diretamente no painel de desenvolvimento.</p>
                                 </div>
                             </div>
@@ -187,7 +188,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                     <?php endif; ?>
                 </div>
 
-                <div class="row g-3" style="max-width: 900px;">
+                <div class="row g-3">
 
                     <!-- Card: APP_ENV -->
                     <div class="col-12 col-md-6">
@@ -217,12 +218,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                         <div class="card h-100 border-<?= $isOAuthDummy ? 'warning' : 'success' ?>-subtle shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex align-items-center gap-2 mb-2">
-                                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0">
-                                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
-                                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
-                                    </svg>
+                                    <i class="bi bi-shield-check text-primary"></i>
                                     <span class="fw-semibold">Google OAuth</span>
                                 </div>
                                 <?php if ($isOAuthDummy): ?>
@@ -328,7 +324,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
         </div>
     </div>
 
-    <script src="<?= Security::e($bootstrapJs) ?>" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="<?= Security::e($bootstrapJs) ?>" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=<?= time() ?>"></script>
 </body>
 </html>

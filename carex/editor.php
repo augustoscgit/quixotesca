@@ -44,8 +44,8 @@ if (class_exists(Security::class)) {
 }
 
 $markdownContent = is_file($mdFile) ? (string) file_get_contents($mdFile) : '';
-$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
-$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js';
+$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css';
+$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js';
 ?>
 <!doctype html>
 <html lang="pt-BR" data-module="carex">
@@ -54,14 +54,13 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CAREX | Editor de Documentacao</title>
     <link href="public/assets/favicon.png" rel="icon" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="<?= editor_escape($bootstrapCss) ?>" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: var(--bs-body-font-family);
         }
 
         .editor-shell {

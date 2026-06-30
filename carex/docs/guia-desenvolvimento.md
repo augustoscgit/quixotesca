@@ -60,7 +60,8 @@ read_only=on
 - Namespace `Carex\` para classes em `src/`.
 - Sem framework PHP.
 - Sem build frontend.
-- CSS central em `public/assets/app.css`.
+- CSS canonico da plataforma em `../../docs/bootstrap-first-planejamento.md`, `../../docs/bootstrap-first-exemplos.md`, `../../docs/tema-css-bootstrap-modulos.md` e `../../public_html/assets/css/style.css`.
+- CSS local do CAREX apenas para layout/comportamento especifico em `public_html/carex/assets/app.css`.
 - JS por modulo em arquivos separados.
 - Comentarios apenas quando ajudam a entender uma regra nao obvia.
 
@@ -87,7 +88,7 @@ read_only=on
 ## Como adicionar tela
 
 1. Reusar `src/templates/navbar.php`.
-2. Manter Bootstrap e `public/assets/app.css`.
+2. Manter Bootstrap oficial e carregar CSS local antes do CSS canonico, conforme `../../docs/bootstrap-first-planejamento.md` e `../../docs/tema-css-bootstrap-modulos.md`.
 3. Evitar landing pages desnecessarias para ferramentas internas.
 4. Usar skeleton/loading em consultas lentas.
 5. Evitar contagens pesadas na carga inicial.

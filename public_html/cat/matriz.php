@@ -99,50 +99,10 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAT - Matriz <?= h($matriz) ?></title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root, [data-bs-theme="light"] {
-            --bg-color: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #64748b;
-            --text-color: #1e293b;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #f8fafc;
-        }
-        [data-bs-theme="dark"] {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #94a3b8;
-            --text-color: #f8fafc;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #111827;
-        }
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif; }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
-        .navbar { background-color: var(--navbar-bg); backdrop-filter: none; border-bottom: 1px solid var(--border-color); }
-        .glass-card { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: none; }
-        .text-accent { color: var(--accent-color) !important; }
-        .btn-icon { width: 40px; height: 40px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
-        .metric-number { font-size: 1.75rem; font-weight: 800; line-height: 1; }
-        .table { --bs-table-bg: transparent; --bs-table-color: var(--text-color); --bs-table-border-color: var(--border-color); }
-        .table thead th { color: var(--text-muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
-        .text-clip { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    </style>
-    <link href="../assets/css/style.css" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
+<script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <!-- Navbar -->
@@ -153,62 +113,62 @@ try {
 
     <main class="container-fluid py-5 px-4">
         <?php if ($db_error): ?>
-            <div class="alert alert-danger glass-card border-danger"><?= h($db_error) ?></div>
+            <div class="alert alert-danger card border-danger"><?= h($db_error) ?></div>
         <?php else: ?>
             <header class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
                 <div>
                     <div class="text-muted mb-1">Raiz da matriz</div>
-                    <h1 class="display-6 text-accent mb-2" style="font-weight: 800;"><?= h($matriz) ?></h1>
+                    <h1 class="display-6 text-primary mb-2"><?= h($matriz) ?></h1>
                     <p class="lead text-secondary mb-0">Resumo consolidado das CATs e filiais vinculadas a esta matriz.</p>
                 </div>
                 <div class="d-flex gap-2">
-                    <a class="btn btn-outline-secondary btn-icon" href="cnpjs.php" title="Voltar ao agregador" aria-label="Voltar ao agregador"><i class="fa-solid fa-arrow-left"></i></a>
-                    <a class="btn btn-outline-accent btn-icon" href="inspecao.php?cnpj=<?= h($matriz) ?>" title="Navegar CATs da matriz" aria-label="Navegar CATs da matriz"><i class="fa-solid fa-address-card"></i></a>
+                    <a class="btn btn-outline-secondary btn-icon" href="cnpjs.php" title="Voltar ao agregador" aria-label="Voltar ao agregador"><i class="bi bi-arrow-left"></i></a>
+                    <a class="btn btn-outline-primary btn-icon" href="inspecao.php?cnpj=<?= h($matriz) ?>" title="Navegar CATs da matriz" aria-label="Navegar CATs da matriz"><i class="bi bi-card-text"></i></a>
                 </div>
             </header>
 
             <section class="row g-4 mb-4">
-                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Acidentes</div><div class="metric-number"><?= number_format((int)($summary['acidentes'] ?? 0), 0, ',', '.') ?></div></div></div>
-                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Obitos</div><div class="metric-number"><?= number_format((int)($summary['obitos'] ?? 0), 0, ',', '.') ?></div></div></div>
-                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Filiais</div><div class="metric-number"><?= number_format((int)($summary['total_filiais'] ?? 0), 0, ',', '.') ?></div></div></div>
-                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Periodo</div><div class="fw-semibold"><?= h(trim(($summary['primeira_ocorrencia'] ?? '') . ' - ' . ($summary['ultima_ocorrencia'] ?? ''), ' -')) ?: '-' ?></div></div></div>
+                <div class="col-6 col-xl-3"><div class="card p-3"><div class="text-muted small">Acidentes</div><div class="metric-number"><?= number_format((int)($summary['acidentes'] ?? 0), 0, ',', '.') ?></div></div></div>
+                <div class="col-6 col-xl-3"><div class="card p-3"><div class="text-muted small">Obitos</div><div class="metric-number"><?= number_format((int)($summary['obitos'] ?? 0), 0, ',', '.') ?></div></div></div>
+                <div class="col-6 col-xl-3"><div class="card p-3"><div class="text-muted small">Filiais</div><div class="metric-number"><?= number_format((int)($summary['total_filiais'] ?? 0), 0, ',', '.') ?></div></div></div>
+                <div class="col-6 col-xl-3"><div class="card p-3"><div class="text-muted small">Periodo</div><div class="fw-semibold"><?= h(trim(($summary['primeira_ocorrencia'] ?? '') . ' - ' . ($summary['ultima_ocorrencia'] ?? ''), ' -')) ?: '-' ?></div></div></div>
             </section>
 
             <section class="row g-4 mb-4">
                 <div class="col-xl-6">
-                    <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-accent">Tipos de acidente</h2>
+                    <div class="card p-4 h-100">
+                        <h2 class="h5 mb-3 text-primary">Tipos de acidente</h2>
                         <?php foreach ($topTypes as $row): ?>
-                            <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-2"><span><?= h($row['label']) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
+                            <div class="d-flex justify-content-between border-bottom border border-opacity-25 py-2"><span><?= h($row['label']) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
                         <?php endforeach; ?>
                     </div>
                 </div>
                 <div class="col-xl-6">
-                    <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-accent">Territorios com CAT</h2>
+                    <div class="card p-4 h-100">
+                        <h2 class="h5 mb-3 text-primary">Territorios com CAT</h2>
                         <?php foreach ($topTerritories as $row): ?>
-                            <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-2"><span><?= h(trim(($row['municipio'] ?? '') . ' / ' . ($row['uf'] ?? ''), ' /')) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
+                            <div class="d-flex justify-content-between border-bottom border border-opacity-25 py-2"><span><?= h(trim(($row['municipio'] ?? '') . ' / ' . ($row['uf'] ?? ''), ' /')) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
                         <?php endforeach; ?>
                     </div>
                 </div>
             </section>
 
-            <section class="glass-card p-4">
-                <h2 class="h5 mb-3 text-accent"><i class="fa-solid fa-code-branch me-2"></i>Filiais da matriz</h2>
+            <section class="card p-4">
+                <h2 class="h5 mb-3 text-primary"><i class="bi bi-diagram-3 me-2"></i>Filiais da matriz</h2>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead><tr><th>CNPJ</th><th>Empresa</th><th>Situacao</th><th>Acidentes</th><th>Obitos</th><th>Territorio</th><th></th></tr></thead>
                         <tbody>
                             <?php foreach ($branches as $branch): ?>
                                 <tr>
-                                    <td><a class="text-accent font-monospace text-decoration-none fw-semibold" href="cnpj.php?cnpj=<?= h($branch['cnpj_digits']) ?>"><?= h(formatCnpjLocal($branch['cnpj_digits'])) ?></a></td>
+                                    <td><a class="text-primary font-monospace text-decoration-none fw-semibold" href="cnpj.php?cnpj=<?= h($branch['cnpj_digits']) ?>"><?= h(formatCnpjLocal($branch['cnpj_digits'])) ?></a></td>
                                     <td><div class="text-clip" title="<?= h($branch['razao_social'] ?: $branch['nome_fantasia'] ?: '-') ?>"><?= h($branch['razao_social'] ?: $branch['nome_fantasia'] ?: '-') ?></div></td>
                                     <td><?= h($branch['situacao'] ?? '-') ?></td>
                                     <td><?= number_format((int)$branch['acidentes'], 0, ',', '.') ?></td>
                                     <td><?= number_format((int)$branch['obitos'], 0, ',', '.') ?></td>
                                     <td><?= h(trim(($branch['municipio_empregador'] ?: $branch['opencnpj_municipio'] ?: '') . ' / ' . ($branch['uf_empregador'] ?: $branch['opencnpj_uf'] ?: ''), ' /')) ?></td>
                                     <td class="text-end">
-                                        <a class="btn btn-outline-accent btn-icon btn-sm" href="inspecao.php?cnpj=<?= h($branch['cnpj_digits']) ?>" title="Navegar CATs do CNPJ" aria-label="Navegar CATs do CNPJ"><i class="fa-solid fa-address-card"></i></a>
+                                        <a class="btn btn-outline-primary btn-icon btn-sm" href="inspecao.php?cnpj=<?= h($branch['cnpj_digits']) ?>" title="Navegar CATs do CNPJ" aria-label="Navegar CATs do CNPJ"><i class="bi bi-card-text"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -219,6 +179,6 @@ try {
         <?php endif; ?>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -1,0 +1,351 @@
+:root, [data-bs-theme="light"] {
+    --bg: var(--bs-body-bg);
+    --surface: var(--bs-body-bg);
+    --surface-strong: var(--bs-body-bg);
+    --border: var(--bs-border-color);
+    --text: var(--bs-body-color);
+    --muted: var(--bs-secondary-color);
+    --accent: var(--bs-primary);
+    --accent-2: var(--bs-primary);
+}
+
+[data-bs-theme="dark"] {
+    --bg: var(--bs-body-bg);
+    --surface: var(--bs-body-bg);
+    --surface-strong: var(--bs-body-bg);
+    --border: var(--bs-border-color);
+    --text: var(--bs-body-color);
+    --muted: var(--bs-secondary-color);
+    --accent: var(--bs-primary);
+    --accent-2: var(--bs-primary);
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bs-body-bg);
+    color: var(--text);
+}
+
+.app-nav {
+    background: var(--bs-body-bg);
+    backdrop-filter: none;
+    border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand,
+.nav-link {
+    color: var(--text);
+}
+
+.navbar-brand img {
+    width: auto;
+    height: 28px;
+    max-height: 28px;
+    max-width: 132px;
+    object-fit: contain;
+}
+
+.navbar-logo-img {
+    width: auto !important;
+    height: 28px !important;
+    max-height: 28px !important;
+    max-width: 132px !important;
+    object-fit: contain !important;
+}
+
+.nav-link {
+    color: var(--muted);
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--text);
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.form-control,
+.form-select {
+    background-color: var(--surface-strong);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--surface-strong);
+    border-color: var(--accent-ui);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--accent-ui, var(--bs-primary)) 18%, transparent);
+    color: var(--text);
+}
+
+.form-control::placeholder {
+    color: var(--muted);
+}
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text);
+    --bs-table-border-color: var(--border);
+    --bs-table-hover-bg: var(--bs-tertiary-bg);
+    --bs-table-hover-color: var(--text);
+}
+
+.badge-soft {
+    background: var(--info-surface);
+    color: var(--info-surface-text);
+    border: 1px solid var(--bs-border-color);
+}
+
+.badge-ok {
+    background: var(--success-surface);
+    color: var(--success-surface-text);
+    border: 1px solid var(--bs-border-color);
+}
+
+.badge-warn {
+    background: var(--warn-surface);
+    color: var(--warn-surface-text);
+    border: 1px solid var(--bs-border-color);
+}
+
+.auth-shell {
+    max-width: 460px;
+    margin-inline: auto;
+}
+
+.section-title {
+    font-size: 0.84rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.cookie-banner {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 1080;
+    display: none;
+    max-width: 420px;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    background: var(--surface-strong);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    box-shadow: none;
+}
+
+.cookie-banner.show {
+    display: flex;
+}
+
+@media (max-width: 576px) {
+    .cookie-banner {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Light theme overrides for soft badges to ensure proper contrast */
+[data-bs-theme="light"] .badge-soft {
+    color: var(--info-surface-text) !important;
+    background: var(--info-surface) !important;
+    border-color: var(--bs-border-color) !important;
+}
+
+[data-bs-theme="light"] .badge-ok {
+    color: var(--success-surface-text) !important;
+    background: var(--success-surface) !important;
+    border-color: var(--bs-border-color) !important;
+}
+
+[data-bs-theme="light"] .badge-warn {
+    color: var(--warn-surface-text) !important;
+    background: var(--warn-surface) !important;
+    border-color: var(--bs-border-color) !important;
+}
+
+/* Bootstrap 5.3 baseline aliases for the Acesso module */
+:root, [data-bs-theme="light"] {
+    --bg: var(--bs-body-bg);
+    --surface: var(--bs-body-bg);
+    --surface-strong: var(--bs-body-bg);
+    --border: var(--bs-border-color);
+    --text: var(--bs-body-color);
+    --muted: var(--bs-secondary-color);
+    --accent: var(--bs-primary);
+    --accent-2: var(--bs-primary);
+}
+
+[data-bs-theme="dark"] {
+    --bg: var(--bs-body-bg);
+    --surface: var(--bs-body-bg);
+    --surface-strong: var(--bs-body-bg);
+    --border: var(--bs-border-color);
+    --text: var(--bs-body-color);
+    --muted: var(--bs-secondary-color);
+    --accent: var(--bs-primary);
+    --accent-2: var(--bs-primary);
+}
+
+body {
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+.app-nav,
+.panel,
+.cookie-banner {
+    background: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.badge-soft,
+.badge-ok,
+.badge-warn {
+    background: var(--bs-tertiary-bg) !important;
+    border-color: var(--bs-border-color) !important;
+    color: var(--bs-body-color) !important;
+}
+
+/* Basic Bootstrap 5.3 components */
+h1, .h1, .display-5 {
+    color: var(--bs-body-color) !important;
+    font-size: clamp(2rem, 4vw, 3.25rem) !important;
+    font-weight: 700 !important;
+    letter-spacing: 0 !important;
+}
+
+h2, .h2, .section-title {
+    color: var(--bs-body-color) !important;
+    font-size: clamp(1.5rem, 2.4vw, 2rem) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+}
+
+.panel,
+.card,
+.box,
+.info-box {
+    background: var(--bs-body-bg) !important;
+    border: 1px solid var(--bs-border-color) !important;
+    border-radius: var(--bs-border-radius) !important;
+    box-shadow: none !important;
+    color: var(--bs-body-color) !important;
+}
+
+.chip,
+.badge,
+.tag-pill,
+.tag-badge,
+.badge-soft,
+.badge-ok,
+.badge-warn {
+    background: var(--bs-tertiary-bg) !important;
+    border: 1px solid var(--bs-border-color) !important;
+    border-radius: 50rem !important;
+    color: var(--bs-body-color) !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+}
+
+.btn,
+.btn-primary,
+.btn-outline-primary {
+    border-radius: var(--bs-border-radius) !important;
+    box-shadow: none !important;
+    font-weight: 500 !important;
+}
+
+/* Form fields and helper text follow Bootstrap 5.3 colors */
+.form-control,
+.form-select,
+.form-check-input,
+.input-group-text {
+    background-color: var(--bs-body-bg) !important;
+    border-color: var(--bs-border-color) !important;
+    color: var(--bs-body-color) !important;
+    border-radius: var(--bs-border-radius) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--bs-primary) !important;
+    box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--bs-primary) 25%, transparent) !important;
+}
+
+.form-control::placeholder,
+textarea.form-control::placeholder {
+    color: var(--bs-secondary-color) !important;
+    opacity: 0.75 !important;
+}
+
+.form-control:disabled,
+.form-control[readonly],
+.form-select:disabled,
+.form-check-input:disabled {
+    background-color: var(--bs-tertiary-bg) !important;
+    border-color: var(--bs-border-color) !important;
+    color: var(--bs-secondary-color) !important;
+    opacity: 1 !important;
+}
+
+.form-control.bg-dark:not(:disabled):not([readonly]),
+.form-control.bg-light:not(:disabled):not([readonly]),
+.form-select.bg-dark:not(:disabled),
+.form-select.bg-light:not(:disabled),
+.input-group-text.bg-dark,
+.input-group-text.bg-light {
+    background-color: var(--bs-body-bg) !important;
+    border-color: var(--bs-border-color) !important;
+    color: var(--bs-body-color) !important;
+}
+
+.form-label,
+.form-check-label,
+.form-floating > label,
+form label {
+    color: var(--bs-body-color) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0 !important;
+}
+
+.form-text,
+form small,
+form .small,
+form .text-muted,
+form .text-secondary,
+form .text-body-secondary,
+.field-help,
+.field-hint,
+.field-note,
+.form-help,
+.input-help,
+.help-text,
+.hint-text,
+.orientation-text,
+.orientacao-campo,
+.descricao-campo {
+    color: var(--bs-secondary-color) !important;
+    font-size: 0.875rem !important;
+    line-height: 1.45 !important;
+    letter-spacing: 0 !important;
+}

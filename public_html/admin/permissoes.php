@@ -92,7 +92,7 @@ render_header('Papeis', 'permissoes');
                     <?php endforeach; ?>
                 </div>
 
-                <button class="btn btn-light mt-4" type="submit">Salvar papeis</button>
+                <button class="btn btn-primary mt-4" type="submit">Salvar papeis</button>
             </form>
         </section>
     </div>

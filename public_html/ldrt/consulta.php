@@ -224,252 +224,12 @@ if ($has_search) {
     <title>LDRT - Consulta Cruzada</title>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-                :root, [data-bs-theme="light"] {
-            --bg-color: #f1f5f9;
-            --bg-glow-1: transparent;
-            --bg-glow-2: transparent;
-            --card-bg: rgba(255, 255, 255, 0.65);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-laranja-4);
-            --text-muted: #64748b;
-            --text-color: #1e293b;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: rgba(241, 245, 249, 0.85);
-            --field-bg: #ffffff;
-        }
-
-        [data-bs-theme="dark"] {
-            --bg-color: #0b0f19;
-            --bg-glow-1: transparent;
-            --bg-glow-2: transparent;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-laranja-4);
-            --text-muted: #94a3b8;
-            --text-color: #f8fafc;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: rgba(11, 15, 25, 0.85);
-            --field-bg: #111827;
-        }
-
-                body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            background-image: none;
-            color: var(--text-color);
-            min-height: 100vh;
-        }
-
-        h1, h2, h3, h4, h5 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-        }
-
-                .navbar {
-            background-color: var(--navbar-bg);
-            backdrop-filter: none;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: none;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-solid);
-            border-color: var(--accent-border);
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-solid-hover);
-            border-color: var(--accent-solid-hover);
-            transform: translateY(-1px);
-        }
-
-        .btn-outline-secondary {
-            border-color: var(--border-color);
-            color: var(--text-color);
-            border-radius: 8px;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
-            color: var(--text-color);
-        }
-
-        .form-control,
-        .form-select,
-        .input-group-text {
-            background-color: var(--field-bg) !important;
-            border: 1px solid var(--border-color);
-            color: var(--text-color) !important;
-            border-radius: 8px;
-        }
-
-        .form-control {
-            padding: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            background-color: var(--field-bg) !important;
-            border-color: var(--accent-border);
-            box-shadow: 0 0 0 0.2rem rgba(0, 99, 146, 0.25);
-            color: var(--text-color) !important;
-        }
-
-        .form-control::placeholder {
-            color: var(--text-muted);
-            opacity: 0.78;
-        }
-
-        .form-select option {
-            background-color: var(--field-bg);
-            color: var(--text-color);
-        }
-
-        .autocomplete-container {
-            position: relative;
-        }
-
-        .autocomplete-container:focus-within {
-            z-index: 10;
-        }
-
-        .autocomplete-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--field-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            max-height: 250px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-            margin-top: 4px;
-        }
-
-        .suggestion-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-            transition: background 0.15s ease;
-            font-size: 0.9rem;
-            color: var(--text-color);
-        }
-
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-
-        .suggestion-item:hover {
-            background-color: var(--bs-tertiary-bg);
-            color: var(--text-color);
-        }
-
-        .tag-input-selected {
-            background-color: var(--field-bg) !important;
-            border: 1px solid var(--border-color);
-            color: var(--text-color) !important;
-            border-radius: 8px;
-            height: 48px;
-            padding: 0 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .tag-input-selected .btn-close {
-            font-size: 0.75rem;
-        }
-
-        [data-bs-theme="dark"] .tag-input-selected .btn-close {
-            filter: invert(1) grayscale(1) brightness(2);
-        }
-
-        .badge-custom {
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-        
-        .badge-cid { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .badge-cnae { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-cbo { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .badge-agent { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-
-        .section-title {
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--accent-color);
-            margin-bottom: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tag-pill {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-right: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .tag-pill i {
-            margin-left: 6px;
-            cursor: pointer;
-            color: var(--text-muted);
-            transition: color 0.15s ease;
-        }
-        .tag-pill i:hover {
-            color: #ef4444;
-        }
-
-        .info-box {
-            background: rgba(255, 255, 255, 0.02);
-            border-left: 3px solid var(--accent-border);
-            padding: 15px;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 15px;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
@@ -484,7 +244,7 @@ if ($has_search) {
         
         <?php if (isset($error_message)): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                <i class="bi bi-exclamation-triangle me-2"></i>
                 <strong>Erro:</strong> <?php echo htmlspecialchars($error_message); ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -494,9 +254,9 @@ if ($has_search) {
             
             <!-- Sidebar / Search Form -->
             <div class="col-lg-4">
-                <div class="glass-card p-4">
+                <div class="card p-4">
                     <h4 class="mb-4 d-flex align-items-center gap-2">
-                        <i class="fa-solid fa-shuffle text-primary" style="color: var(--accent-color) !important;"></i> 
+                        <i class="bi bi-shuffle text-primary"></i> 
                         Consulta Cruzada
                     </h4>
                     
@@ -505,13 +265,13 @@ if ($has_search) {
                         <!-- CID Input -->
                         <div class="mb-3 autocomplete-container">
                             <label for="cid_search" class="form-label d-flex justify-content-between">
-                                <span><i class="fa-solid fa-virus-covid me-1 text-primary" style="color: var(--accent-color) !important;"></i> CID-10 (Doença)</span>
-                                <span class="badge badge-custom badge-cid">Doença</span>
+                                <span><i class="bi bi-virus me-1 text-primary"></i> CID-10 (Doença)</span>
+                                <span class="badge text-bg-secondary badge-cid">Doença</span>
                             </label>
                             <?php if ($cid_data): ?>
                                 <div class="tag-input-selected form-control">
-                                    <span class="badge badge-custom badge-cid text-truncate text-start" title="<?php echo htmlspecialchars($cid_data['codigo'] . ' - ' . $cid_data['descricao']); ?>" style="max-width: calc(100% - 25px); font-size: 0.85rem; padding: 6px 10px;">
-                                        <i class="fa-solid fa-virus-covid me-1"></i>
+                                    <span class="badge text-bg-secondary badge-cid text-truncate text-start" title="<?php echo htmlspecialchars($cid_data['codigo'] . ' - ' . $cid_data['descricao']); ?>">
+                                        <i class="bi bi-virus me-1"></i>
                                         <?php echo htmlspecialchars($cid_data['codigo'] . ' - ' . $cid_data['descricao']); ?>
                                     </span>
                                     <button type="button" class="btn-close" onclick="removeFilter('cid')" aria-label="Remover"></button>
@@ -527,13 +287,13 @@ if ($has_search) {
                         <!-- CNAE Input -->
                         <div class="mb-3 autocomplete-container">
                             <label for="cnae_search" class="form-label d-flex justify-content-between">
-                                <span><i class="fa-solid fa-industry me-1 text-success"></i> CNAE (Atividade Econômica)</span>
-                                <span class="badge badge-custom badge-cnae">Setor</span>
+                                <span><i class="bi bi-building-gear me-1 text-success"></i> CNAE (Atividade Econômica)</span>
+                                <span class="badge text-bg-secondary badge-cnae">Setor</span>
                             </label>
                             <?php if ($cnae_data): ?>
                                 <div class="tag-input-selected form-control">
-                                    <span class="badge badge-custom badge-cnae text-truncate text-start" title="<?php echo htmlspecialchars($cnae_data['codigo'] . ' - ' . $cnae_data['descricao']); ?>" style="max-width: calc(100% - 25px); font-size: 0.85rem; padding: 6px 10px;">
-                                        <i class="fa-solid fa-industry me-1"></i>
+                                    <span class="badge text-bg-secondary badge-cnae text-truncate text-start" title="<?php echo htmlspecialchars($cnae_data['codigo'] . ' - ' . $cnae_data['descricao']); ?>">
+                                        <i class="bi bi-building-gear me-1"></i>
                                         <?php echo htmlspecialchars($cnae_data['codigo'] . ' - ' . $cnae_data['descricao']); ?>
                                     </span>
                                     <button type="button" class="btn-close" onclick="removeFilter('cnae')" aria-label="Remover"></button>
@@ -549,13 +309,13 @@ if ($has_search) {
                         <!-- CBO Input -->
                         <div class="mb-3 autocomplete-container">
                             <label for="cbo_search" class="form-label d-flex justify-content-between">
-                                <span><i class="fa-solid fa-user-doctor me-1 text-warning"></i> CBO (Ocupação/Profissão)</span>
-                                <span class="badge badge-custom badge-cbo">Profissão</span>
+                                <span><i class="bi bi-person-badge me-1 text-warning"></i> CBO (Ocupação/Profissão)</span>
+                                <span class="badge text-bg-secondary badge-cbo">Profissão</span>
                             </label>
                             <?php if ($cbo_data): ?>
                                 <div class="tag-input-selected form-control">
-                                    <span class="badge badge-custom badge-cbo text-truncate text-start" title="<?php echo htmlspecialchars($cbo_data['codigo'] . ' - ' . $cbo_data['descricao']); ?>" style="max-width: calc(100% - 25px); font-size: 0.85rem; padding: 6px 10px;">
-                                        <i class="fa-solid fa-user-doctor me-1"></i>
+                                    <span class="badge text-bg-secondary badge-cbo text-truncate text-start" title="<?php echo htmlspecialchars($cbo_data['codigo'] . ' - ' . $cbo_data['descricao']); ?>">
+                                        <i class="bi bi-person-badge me-1"></i>
                                         <?php echo htmlspecialchars($cbo_data['codigo'] . ' - ' . $cbo_data['descricao']); ?>
                                     </span>
                                     <button type="button" class="btn-close" onclick="removeFilter('cbo')" aria-label="Remover"></button>
@@ -571,13 +331,13 @@ if ($has_search) {
                         <!-- Agent Input -->
                         <div class="mb-4 autocomplete-container">
                             <label for="agente_search" class="form-label d-flex justify-content-between">
-                                <span><i class="fa-solid fa-biohazard me-1 text-danger"></i> Agente de Risco / Fator</span>
-                                <span class="badge badge-custom badge-agent">Agente</span>
+                                <span><i class="bi bi-radioactive me-1 text-danger"></i> Agente de Risco / Fator</span>
+                                <span class="badge text-bg-secondary badge-agent">Agente</span>
                             </label>
                             <?php if ($agente_data): ?>
                                 <div class="tag-input-selected form-control">
-                                    <span class="badge badge-custom badge-agent text-truncate text-start" title="<?php echo htmlspecialchars($agente_data['descricao']); ?>" style="max-width: calc(100% - 25px); font-size: 0.85rem; padding: 6px 10px;">
-                                        <i class="fa-solid fa-biohazard me-1"></i>
+                                    <span class="badge text-bg-secondary badge-agent text-truncate text-start" title="<?php echo htmlspecialchars($agente_data['descricao']); ?>">
+                                        <i class="bi bi-radioactive me-1"></i>
                                         <?php echo htmlspecialchars($agente_data['descricao']); ?>
                                     </span>
                                     <button type="button" class="btn-close" onclick="removeFilter('agente')" aria-label="Remover"></button>
@@ -592,11 +352,11 @@ if ($has_search) {
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fa-solid fa-magnifying-glass me-2"></i>Buscar Relações
+                                <i class="bi bi-search me-2"></i>Buscar Relações
                             </button>
                             <?php if ($has_search): ?>
                                 <a href="consulta.php" class="btn btn-outline-secondary">
-                                    <i class="fa-solid fa-filter-circle-xmark me-2"></i>Limpar Filtros
+                                    <i class="bi bi-funnel me-2"></i>Limpar Filtros
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -606,20 +366,20 @@ if ($has_search) {
 
             <!-- Results Panel -->
             <div class="col-lg-8">
-                <div class="glass-card p-4 h-100">
+                <div class="card p-4 h-100">
                     <?php if (!$has_search): ?>
                         <div class="text-center py-5">
-                            <i class="fa-solid fa-shuffle text-muted mb-4" style="font-size: 4rem; opacity: 0.25;"></i>
+                            <i class="bi bi-shuffle text-muted mb-4"></i>
                             <h3>Nenhuma consulta realizada</h3>
-                            <p class="text-muted mx-auto" style="max-width: 480px;">
+                            <p class="text-muted mx-auto">
                                 Preencha um ou mais campos ao lado para buscar relações estabelecidas na Lista de Doenças Relacionadas ao Trabalho (LDRT).
                             </p>
                             <div class="mt-4">
                                 <span class="text-muted small">Exemplos de consultas (clique para testar):</span>
                                 <div class="mt-2">
-                                    <a href="consulta.php?cid=I10" class="badge badge-custom badge-cid me-2 text-decoration-none">Hipertensão (I10)</a>
-                                    <a href="consulta.php?agente=89" class="badge badge-custom badge-agent me-2 text-decoration-none">Chumbo (ID 89)</a>
-                                    <a href="consulta.php?cnae=9521500" class="badge badge-custom badge-cnae me-2 text-decoration-none">Informática (9521500)</a>
+                                    <a href="consulta.php?cid=I10" class="badge text-bg-secondary badge-cid me-2 text-decoration-none">Hipertensão (I10)</a>
+                                    <a href="consulta.php?agente=89" class="badge text-bg-secondary badge-agent me-2 text-decoration-none">Chumbo (ID 89)</a>
+                                    <a href="consulta.php?cnae=9521500" class="badge text-bg-secondary badge-cnae me-2 text-decoration-none">Informática (9521500)</a>
                                 </div>
                             </div>
                         </div>
@@ -632,7 +392,7 @@ if ($has_search) {
                                 <div class="col-md-6">
                                     <div class="info-box">
                                         <div class="text-muted small font-weight-bold">DIAGNÓSTICO (CID-10)</div>
-                                        <h5 class="mt-1 text-primary" style="color: #60a5fa !important;"><?php echo htmlspecialchars($cid_data['codigo']); ?></h5>
+                                        <h5 class="mt-1 text-primary"><?php echo htmlspecialchars($cid_data['codigo']); ?></h5>
                                         <p class="mb-0 small"><?php echo htmlspecialchars($cid_data['descricao']); ?></p>
                                         <span class="badge bg-secondary mt-2 small"><?php echo htmlspecialchars($cid_data['nivel']); ?></span>
                                     </div>
@@ -641,12 +401,12 @@ if ($has_search) {
 
                             <?php if ($agente_data): ?>
                                 <div class="col-md-6">
-                                    <div class="info-box" style="border-left-color: #f87171;">
+                                    <div class="info-box">
                                         <div class="text-muted small font-weight-bold">AGENTE DE RISCO / FATOR</div>
-                                        <h5 class="mt-1 text-danger" style="color: #f87171 !important;">ID: <?php echo htmlspecialchars($agente_data['id']); ?></h5>
+                                        <h5 class="mt-1 text-danger">ID: <?php echo htmlspecialchars($agente_data['id']); ?></h5>
                                         <p class="mb-0 small"><?php echo htmlspecialchars($agente_data['descricao']); ?></p>
                                         <?php if (!empty($agente_data['cas'])): ?>
-                                            <span class="badge bg-dark text-light border border-secondary mt-2 small">CAS: <?php echo htmlspecialchars($agente_data['cas']); ?></span>
+                                            <span class="badge bg-body-tertiary text-body border border mt-2 small">CAS: <?php echo htmlspecialchars($agente_data['cas']); ?></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -654,9 +414,9 @@ if ($has_search) {
 
                             <?php if ($cnae_data): ?>
                                 <div class="col-md-6">
-                                    <div class="info-box" style="border-left-color: #34d399;">
+                                    <div class="info-box">
                                         <div class="text-muted small font-weight-bold">ATIVIDADE ECONÔMICA (CNAE)</div>
-                                        <h5 class="mt-1 text-success" style="color: #34d399 !important;"><?php echo htmlspecialchars($cnae_data['codigo']); ?></h5>
+                                        <h5 class="mt-1 text-success"><?php echo htmlspecialchars($cnae_data['codigo']); ?></h5>
                                         <p class="mb-0 small"><?php echo htmlspecialchars($cnae_data['descricao']); ?></p>
                                         <span class="badge bg-secondary mt-2 small"><?php echo htmlspecialchars($cnae_data['nivel']); ?></span>
                                     </div>
@@ -665,9 +425,9 @@ if ($has_search) {
 
                             <?php if ($cbo_data): ?>
                                 <div class="col-md-6">
-                                    <div class="info-box" style="border-left-color: #fbbf24;">
+                                    <div class="info-box">
                                         <div class="text-muted small font-weight-bold">OCUPAÇÃO / PROFISSÃO (CBO)</div>
-                                        <h5 class="mt-1 text-warning" style="color: #fbbf24 !important;"><?php echo htmlspecialchars($cbo_data['codigo']); ?></h5>
+                                        <h5 class="mt-1 text-warning"><?php echo htmlspecialchars($cbo_data['codigo']); ?></h5>
                                         <p class="mb-0 small"><?php echo htmlspecialchars($cbo_data['descricao']); ?></p>
                                         <span class="badge bg-secondary mt-2 small"><?php echo htmlspecialchars($cbo_data['nivel']); ?></span>
                                     </div>
@@ -675,7 +435,7 @@ if ($has_search) {
                             <?php endif; ?>
                         </div>
 
-                        <hr class="border-secondary my-4">
+                        <hr class="border my-4">
 
                         <!-- Main Relations -->
                         <div class="row g-4">
@@ -683,16 +443,16 @@ if ($has_search) {
                             <!-- If CID was selected, show related agents -->
                             <?php if ($cid_data): ?>
                                 <div class="col-12">
-                                    <h5 class="section-title"><i class="fa-solid fa-biohazard"></i> Agentes de Risco Associados a esta Doença</h5>
+                                    <h5 class="section-title"><i class="bi bi-radioactive"></i> Agentes de Risco Associados a esta Doença</h5>
                                     <?php if (empty($related_agents)): ?>
                                         <p class="text-muted small">Nenhum agente de risco específico listado diretamente para esta CID na base de dados.</p>
                                     <?php else: ?>
-                                        <div class="list-group list-group-flush rounded-3 border border-secondary overflow-hidden">
+                                        <div class="list-group list-group-flush rounded-3 border border overflow-hidden">
                                             <?php foreach ($related_agents as $agent): ?>
-                                                <div class="list-group-item bg-dark border-secondary p-3">
+                                                <div class="list-group-item bg-body-tertiary border p-3">
                                                     <div class="d-flex justify-content-between align-items-start gap-3">
-                                                        <div style="min-width: 0; flex: 1;">
-                                                            <strong class="text-light" style="word-break: break-word; white-space: normal;"><?php echo htmlspecialchars($agent['descricao']); ?></strong>
+                                                        <div>
+                                                            <strong class="text-body"><?php echo htmlspecialchars($agent['descricao']); ?></strong>
                                                             <?php if (!empty($agent['cas'])): ?>
                                                                 <div class="text-muted small mt-1">CAS: <?php echo htmlspecialchars($agent['cas']); ?></div>
                                                             <?php endif; ?>
@@ -709,12 +469,12 @@ if ($has_search) {
                             <!-- If Agent was selected, show related CIDs -->
                             <?php if ($agente_data): ?>
                                 <div class="col-12 mt-4">
-                                    <h5 class="section-title"><i class="fa-solid fa-virus-covid"></i> Doenças (CIDs) Associadas a este Agente</h5>
+                                    <h5 class="section-title"><i class="bi bi-virus"></i> Doenças (CIDs) Associadas a este Agente</h5>
                                     <?php if (empty($related_cids)): ?>
                                         <p class="text-muted small">Nenhuma CID listada diretamente para este agente de risco na base de dados.</p>
                                     <?php else: ?>
-                                        <div style="max-height: 400px; overflow-y: auto;" class="border border-secondary rounded-3">
-                                            <table class="table table-dark table-hover mb-0 align-middle">
+                                        <div class="border border rounded-3">
+                                            <table class="table table-hover mb-0 align-middle">
                                                 <thead>
                                                     <tr>
                                                         <th>Código</th>
@@ -725,7 +485,7 @@ if ($has_search) {
                                                 <tbody>
                                                     <?php foreach ($related_cids as $rcid): ?>
                                                         <tr>
-                                                            <td><span class="badge badge-custom badge-cid"><?php echo htmlspecialchars($rcid['codigo']); ?></span></td>
+                                                            <td><span class="badge text-bg-secondary badge-cid"><?php echo htmlspecialchars($rcid['codigo']); ?></span></td>
                                                             <td class="small"><?php echo htmlspecialchars($rcid['descricao']); ?></td>
                                                             <td>
                                                                 <a href="consulta.php?cid=<?php echo urlencode($rcid['codigo']); ?>&agente=<?php echo $agente_data['id']; ?>" class="btn btn-sm btn-outline-secondary py-0 px-2">Filtrar</a>
@@ -741,35 +501,35 @@ if ($has_search) {
 
                             <!-- Relatos de Casos -->
                             <div class="col-12 mt-4">
-                                <h5 class="section-title"><i class="fa-solid fa-file-medical"></i> Relatos de Casos</h5>
+                                <h5 class="section-title"><i class="bi bi-file-earmark-medical"></i> Relatos de Casos</h5>
                                 <?php if (empty($matching_relatos)): ?>
                                     <p class="text-muted small">Nenhum relato de caso específico encontrado para os filtros selecionados.</p>
                                 <?php else: ?>
                                     <?php foreach ($matching_relatos as $relato): ?>
-                                        <div class="card bg-dark border-secondary mb-3">
-                                            <div class="card-header border-secondary d-flex justify-content-between align-items-center">
+                                        <div class="card bg-body-tertiary border mb-3">
+                                            <div class="card-header border d-flex justify-content-between align-items-center">
                                                 <h6 class="mb-0 text-primary-emphasis"><?php echo htmlspecialchars($relato['titulo']); ?></h6>
                                                 <span class="badge bg-secondary font-monospace"><?php echo htmlspecialchars($relato['old_id']); ?></span>
                                             </div>
                                             <div class="card-body">
-                                                <p class="card-text small text-light-emphasis" style="white-space: pre-wrap;"><?php echo htmlspecialchars($relato['relato']); ?></p>
+                                                <p class="card-text small text-body-secondary"><?php echo htmlspecialchars($relato['relato']); ?></p>
                                                 
-                                                <div class="border-top border-secondary pt-3 mt-3 d-flex flex-wrap gap-2 align-items-center">
+                                                <div class="border-top border pt-3 mt-3 d-flex flex-wrap gap-2 align-items-center">
                                                     <span class="text-muted small me-2">Ligações:</span>
                                                     <?php if ($relato['cnae_cbo_codigo'] && !$cnae_data && !$cbo_data): ?>
-                                                        <span class="badge badge-custom <?php echo $relato['classificacao'] === 'cnae' ? 'badge-cnae' : 'badge-cbo'; ?>">
+                                                        <span class="badge text-bg-secondary <?php echo $relato['classificacao'] === 'cnae' ? 'badge-cnae' : 'badge-cbo'; ?>">
                                                             <?php echo strtoupper($relato['classificacao']) . ': ' . htmlspecialchars($relato['cnae_cbo_codigo']) . ' - ' . htmlspecialchars(substr($relato['cnae_cbo_descricao'], 0, 30)) . '...'; ?>
                                                         </span>
                                                     <?php endif; ?>
                                                     
                                                     <?php if ($relato['agente_descricao'] && !$agente_data): ?>
-                                                        <span class="badge badge-custom badge-agent">
+                                                        <span class="badge text-bg-secondary badge-agent">
                                                             Agente: <?php echo htmlspecialchars(substr($relato['agente_descricao'], 0, 30)); ?>...
                                                         </span>
                                                     <?php endif; ?>
                                                     
                                                     <?php if ($relato['cid_codigo'] && !$cid_data): ?>
-                                                        <span class="badge badge-custom badge-cid">
+                                                        <span class="badge text-bg-secondary badge-cid">
                                                             CID: <?php echo htmlspecialchars($relato['cid_codigo']) . ' - ' . htmlspecialchars(substr($relato['cid_descricao'], 0, 30)) . '...'; ?>
                                                         </span>
                                                     <?php endif; ?>
@@ -789,14 +549,14 @@ if ($has_search) {
     </div>
 
     <!-- Footer -->
-    <footer class="text-center py-4 border-top border-secondary mt-5" style="background-color: rgba(11, 15, 25, 0.5);">
+    <footer class="text-center py-4 border-top border mt-5">
         <div class="container">
             <p class="mb-1 text-muted small">LDRT Query Application &copy; 2026 - Em conformidade com a Portaria GM/MS 1.999/2023</p>
         </div>
     </footer>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
     <!-- Autocomplete Script -->
     <script>

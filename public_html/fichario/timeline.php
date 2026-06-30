@@ -179,263 +179,11 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Linha do Tempo - Fichário Acadêmico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts: Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
-    <style>
-        .blob {
-            animation: floatBlob 12s infinite alternate ease-in-out;
-        }
-
-        .legacy-decoration-secondary {
-            animation-delay: -6s;
-        }
-
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 40px) scale(1.15); }
-        }
-
-        /* Timeline Styles */
-        .timeline-container {
-            position: relative;
-            padding: 2rem 0;
-            margin: 2rem auto;
-        }
-
-        .timeline-line {
-            position: absolute;
-            left: 90px;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(to bottom, var(--bs-primary) 0%, rgba(13, 110, 253, 0.1) 100%);
-            border-radius: 2px;
-            z-index: 1;
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 1.5rem;
-            min-height: 75px;
-            z-index: 2;
-        }
-
-        /* Empty timeline item to maintain physical scale */
-        .timeline-item-empty {
-            position: relative;
-            height: 60px;
-            margin-bottom: 0;
-            z-index: 2;
-        }
-
-        .timeline-year-label {
-            position: absolute;
-            left: 0;
-            top: 14px;
-            width: 75px;
-            text-align: right;
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: var(--bs-primary);
-            line-height: 1;
-        }
-
-        .timeline-year-label-empty {
-            position: absolute;
-            left: 0;
-            top: 13px;
-            width: 75px;
-            text-align: right;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text-muted);
-            opacity: 0.35;
-            line-height: 1.5;
-        }
-
-        .timeline-point {
-            position: absolute;
-            left: 82px; /* centered on the 4px line at 90px */
-            top: 12px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--bs-body-bg);
-            border: 4px solid var(--bs-primary);
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
-            z-index: 3;
-            transition: all 0.3s ease;
-        }
-
-        .timeline-point-empty {
-            position: absolute;
-            left: 88px; /* centered on the 4px line at 90px */
-            top: 18px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--bs-border-color);
-            z-index: 3;
-            opacity: 0.35;
-            transition: all 0.3s ease;
-        }
-
-        .timeline-item:hover .timeline-point {
-            background: var(--bs-primary);
-            transform: scale(1.25);
-            box-shadow: 0 0 12px var(--bs-primary);
-        }
-
-        .timeline-item-empty:hover .timeline-point-empty {
-            background: var(--bs-primary);
-            opacity: 0.8;
-            transform: scale(1.3);
-        }
-
-        .timeline-connector {
-            position: absolute;
-            left: 92px; /* starts from the center of the line */
-            width: 38px;
-            height: 2px;
-            background: var(--bs-border-color);
-            top: 21px;
-            z-index: 1;
-            transition: background-color 0.3s ease;
-        }
-
-        .timeline-item:hover .timeline-connector {
-            background-color: var(--bs-primary);
-        }
-
-        .timeline-card {
-            margin-left: 130px;
-            padding: 1.25rem 1.75rem;
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border) !important;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .timeline-card:hover {
-            border-color: var(--bs-primary) !important;
-            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.08);
-        }
-
-        .timeline-card-header {
-            cursor: pointer;
-            user-select: none;
-            color: var(--text-color);
-            transition: color 0.2s ease;
-        }
-
-        .timeline-card-header:hover {
-            color: var(--bs-primary);
-        }
-
-        .timeline-card-header[aria-expanded="true"] {
-            color: var(--bs-primary);
-        }
-
-        .timeline-card-header[aria-expanded="true"] .bi-chevron-down {
-            transform: rotate(180deg);
-        }
-
-        .transition-transform {
-            transition: transform 0.25s ease-in-out;
-        }
-
-        .timeline-article-title {
-            font-size: 1.15rem;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-            line-height: 1.4;
-        }
-
-        .timeline-article-title a {
-            color: var(--text-color);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .timeline-article-title a:hover {
-            color: var(--bs-primary);
-        }
-
-        .timeline-article-meta {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-stack-badge {
-            display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.25rem 0.6rem;
-            border-radius: 50px;
-            background-color: rgba(13, 110, 253, 0.1);
-            color: var(--bs-primary);
-            border: 1px solid rgba(13, 110, 253, 0.2);
-        }
-
-        .timeline-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-        }
-
-        .timeline-stack-item {
-            position: relative;
-        }
-
-        /* Responsive timeline */
-        @media (max-width: 575.98px) {
-            .timeline-line {
-                left: 20px;
-            }
-            .timeline-year-label {
-                position: static;
-                width: auto;
-                text-align: left;
-                margin-bottom: 0.75rem;
-                padding-left: 35px;
-                font-size: 1.25rem;
-            }
-            .timeline-year-label-empty {
-                position: static;
-                width: auto;
-                text-align: left;
-                margin-bottom: 0.25rem;
-                padding-left: 35px;
-                font-size: 0.95rem;
-            }
-            .timeline-point {
-                left: 12px;
-                top: 2px;
-            }
-            .timeline-point-empty {
-                left: 18px;
-                top: 6px;
-            }
-            .timeline-connector {
-                display: none;
-            }
-            .timeline-card {
-                margin-left: 35px;
-                padding: 1.25rem;
-            }
-            .timeline-item-empty {
-                height: 40px;
-                margin-bottom: 0.5rem;
-            }
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <!-- Background Animated Blobs -->
@@ -448,18 +196,18 @@ try {
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page">Timeline</li>
+                <li class="breadcrumb-item active text-body" aria-current="page">Timeline</li>
             </ol>
         </nav>
 
         <!-- Top heading -->
         <div class="mb-4">
-            <h1 class="h3 mb-1 text-white fw-bold">Linha do Tempo de Artigos</h1>
+            <h1 class="h3 mb-1 text-body fw-bold">Linha do Tempo de Artigos</h1>
             <p class="text-secondary mb-0">Explore a produção acadêmica fichada em ordem cronológica de publicação. Clique nos anos para expandir.</p>
         </div>
 
         <!-- Filter Form -->
-        <form class="glass-card p-4 mb-4" method="get">
+        <form class="card p-4 mb-4" method="get">
             <div class="row g-3 align-items-end">
                 <div class="col-md-9">
                     <label class="form-label" for="tag-filter-search">Filtrar por Tags Temáticas (Digite e pressione Enter)</label>
@@ -558,7 +306,7 @@ try {
                         $cColor = get_tag_colors($tagInfo['category'] ?? '');
                     ?>
                     <span class="badge border tag-badge d-inline-flex align-items-center gap-1 py-1 px-2"
-                          style="background:<?= $cColor['bg'] ?>; color:<?= $cColor['text'] ?>; border-color:<?= $cColor['border'] ?> !important;"
+                         
                           <?= tag_tooltip_attrs($tagInfo) ?>>
                         <?= h($tagInfo['name']) ?>
                         <button type="button" class="tag-chip-remove" data-tag-id="<?= $tId ?>" aria-label="Remover tag">&times;</button>
@@ -573,7 +321,7 @@ try {
                 <?= h($dbError) ?>
             </div>
         <?php elseif (empty($articlesByYear)): ?>
-            <div class="glass-card text-center p-5">
+            <div class="card text-center p-5">
                 <p class="text-secondary mb-0">Nenhum artigo encontrado para o filtro selecionado.</p>
             </div>
         <?php else: ?>
@@ -632,7 +380,7 @@ try {
                         <div class="timeline-year-label"><?= $year ?></div>
                         <div class="timeline-connector"></div>
 
-                        <div class="timeline-card glass-card">
+                        <div class="timeline-card card">
                             <!-- Clickable Card Header -->
                             <div class="timeline-card-header" 
                                  id="<?= $headerId ?>"
@@ -658,7 +406,7 @@ try {
                                             $colors = get_tag_colors($tag['category'] ?? '');
                                         ?>
                                             <span class="tag-badge border" 
-                                                  style="background-color: <?= $colors['bg'] ?>; color: <?= $colors['text'] ?>; border-color: <?= $colors['border'] ?> !important; font-size: 0.65rem; padding: 0.15rem 0.5rem;"
+                                                 
                                                   title="<?= h($tag['category'] ?? '') ?>">
                                                 <?= h($tag['name']) ?>
                                             </span>
@@ -697,7 +445,7 @@ try {
                                                             $colors = get_tag_colors($tag['category'] ?? '');
                                                         ?>
                                                             <span class="tag-badge border" 
-                                                                  style="background-color: <?= $colors['bg'] ?>; color: <?= $colors['text'] ?>; border-color: <?= $colors['border'] ?> !important;"
+                                                                 
                                                                   title="<?= h($tag['category'] ?? '') ?>">
                                                                 <?= h($tag['name']) ?>
                                                             </span>
@@ -723,7 +471,7 @@ try {
         <?php endif; ?>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             function normalizeTagFilterText(text) {

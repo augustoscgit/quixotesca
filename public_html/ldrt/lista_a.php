@@ -140,156 +140,12 @@ try {
     <title>LDRT - Tabelas Oficiais</title>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-                :root, [data-bs-theme="light"] {
-            --bg-color: #f1f5f9;
-            --bg-glow-1: transparent;
-            --bg-glow-2: transparent;
-            --card-bg: rgba(255, 255, 255, 0.65);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-laranja-4);
-            --text-muted: #64748b;
-            --text-color: #1e293b;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: rgba(241, 245, 249, 0.85);
-            --field-bg: #ffffff;
-        }
-
-        [data-bs-theme="dark"] {
-            --bg-color: #0b0f19;
-            --bg-glow-1: transparent;
-            --bg-glow-2: transparent;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-laranja-4);
-            --text-muted: #94a3b8;
-            --text-color: #f8fafc;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: rgba(11, 15, 25, 0.85);
-            --field-bg: #111827;
-        }
-
-                body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            background-image: none;
-            color: var(--text-color);
-            min-height: 100vh;
-        }
-
-        h1, h2, h3, h4, h5 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-        }
-
-                .navbar {
-            background-color: var(--navbar-bg);
-            backdrop-filter: none;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: none;
-        }
-
-        .nav-tabs {
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .nav-tabs .nav-link {
-            border: none;
-            color: var(--text-muted);
-            font-weight: 500;
-            padding: 12px 24px;
-        }
-
-        .nav-tabs .nav-link.active {
-            background-color: transparent;
-            color: var(--accent-color);
-            border-bottom: 2px solid var(--accent-border);
-        }
-
-        .table-responsive {
-            max-height: calc(100vh - 300px);
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-        }
-
-        .table th {
-            position: sticky;
-            top: 0;
-            background-color: #1e293b;
-            z-index: 10;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .form-control,
-        .form-select,
-        .input-group-text {
-            background-color: var(--field-bg) !important;
-            border: 1px solid var(--border-color);
-            color: var(--text-color) !important;
-            border-radius: 8px;
-        }
-
-        .form-control {
-            padding: 10px 15px;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            background-color: var(--field-bg) !important;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.2rem rgba(0, 99, 146, 0.25);
-            color: var(--text-color) !important;
-        }
-
-        .form-control::placeholder {
-            color: var(--text-muted);
-            opacity: 0.78;
-        }
-
-        .form-select option {
-            background-color: var(--field-bg);
-            color: var(--text-color);
-        }
-
-        .badge-custom {
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-        .badge-cid { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .badge-agent { background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-
-        .category-header {
-            background-color: var(--bs-tertiary-bg) !important;
-            font-weight: 600;
-            color: var(--accent-ui);
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
@@ -304,12 +160,12 @@ try {
         
         <?php if ($error_message): ?>
             <div class="alert alert-danger" role="alert">
-                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                <i class="bi bi-exclamation-triangle me-2"></i>
                 <strong>Erro:</strong> <?php echo htmlspecialchars($error_message); ?>
             </div>
         <?php endif; ?>
 
-        <div class="glass-card p-4">
+        <div class="card p-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                 <div>
                     <h3>Tabelas Oficiais da LDRT</h3>
@@ -319,7 +175,7 @@ try {
                     <!-- Page Size Selector -->
                     <div class="d-flex align-items-center gap-2">
                         <label for="page_size_select" class="text-muted small text-nowrap">Itens por página:</label>
-                        <select id="page_size_select" class="form-select form-select-sm" style="width: 80px;">
+                        <select id="page_size_select" class="form-select form-select-sm">
                             <option value="15">15</option>
                             <option value="30" selected>30</option>
                             <option value="50">50</option>
@@ -327,14 +183,14 @@ try {
                         </select>
                     </div>
                     <!-- Filter Input -->
-                    <div style="max-width: 300px;" class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="fa-solid fa-filter text-muted"></i></span>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="bi bi-funnel text-muted"></i></span>
                         <input type="text" id="table_filter" class="form-control" placeholder="Filtrar tabela atual...">
                     </div>
                 </div>
             </div>
             <!-- Hierarchical CID-10 Filter Box -->
-            <div class="p-3 mb-4 rounded-3 border border-secondary border-opacity-25" style="background: rgba(255, 255, 255, 0.02);">
+            <div class="p-3 mb-4 rounded-3 border border border-opacity-25">
                 <form id="filter_form" method="GET" class="row g-3 align-items-end">
                     <input type="hidden" name="cid_id" id="cid_id_val" value="<?php echo htmlspecialchars($cidId ?? ''); ?>">
                     
@@ -369,7 +225,7 @@ try {
                     <?php if ($cidId): ?>
                         <div class="col-auto">
                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearCidFilter()">
-                                <i class="fa-solid fa-times me-1"></i>Limpar Filtro CID
+                                <i class="bi bi-x-lg me-1"></i>Limpar Filtro CID
                             </button>
                         </div>
                     <?php endif; ?>
@@ -380,12 +236,12 @@ try {
             <ul class="nav nav-tabs mb-3" id="listTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="list-a-tab" data-bs-toggle="tab" data-bs-target="#list-a-panel" type="button" role="tab">
-                        <i class="fa-solid fa-flask me-1"></i> Lista A (Agente ➔ CID)
+                        <i class="bi bi-flask me-1"></i> Lista A (Agente ➔ CID)
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="list-b-tab" data-bs-toggle="tab" data-bs-target="#list-b-panel" type="button" role="tab">
-                        <i class="fa-solid fa-stethoscope me-1"></i> Lista B (CID ➔ Agente)
+                        <i class="bi bi-clipboard2-pulse me-1"></i> Lista B (CID ➔ Agente)
                     </button>
                 </li>
             </ul>
@@ -395,20 +251,20 @@ try {
                 <!-- LIST A PANEL -->
                 <div class="tab-pane fade show active" id="list-a-panel" role="tabpanel">
                     <div class="table-responsive">
-                        <table class="table table-dark table-hover mb-0 align-middle" id="table_lista_a">
+                        <table class="table table-hover mb-0 align-middle" id="table_lista_a">
                             <thead>
                                 <tr>
-                                    <th onclick="sortList('a', 'categoria')" style="cursor:pointer; user-select:none;">
-                                        Categoria de Risco <span id="sort_icon_a_categoria" class="ms-1 text-muted"><i class="fa-solid fa-sort"></i></span>
+                                    <th onclick="sortList('a', 'categoria')">
+                                        Categoria de Risco <span id="sort_icon_a_categoria" class="ms-1 text-muted"><i class="bi bi-arrow-down-up"></i></span>
                                     </th>
-                                    <th onclick="sortList('a', 'agente')" style="cursor:pointer; user-select:none;">
-                                        Agente / Fator de Risco <span id="sort_icon_a_agente" class="ms-1 text-muted"><i class="fa-solid fa-sort"></i></span>
+                                    <th onclick="sortList('a', 'agente')">
+                                        Agente / Fator de Risco <span id="sort_icon_a_agente" class="ms-1 text-muted"><i class="bi bi-arrow-down-up"></i></span>
                                     </th>
-                                    <th onclick="sortList('a', 'cid_codigo')" style="cursor:pointer; user-select:none;">
-                                        CID-10 <span id="sort_icon_a_cid_codigo" class="ms-1 text-muted"><i class="fa-solid fa-sort"></i></span>
+                                    <th onclick="sortList('a', 'cid_codigo')">
+                                        CID-10 <span id="sort_icon_a_cid_codigo" class="ms-1 text-muted"><i class="bi bi-arrow-down-up"></i></span>
                                     </th>
-                                    <th onclick="sortList('a', 'cid_descricao')" style="cursor:pointer; user-select:none;">
-                                        Doença Relacionada ao Trabalho <span id="sort_icon_a_cid_descricao" class="ms-1 text-muted"><i class="fa-solid fa-sort"></i></span>
+                                    <th onclick="sortList('a', 'cid_descricao')">
+                                        Doença Relacionada ao Trabalho <span id="sort_icon_a_cid_descricao" class="ms-1 text-muted"><i class="bi bi-arrow-down-up"></i></span>
                                     </th>
                                 </tr>
                             </thead>
@@ -422,7 +278,7 @@ try {
                             Exibindo 0 a 0 de 0 registros
                         </div>
                         <nav aria-label="Navegação da Lista A">
-                            <ul class="pagination pagination-sm mb-0 bg-dark" id="pagination_controls_a">
+                            <ul class="pagination pagination-sm mb-0 bg-body-tertiary" id="pagination_controls_a">
                                 <!-- Pagination items -->
                             </ul>
                         </nav>
@@ -432,20 +288,20 @@ try {
                 <!-- LIST B PANEL -->
                 <div class="tab-pane fade" id="list-b-panel" role="tabpanel">
                     <div class="table-responsive">
-                        <table class="table table-dark table-hover mb-0 align-middle" id="table_lista_b">
+                        <table class="table table-hover mb-0 align-middle" id="table_lista_b">
                             <thead>
                                 <tr>
-                                    <th onclick="sortList('b', 'cid_codigo')" style="cursor:pointer; user-select:none;">
-                                        CID-10 <span id="sort_icon_b_cid_codigo" class="ms-1 text-muted"><i class="fa-solid fa-sort"></i></span>
+                                    <th onclick="sortList('b', 'cid_codigo')">
+                                        CID-10 <span id="sort_icon_b_cid_codigo" class="ms-1 text-muted"><i class="bi bi-arrow-down-up"></i></span>
                                     </th>
-                                    <th onclick="sortList('b', 'cid_descricao')" style="cursor:pointer; user-select:none;">
-                                        Doença <span id="sort_icon_b_cid_descricao" class="ms-1 text-muted"><i class="fa-solid fa-sort"></i></span>
+                                    <th onclick="sortList('b', 'cid_descricao')">
+                                        Doença <span id="sort_icon_b_cid_descricao" class="ms-1 text-muted"><i class="bi bi-arrow-down-up"></i></span>
                                     </th>
-                                    <th onclick="sortList('b', 'cid_nivel')" style="cursor:pointer; user-select:none;">
-                                        Nível <span id="sort_icon_b_cid_nivel" class="ms-1 text-muted"><i class="fa-solid fa-sort"></i></span>
+                                    <th onclick="sortList('b', 'cid_nivel')">
+                                        Nível <span id="sort_icon_b_cid_nivel" class="ms-1 text-muted"><i class="bi bi-arrow-down-up"></i></span>
                                     </th>
-                                    <th onclick="sortList('b', 'agentes')" style="cursor:pointer; user-select:none;">
-                                        Agentes / Fatores de Risco Relacionados <span id="sort_icon_b_agentes" class="ms-1 text-muted"><i class="fa-solid fa-sort"></i></span>
+                                    <th onclick="sortList('b', 'agentes')">
+                                        Agentes / Fatores de Risco Relacionados <span id="sort_icon_b_agentes" class="ms-1 text-muted"><i class="bi bi-arrow-down-up"></i></span>
                                     </th>
                                 </tr>
                             </thead>
@@ -459,7 +315,7 @@ try {
                             Exibindo 0 a 0 de 0 registros
                         </div>
                         <nav aria-label="Navegação da Lista B">
-                            <ul class="pagination pagination-sm mb-0 bg-dark" id="pagination_controls_b">
+                            <ul class="pagination pagination-sm mb-0 bg-body-tertiary" id="pagination_controls_b">
                                 <!-- Pagination items -->
                             </ul>
                         </nav>
@@ -471,14 +327,14 @@ try {
     </div>
 
     <!-- Footer -->
-    <footer class="text-center py-4 border-top border-secondary mt-5" style="background-color: rgba(11, 15, 25, 0.5);">
+    <footer class="text-center py-4 border-top border mt-5">
         <div class="container">
             <p class="mb-1 text-muted small">LDRT Tabelas Oficiais &copy; 2026 - Conforme Portaria GM/MS 1.999/2023</p>
         </div>
     </footer>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
     <!-- Client-side sorting, filtering, and pagination script -->
     <script>
@@ -534,13 +390,13 @@ try {
                     tr.className = 'data-row';
                     tr.innerHTML = `
                         <td class="small text-muted">${escapeHtml(row.categoria)}</td>
-                        <td class="fw-medium text-light">${escapeHtml(row.agente)}</td>
+                        <td class="fw-medium text-body">${escapeHtml(row.agente)}</td>
                         <td>
-                            <a href="consulta.php?cid=${encodeURIComponent(row.cid_codigo)}" class="badge badge-custom badge-cid text-decoration-none" title="${escapeHtml(row.cid_descricao)}">
+                            <a href="consulta.php?cid=${encodeURIComponent(row.cid_codigo)}" class="badge text-bg-secondary badge-cid text-decoration-none" title="${escapeHtml(row.cid_descricao)}">
                                 ${escapeHtml(row.cid_codigo)}
                             </a>
                         </td>
-                        <td class="small text-light-emphasis">${escapeHtml(row.cid_descricao)}</td>
+                        <td class="small text-body-secondary">${escapeHtml(row.cid_descricao)}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -552,19 +408,19 @@ try {
                     const agents = (row.agentes || '').split(' || ');
                     let agentsHtml = '<div class="d-flex flex-column gap-1">';
                     agents.forEach(agent => {
-                        agentsHtml += `<div class="p-1 rounded bg-dark border border-secondary border-opacity-50"><i class="fa-solid fa-biohazard text-danger me-1 small"></i>${escapeHtml(agent)}</div>`;
+                        agentsHtml += `<div class="p-1 rounded bg-body-tertiary border border border-opacity-50"><i class="bi bi-radioactive text-danger me-1 small"></i>${escapeHtml(agent)}</div>`;
                     });
                     agentsHtml += '</div>';
 
                     tr.innerHTML = `
                         <td>
-                            <a href="consulta.php?cid=${encodeURIComponent(row.cid_codigo)}" class="badge badge-custom badge-cid text-decoration-none" title="${escapeHtml(row.cid_descricao)}">
+                            <a href="consulta.php?cid=${encodeURIComponent(row.cid_codigo)}" class="badge text-bg-secondary badge-cid text-decoration-none" title="${escapeHtml(row.cid_descricao)}">
                                 ${escapeHtml(row.cid_codigo)}
                             </a>
                         </td>
-                        <td class="fw-medium text-light small">${escapeHtml(row.cid_descricao)}</td>
-                        <td><span class="badge bg-secondary font-monospace" style="font-size: 0.7rem;">${escapeHtml(row.cid_nivel)}</span></td>
-                        <td class="small text-light-emphasis">${agentsHtml}</td>
+                        <td class="fw-medium text-body small">${escapeHtml(row.cid_descricao)}</td>
+                        <td><span class="badge bg-secondary font-monospace">${escapeHtml(row.cid_nivel)}</span></td>
+                        <td class="small text-body-secondary">${agentsHtml}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -588,7 +444,7 @@ try {
             // Previous Button
             const prevLi = document.createElement('li');
             prevLi.className = `page-item ${listState.currentPage === 1 ? 'disabled' : ''}`;
-            prevLi.innerHTML = `<a class="page-link bg-dark text-light border-secondary" href="#" onclick="changePage('${listKey}', ${listState.currentPage - 1}); return false;">Anterior</a>`;
+            prevLi.innerHTML = `<a class="page-link bg-body-tertiary text-body border" href="#" onclick="changePage('${listKey}', ${listState.currentPage - 1}); return false;">Anterior</a>`;
             container.appendChild(prevLi);
 
             // Determine page range to show (max 5 pages)
@@ -601,14 +457,14 @@ try {
             for (let i = startPage; i <= endPage; i++) {
                 const li = document.createElement('li');
                 li.className = `page-item ${listState.currentPage === i ? 'active' : ''}`;
-                li.innerHTML = `<a class="page-link ${listState.currentPage === i ? 'bg-indigo border-indigo text-white' : 'bg-dark text-light border-secondary'}" href="#" onclick="changePage('${listKey}', ${i}); return false;">${i}</a>`;
+                li.innerHTML = `<a class="page-link ${listState.currentPage === i ? 'bg-primary border-primary text-body' : 'bg-body-tertiary text-body border'}" href="#" onclick="changePage('${listKey}', ${i}); return false;">${i}</a>`;
                 container.appendChild(li);
             }
 
             // Next Button
             const nextLi = document.createElement('li');
             nextLi.className = `page-item ${listState.currentPage === totalPages ? 'disabled' : ''}`;
-            nextLi.innerHTML = `<a class="page-link bg-dark text-light border-secondary" href="#" onclick="changePage('${listKey}', ${listState.currentPage + 1}); return false;">Próximo</a>`;
+            nextLi.innerHTML = `<a class="page-link bg-body-tertiary text-body border" href="#" onclick="changePage('${listKey}', ${listState.currentPage + 1}); return false;">Próximo</a>`;
             container.appendChild(nextLi);
         }
 
@@ -637,14 +493,14 @@ try {
             headers.forEach(h => {
                 const iconSpan = document.getElementById(`sort_icon_${listKey}_${h}`);
                 if (iconSpan) {
-                    iconSpan.innerHTML = '<i class="fa-solid fa-sort"></i>';
+                    iconSpan.innerHTML = '<i class="bi bi-arrow-down-up"></i>';
                     iconSpan.className = 'ms-1 text-muted';
                 }
             });
 
             const activeIconSpan = document.getElementById(`sort_icon_${listKey}_${field}`);
             if (activeIconSpan) {
-                activeIconSpan.innerHTML = listState.sortAsc ? '<i class="fa-solid fa-sort-up"></i>' : '<i class="fa-solid fa-sort-down"></i>';
+                activeIconSpan.innerHTML = listState.sortAsc ? '<i class="bi bi-sort-up"></i>' : '<i class="bi bi-sort-down"></i>';
                 activeIconSpan.className = 'ms-1 text-primary';
             }
 

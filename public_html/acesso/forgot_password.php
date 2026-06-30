@@ -40,7 +40,7 @@ render_header('Recuperar senha');
 
     <?php if ($sent): ?>
         <div class="alert alert-success">Se o usuario existir, enviaremos um link de recuperacao para o e-mail cadastrado.</div>
-        <a class="btn btn-light" href="login.php">Voltar ao login</a>
+        <a class="btn btn-outline-primary" href="login.php">Voltar ao login</a>
     <?php else: ?>
         <p class="muted">Informe seu e-mail ou nome de usuario. O link de recuperacao expira automaticamente.</p>
         <form method="post" class="d-grid gap-3">
@@ -49,7 +49,7 @@ render_header('Recuperar senha');
                 <label class="form-label" for="login">E-mail ou usuario</label>
                 <input class="form-control" id="login" name="login" required value="<?= h($login) ?>">
             </div>
-            <button class="btn btn-light" type="submit">Enviar link</button>
+            <button class="btn btn-primary" type="submit">Enviar link</button>
         </form>
     <?php endif; ?>
 </section>

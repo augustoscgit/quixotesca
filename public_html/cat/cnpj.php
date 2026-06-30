@@ -146,51 +146,10 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAT - CNPJ <?= h(formatCnpj($cnpj)) ?></title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root, [data-bs-theme="light"] {
-            --bg-color: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #64748b;
-            --text-color: #1e293b;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #f8fafc;
-        }
-        [data-bs-theme="dark"] {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #94a3b8;
-            --text-color: #f8fafc;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: var(--bs-body-bg);
-            --field-bg: #111827;
-        }
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Inter', sans-serif; }
-        h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
-        .navbar { background-color: var(--navbar-bg); backdrop-filter: none; border-bottom: 1px solid var(--border-color); }
-        .glass-card { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: none; }
-        .text-accent { color: var(--accent-color) !important; }
-        .btn-icon { width: 40px; height: 40px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
-        .info-label { color: var(--text-muted); font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-        .info-value { background: var(--field-bg); border: 1px solid var(--border-color); border-radius: 8px; min-height: 42px; padding: 10px 12px; word-break: break-word; }
-        .table { --bs-table-bg: transparent; --bs-table-color: var(--text-color); --bs-table-border-color: var(--border-color); }
-        .table thead th { color: var(--text-muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; }
-        .metric-number { font-size: 1.75rem; font-weight: 800; line-height: 1; }
-    </style>
-    <link href="../assets/css/style.css" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
+<script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <!-- Navbar -->
@@ -201,29 +160,29 @@ try {
 
     <main class="container-fluid py-5 px-4">
         <?php if ($db_error): ?>
-            <div class="alert alert-danger glass-card border-danger"><?= h($db_error) ?></div>
+            <div class="alert alert-danger card border-danger"><?= h($db_error) ?></div>
         <?php else: ?>
             <header class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
                 <div>
                     <div class="text-muted mb-1">CNPJ do empregador</div>
-                    <h1 class="display-6 text-accent mb-2" style="font-weight: 800;"><?= h(formatCnpj($cnpj)) ?></h1>
+                    <h1 class="display-6 text-primary mb-2"><?= h(formatCnpj($cnpj)) ?></h1>
                     <p class="lead text-secondary mb-0" id="opencnpj-title"><?= h($cache['razao_social'] ?? $cache['nome_fantasia'] ?? 'Dados cadastrais ainda não carregados') ?></p>
                 </div>
                 <div class="d-flex gap-2">
-                    <a class="btn btn-outline-secondary btn-icon" href="cnpjs.php" title="Voltar ao agregador" aria-label="Voltar ao agregador"><i class="fa-solid fa-arrow-left"></i></a>
+                    <a class="btn btn-outline-secondary btn-icon" href="cnpjs.php" title="Voltar ao agregador" aria-label="Voltar ao agregador"><i class="bi bi-arrow-left"></i></a>
                     <?php if (!empty($aggregate['matriz'])): ?>
-                        <a class="btn btn-outline-accent btn-icon" href="matriz.php?matriz=<?= h($aggregate['matriz']) ?>" title="Abrir matriz" aria-label="Abrir matriz"><i class="fa-solid fa-sitemap"></i></a>
+                        <a class="btn btn-outline-primary btn-icon" href="matriz.php?matriz=<?= h($aggregate['matriz']) ?>" title="Abrir matriz" aria-label="Abrir matriz"><i class="bi bi-diagram-3"></i></a>
                     <?php endif; ?>
-                    <a class="btn btn-outline-accent btn-icon" href="inspecao.php?cnpj=<?= h($cnpj) ?>" title="Navegar acidentes" aria-label="Navegar acidentes"><i class="fa-solid fa-address-card"></i></a>
-                    <button type="button" class="btn btn-outline-secondary btn-icon" onclick="refreshOpenCnpj()" title="Atualizar OpenCNPJ" aria-label="Atualizar OpenCNPJ"><i class="fa-solid fa-cloud-arrow-down"></i></button>
+                    <a class="btn btn-outline-primary btn-icon" href="inspecao.php?cnpj=<?= h($cnpj) ?>" title="Navegar acidentes" aria-label="Navegar acidentes"><i class="bi bi-card-text"></i></a>
+                    <button type="button" class="btn btn-outline-secondary btn-icon" onclick="refreshOpenCnpj()" title="Atualizar OpenCNPJ" aria-label="Atualizar OpenCNPJ"><i class="bi bi-cloud-arrow-down"></i></button>
                 </div>
             </header>
 
             <section class="row g-4 mb-4">
-                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Acidentes</div><div class="metric-number"><?= number_format((int)($aggregate['acidentes'] ?? 0), 0, ',', '.') ?></div></div></div>
-                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Óbitos</div><div class="metric-number"><?= number_format((int)($aggregate['obitos'] ?? 0), 0, ',', '.') ?></div></div></div>
-                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Matriz</div><div class="metric-number font-monospace"><?php if (!empty($aggregate['matriz'])): ?><a class="text-accent text-decoration-none" href="matriz.php?matriz=<?= h($aggregate['matriz']) ?>"><?= h($aggregate['matriz']) ?></a><?php else: ?>-<?php endif; ?></div></div></div>
-                <div class="col-6 col-xl-3"><div class="glass-card p-3"><div class="text-muted small">Filial</div><div class="metric-number font-monospace"><?= h($aggregate['filial'] ?? '-') ?></div></div></div>
+                <div class="col-6 col-xl-3"><div class="card p-3"><div class="text-muted small">Acidentes</div><div class="metric-number"><?= number_format((int)($aggregate['acidentes'] ?? 0), 0, ',', '.') ?></div></div></div>
+                <div class="col-6 col-xl-3"><div class="card p-3"><div class="text-muted small">Óbitos</div><div class="metric-number"><?= number_format((int)($aggregate['obitos'] ?? 0), 0, ',', '.') ?></div></div></div>
+                <div class="col-6 col-xl-3"><div class="card p-3"><div class="text-muted small">Matriz</div><div class="metric-number font-monospace"><?php if (!empty($aggregate['matriz'])): ?><a class="text-primary text-decoration-none" href="matriz.php?matriz=<?= h($aggregate['matriz']) ?>"><?= h($aggregate['matriz']) ?></a><?php else: ?>-<?php endif; ?></div></div></div>
+                <div class="col-6 col-xl-3"><div class="card p-3"><div class="text-muted small">Filial</div><div class="metric-number font-monospace"><?= h($aggregate['filial'] ?? '-') ?></div></div></div>
             </section>
 
             <?php
@@ -246,8 +205,8 @@ try {
                     ['empresa', 'socios'],
                 ]);
             ?>
-            <section class="glass-card p-4 mb-4">
-                <h2 class="h5 mb-3 text-accent"><i class="fa-solid fa-database me-2"></i>Cadastro completo OpenCNPJ</h2>
+            <section class="card p-4 mb-4">
+                <h2 class="h5 mb-3 text-primary"><i class="bi bi-database me-2"></i>Cadastro completo OpenCNPJ</h2>
                 <?php if (!$openCnpjRaw): ?>
                     <div class="text-muted small">Dados completos ainda nao estao no cache. Use o botao de atualizacao da API no canto superior direito.</div>
                 <?php else: ?>
@@ -306,8 +265,8 @@ try {
                         </div>
                         <div class="col-12">
                             <details class="mt-2">
-                                <summary class="small text-accent fw-semibold">JSON completo armazenado</summary>
-                                <pre class="bg-body-tertiary border rounded p-3 mt-2 small overflow-auto" style="max-height: 420px;"><?= h(json_encode($openCnpjRaw, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)) ?></pre>
+                                <summary class="small text-primary fw-semibold">JSON completo armazenado</summary>
+                                <pre class="bg-body-tertiary border rounded p-3 mt-2 small overflow-auto"><?= h(json_encode($openCnpjRaw, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)) ?></pre>
                             </details>
                         </div>
                     </div>
@@ -316,9 +275,9 @@ try {
 
             <section class="row g-4 mb-4">
                 <div class="col-xl-7">
-                    <div class="glass-card p-4 h-100">
+                    <div class="card p-4 h-100">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 mb-0 text-accent"><i class="fa-solid fa-id-card me-2"></i>Cadastro OpenCNPJ</h2>
+                            <h2 class="h5 mb-0 text-primary"><i class="bi bi-person-vcard me-2"></i>Cadastro OpenCNPJ</h2>
                             <span class="badge text-bg-secondary" id="opencnpj-status"><?= $cache ? h(($cache['is_fresh'] ?? false) ? 'cache válido' : 'cache expirado') : 'não consultado' ?></span>
                         </div>
                         <div class="row g-3">
@@ -333,8 +292,8 @@ try {
                     </div>
                 </div>
                 <div class="col-xl-5">
-                    <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-accent"><i class="fa-solid fa-building me-2"></i>Dados locais CAT</h2>
+                    <div class="card p-4 h-100">
+                        <h2 class="h5 mb-3 text-primary"><i class="bi bi-building me-2"></i>Dados locais CAT</h2>
                         <div class="row g-3">
                             <div class="col-12"><div class="info-label">CNAE no arquivo CAT</div><div class="info-value"><?= h(trim(($aggregate['cnae_codigo'] ?? '') . ' - ' . ($aggregate['cnae_descricao'] ?? ''), ' -')) ?: '-' ?></div></div>
                             <div class="col-md-6"><div class="info-label">Município empregador</div><div class="info-value"><?= h($aggregate['municipio_empregador'] ?? '-') ?></div></div>
@@ -348,30 +307,30 @@ try {
 
             <section class="row g-4 mb-4">
                 <div class="col-xl-6">
-                    <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-accent">Distribuição por tipo de acidente</h2>
+                    <div class="card p-4 h-100">
+                        <h2 class="h5 mb-3 text-primary">Distribuição por tipo de acidente</h2>
                         <?php foreach ($typeDistribution as $row): ?>
-                            <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-2"><span><?= h($row['label']) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
+                            <div class="d-flex justify-content-between border-bottom border border-opacity-25 py-2"><span><?= h($row['label']) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
                         <?php endforeach; ?>
                     </div>
                 </div>
                 <div class="col-xl-6">
-                    <div class="glass-card p-4 h-100">
-                        <h2 class="h5 mb-3 text-accent">Distribuição por sexo</h2>
+                    <div class="card p-4 h-100">
+                        <h2 class="h5 mb-3 text-primary">Distribuição por sexo</h2>
                         <?php foreach ($sexDistribution as $row): ?>
-                            <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-25 py-2"><span><?= h($row['label']) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
+                            <div class="d-flex justify-content-between border-bottom border border-opacity-25 py-2"><span><?= h($row['label']) ?></span><strong><?= number_format((int)$row['total'], 0, ',', '.') ?></strong></div>
                         <?php endforeach; ?>
                     </div>
                 </div>
             </section>
 
-            <section class="glass-card p-4 mb-4">
+            <section class="card p-4 mb-4">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                    <h2 class="h5 mb-0 text-accent"><i class="fa-solid fa-list me-2"></i>CATs registradas</h2>
+                    <h2 class="h5 mb-0 text-primary"><i class="bi bi-list-ul me-2"></i>CATs registradas</h2>
                     <div class="d-flex align-items-center gap-2 flex-wrap">
                         <span class="small text-muted" id="cat-range-summary">Carregando CATs...</span>
                         <span class="small text-muted">Linhas</span>
-                        <select id="cat-per-page" class="form-select form-select-sm" style="width: auto;" title="Linhas por pagina" aria-label="Linhas por pagina">
+                        <select id="cat-per-page" class="form-select form-select-sm" title="Linhas por pagina" aria-label="Linhas por pagina">
                             <?php foreach ([10, 25, 50, 100] as $option): ?>
                                 <option value="<?= $option ?>" <?= $option === $catPerPage ? 'selected' : '' ?>><?= $option ?></option>
                             <?php endforeach; ?>
@@ -391,7 +350,7 @@ try {
                                     <td class="font-monospace"><?= h($row['cbo'] ?? '-') ?></td>
                                     <td class="font-monospace"><?= h($row['registro_origem_id'] ?? '-') ?></td>
                                     <td class="small text-muted"><?= h($row['arquivo_nome'] ?? '-') ?></td>
-                                    <td class="text-end"><a class="btn btn-outline-accent btn-icon btn-sm" href="inspecao.php?cnpj=<?= h($cnpj) ?>&registro=<?= h($row['registro_origem_id'] ?? '') ?>" title="Abrir esta CAT" aria-label="Abrir esta CAT"><i class="fa-solid fa-address-card"></i></a></td>
+                                    <td class="text-end"><a class="btn btn-outline-primary btn-icon btn-sm" href="inspecao.php?cnpj=<?= h($cnpj) ?>&registro=<?= h($row['registro_origem_id'] ?? '') ?>" title="Abrir esta CAT" aria-label="Abrir esta CAT"><i class="bi bi-card-text"></i></a></td>
                                 </tr>
                             <?php endforeach; ?>
                             <?php if (empty($recentAccidents)): ?>
@@ -408,7 +367,7 @@ try {
                     <nav class="d-flex justify-content-center mt-3" aria-label="Paginacao das CATs do CNPJ">
                         <ul class="pagination pagination-sm mb-0">
                             <li class="page-item <?= $catPage <= 1 ? 'disabled' : '' ?>">
-                                <a class="page-link" href="cnpj.php?cnpj=<?= h($cnpj) ?>&cat_page=<?= max(1, $catPage - 1) ?>" title="Pagina anterior" aria-label="Pagina anterior"><i class="fa-solid fa-angle-left"></i></a>
+                                <a class="page-link" href="cnpj.php?cnpj=<?= h($cnpj) ?>&cat_page=<?= max(1, $catPage - 1) ?>" title="Pagina anterior" aria-label="Pagina anterior"><i class="bi bi-chevron-left"></i></a>
                             </li>
                             <?php for ($page = $pageWindowStart; $page <= $pageWindowEnd; $page++): ?>
                                 <li class="page-item <?= $page === $catPage ? 'active' : '' ?>">
@@ -416,7 +375,7 @@ try {
                                 </li>
                             <?php endfor; ?>
                             <li class="page-item <?= $catPage >= $catTotalPages ? 'disabled' : '' ?>">
-                                <a class="page-link" href="cnpj.php?cnpj=<?= h($cnpj) ?>&cat_page=<?= min($catTotalPages, $catPage + 1) ?>" title="Proxima pagina" aria-label="Proxima pagina"><i class="fa-solid fa-angle-right"></i></a>
+                                <a class="page-link" href="cnpj.php?cnpj=<?= h($cnpj) ?>&cat_page=<?= min($catTotalPages, $catPage + 1) ?>" title="Proxima pagina" aria-label="Proxima pagina"><i class="bi bi-chevron-right"></i></a>
                             </li>
                         </ul>
                     </nav>
@@ -424,15 +383,15 @@ try {
             </section>
 
             <?php if (count($matrixBranches) > 1): ?>
-                <section class="glass-card p-4">
-                    <h2 class="h5 mb-3 text-accent"><i class="fa-solid fa-code-branch me-2"></i>Filiais da mesma matriz</h2>
+                <section class="card p-4">
+                    <h2 class="h5 mb-3 text-primary"><i class="bi bi-diagram-3 me-2"></i>Filiais da mesma matriz</h2>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead><tr><th>CNPJ</th><th>Filial</th><th>Acidentes</th><th>Óbitos</th><th>Território</th></tr></thead>
                             <tbody>
                                 <?php foreach ($matrixBranches as $branch): ?>
                                     <tr>
-                                        <td><a class="text-accent font-monospace text-decoration-none fw-semibold" href="cnpj.php?cnpj=<?= h($branch['cnpj_digits']) ?>"><?= h(formatCnpj($branch['cnpj_digits'])) ?></a></td>
+                                        <td><a class="text-primary font-monospace text-decoration-none fw-semibold" href="cnpj.php?cnpj=<?= h($branch['cnpj_digits']) ?>"><?= h(formatCnpj($branch['cnpj_digits'])) ?></a></td>
                                         <td class="font-monospace"><?= h($branch['filial']) ?></td>
                                         <td><?= number_format((int)$branch['acidentes'], 0, ',', '.') ?></td>
                                         <td><?= number_format((int)$branch['obitos'], 0, ',', '.') ?></td>
@@ -447,7 +406,7 @@ try {
         <?php endif; ?>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script>
         const cnpj = <?= json_encode($cnpj, JSON_UNESCAPED_UNICODE) ?>;
         const hasOpenCnpjCache = <?= $cache ? 'true' : 'false' ?>;
@@ -514,11 +473,11 @@ try {
                     <a class="page-link" href="#" data-cat-page="${page}" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}">${html}</a>
                 </li>
             `;
-            items.push(pageItem(Math.max(1, current - 1), '<i class="fa-solid fa-angle-left"></i>', 'Pagina anterior', current <= 1));
+            items.push(pageItem(Math.max(1, current - 1), '<i class="bi bi-chevron-left"></i>', 'Pagina anterior', current <= 1));
             for (let page = start; page <= end; page++) {
                 items.push(pageItem(page, formatNumber(page), `Pagina ${page}`, false, page === current));
             }
-            items.push(pageItem(Math.min(totalPages, current + 1), '<i class="fa-solid fa-angle-right"></i>', 'Proxima pagina', current >= totalPages));
+            items.push(pageItem(Math.min(totalPages, current + 1), '<i class="bi bi-chevron-right"></i>', 'Proxima pagina', current >= totalPages));
             pagination.innerHTML = items.join('');
             pagination.querySelectorAll('[data-cat-page]').forEach(link => {
                 link.addEventListener('click', event => {
@@ -571,8 +530,8 @@ try {
                         <td>${renderCatCode(row.cid, row.cid_label)}</td>
                         <td>${renderCatCode(row.cbo, row.cbo_label)}</td>
                         <td class="text-end">
-                            <a class="btn btn-outline-accent btn-icon btn-sm" href="inspecao.php?cnpj=${encodeURIComponent(cnpj)}&registro=${encodeURIComponent(row.registro_origem_id || '')}" title="Abrir esta CAT" aria-label="Abrir esta CAT">
-                                <i class="fa-solid fa-address-card"></i>
+                            <a class="btn btn-outline-primary btn-icon btn-sm" href="inspecao.php?cnpj=${encodeURIComponent(cnpj)}&registro=${encodeURIComponent(row.registro_origem_id || '')}" title="Abrir esta CAT" aria-label="Abrir esta CAT">
+                                <i class="bi bi-card-text"></i>
                             </a>
                         </td>
                     </tr>

@@ -65,7 +65,7 @@ render_header('Entrar');
             <label class="form-label" for="password">Senha</label>
             <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required>
         </div>
-        <button class="btn btn-light" type="submit" data-loading-text="Entrando...">Entrar</button>
+        <button class="btn btn-primary" type="submit" data-loading-text="Entrando...">Entrar</button>
     </form>
 
     <div class="d-flex justify-content-between mt-4 small">

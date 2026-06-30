@@ -337,7 +337,7 @@
         }
         const toast = document.createElement('div');
         toast.className = `alert alert-${type} shadow-lg m-0`;
-        toast.style.cssText = 'pointer-events: auto; width: 100%; border-radius: 12px; font-weight: 500; font-family: "Outfit", sans-serif; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); border: 1px solid; opacity: 0; transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease;';
+        toast.style.cssText = 'pointer-events: auto; width: 100%; border-radius: 12px; font-weight: 500; font-family: var(--bs-body-font-family); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; border: 1px solid; opacity: 0; transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease;';
         
         const iconMap = {
             success: '<i class="bi bi-check-circle-fill me-2 fs-5"></i>',
@@ -577,8 +577,8 @@
             }
 
             // Select classes based on what is being moved
-            const cardSelector = isNote ? '.note-card' : '.glass-card';
-            const siblingClass = isNote ? 'note-card' : 'glass-card';
+            const cardSelector = isNote ? '.note-card' : '.card';
+            const siblingClass = isNote ? 'note-card' : 'card';
 
             const card = form.closest(cardSelector);
             if (!card) return;

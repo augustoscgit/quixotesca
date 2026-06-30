@@ -38,6 +38,34 @@ function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
+function syncBootstrapResetMetrics(root = document) {
+  root.querySelectorAll('[data-progress-percent]').forEach((element) => {
+    const value = Number.parseFloat(element.getAttribute('data-progress-percent') || '0');
+    const percent = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
+    element.style.width = `${percent}%`;
+  });
+
+  root.querySelectorAll('[data-placeholder-width]').forEach((element) => {
+    const value = Number.parseFloat(element.getAttribute('data-placeholder-width') || '100');
+    const percent = Math.max(10, Math.min(100, Number.isFinite(value) ? value : 100));
+    element.style.width = `${percent}%`;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  syncBootstrapResetMetrics();
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node instanceof Element) {
+          syncBootstrapResetMetrics(node);
+        }
+      });
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+});
+
 function showTableSkeleton(columnCount = 8, rowCount = 8) {
   const rows = [];
   for (let i = 0; i < rowCount; i++) {
@@ -47,7 +75,7 @@ function showTableSkeleton(columnCount = 8, rowCount = 8) {
       cells.push(`
         <td>
           <div class="placeholder-glow">
-            <span class="placeholder col-12" style="height: 16px; border-radius: 4px; width: ${widthPercent}%;"></span>
+            <span class="placeholder col-12 placeholder-line" data-placeholder-width="${widthPercent}"></span>
           </div>
         </td>
       `);
@@ -339,7 +367,7 @@ function renderEstimates(payload) {
           <td>
             <div class="d-flex align-items-center gap-2">
               <div class="progress flex-grow-1 work-progress" role="progressbar" aria-valuenow="${escapeHtml(percent)}" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar" style="width: ${Math.max(0, Math.min(100, percent))}%"></div>
+                <div class="progress-bar" data-progress-percent="${Math.max(0, Math.min(100, percent))}"></div>
               </div>
               <span class="small fw-semibold estimate-percent">${percent.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</span>
             </div>
@@ -394,21 +422,21 @@ function renderEstimateCriterionCard(criterion, classBadgeMap, formatAverage) {
     const percentText = percent.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 
     const leftCols = `
-      <td class="border-0 bg-transparent py-2 px-1 align-middle" style="width: 200px; min-width: 200px;">
+      <td class="border-0 bg-transparent py-2 px-1 align-middle matrix-col-classification">
         <span class="badge rounded ${badgeClass} w-100 d-block text-center py-1.5 px-2">${escapeHtml(classificationName)}</span>
       </td>
-      <td class="border-0 bg-transparent py-2 px-2 align-middle" style="min-width: 120px;">
-        <div class="progress work-progress" role="progressbar" aria-valuenow="${escapeHtml(percent)}" aria-valuemin="0" aria-valuemax="100" style="height: 8px;">
-          <div class="progress-bar" style="width: ${Math.max(0, Math.min(100, percent))}%"></div>
+      <td class="border-0 bg-transparent py-2 px-2 align-middle matrix-col-progress">
+        <div class="progress work-progress progress-thin" role="progressbar" aria-valuenow="${escapeHtml(percent)}" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar" data-progress-percent="${Math.max(0, Math.min(100, percent))}"></div>
         </div>
       </td>
-      <td class="border-0 bg-transparent py-2 px-1 align-middle text-end fw-semibold small text-nowrap" style="width: 145px; min-width: 145px;">
+      <td class="border-0 bg-transparent py-2 px-1 align-middle text-end fw-semibold small text-nowrap matrix-col-total">
         ${classificationVinculos} (${percentText})
       </td>
     `;
 
     const rightCols = `
-      <th scope="row" class="text-nowrap py-2 px-3 align-middle bg-body-tertiary fw-semibold" style="font-size: 0.75rem;">
+      <th scope="row" class="text-nowrap py-2 px-3 align-middle bg-body-tertiary fw-semibold matrix-small-text">
         ${escapeHtml(cbo.name)}
       </th>
       ${cnaeClasses.map((cnae) => {
@@ -416,7 +444,7 @@ function renderEstimateCriterionCard(criterion, classBadgeMap, formatAverage) {
         const cellPercent = Number(cell.percentual || 0);
         const resultCode = String(cell.result_code || '9');
         return `
-          <td class="align-middle text-center text-nowrap ${matrixClassMap[resultCode] || 'estimate-cell-ncl'}" title="${escapeHtml(cell.result_name || '')}" style="font-size: 0.75rem; font-weight: 500;">
+          <td class="align-middle text-center text-nowrap matrix-cell ${matrixClassMap[resultCode] || 'estimate-cell-ncl'}" title="${escapeHtml(cell.result_name || '')}">
             <span>${formatAverage(cell.vinculos)} (${cellPercent.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%)</span>
           </td>
         `;
@@ -439,8 +467,8 @@ function renderEstimateCriterionCard(criterion, classBadgeMap, formatAverage) {
           <thead>
             <tr>
               <th colspan="3" class="border-0 bg-transparent"></th>
-              <th scope="col" class="text-nowrap bg-body-tertiary text-center align-middle" style="font-size: 0.75rem; font-weight: 700;">CBO \\ CNAE</th>
-              ${cnaeClasses.map((item) => `<th scope="col" class="text-nowrap bg-body-tertiary text-center align-middle" style="font-size: 0.75rem; font-weight: 700;">${escapeHtml(item.name)}</th>`).join('')}
+              <th scope="col" class="text-nowrap bg-body-tertiary text-center align-middle matrix-small-heading">CBO \\ CNAE</th>
+              ${cnaeClasses.map((item) => `<th scope="col" class="text-nowrap bg-body-tertiary text-center align-middle matrix-small-heading">${escapeHtml(item.name)}</th>`).join('')}
             </tr>
           </thead>
           <tbody>
@@ -579,7 +607,7 @@ async function addFilterRow(preselectedColumn = '', preselectedValues = []) {
 
   const rowHtml = `
     <div class="d-flex flex-wrap gap-2 align-items-center p-2 matrix-empty-state" id="${filterId}">
-      <div class="flex-grow-1" style="min-width: 150px;">
+      <div class="flex-grow-1 filter-column-field">
         <select class="form-select form-select-sm filter-column-select">
           <option value="">Selecione o campo...</option>
           ${filterFields.map(field => {
@@ -588,12 +616,12 @@ async function addFilterRow(preselectedColumn = '', preselectedValues = []) {
           }).join('')}
         </select>
       </div>
-      <div class="flex-grow-1" style="min-width: 250px;">
+      <div class="flex-grow-1 filter-values-field">
         <div class="dropdown filter-values-dropdown w-100">
           <button class="btn btn-sm btn-outline-secondary dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" ${preselectedColumn ? '' : 'disabled'}>
             <span>Selecione valores...</span>
           </button>
-          <ul class="dropdown-menu p-2 shadow-sm" style="max-height: 200px; overflow-y: auto; min-width: 250px;">
+          <ul class="dropdown-menu p-2 shadow-sm dropdown-menu-scroll">
           </ul>
         </div>
       </div>

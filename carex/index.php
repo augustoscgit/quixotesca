@@ -53,8 +53,8 @@ try {
     $numClassifications = 10214;
 }
 
-$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
-$bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js';
+$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css';
+$bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js';
 ?><!doctype html>
 <html lang="pt-BR" data-module="carex">
 <head>
@@ -62,24 +62,12 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Carex-BR | Portal</title>
     <link href="public/assets/favicon.png" rel="icon" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        :root, [data-bs-theme="light"] {
-            --bg:        var(--bs-body-bg);
-            --surface:   var(--card-bg);
-            --surface2:  var(--card-hover-bg);
-            --accent:    var(--accent);
-            --border:    var(--bs-border-color);
-            --border-md: var(--bs-border-color);
-            --text:      var(--bs-body-color);
-            --muted:     var(--bs-secondary-color);
-            --faint:     var(--bs-secondary-color);
-        }
-        [data-bs-theme="dark"] {
+        :root {
             --bg:        var(--bs-body-bg);
             --surface:   var(--card-bg);
             --surface2:  var(--card-hover-bg);
@@ -93,7 +81,7 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
         body {
             background: var(--bs-body-bg);
             color: var(--bs-body-color);
-            font-family: 'Inter', sans-serif;
+            font-family: var(--bs-body-font-family);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -291,8 +279,8 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
             .cx-stats { max-width: 100%; }
         }
     </style>
-    <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body class="landing-page">
     <!-- Navbar -->
@@ -361,7 +349,7 @@ $bootstrapJs  = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.
         </div>
     </footer>
     <!-- ── SCRIPTS ───────────────────────────────────── -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
     (() => {

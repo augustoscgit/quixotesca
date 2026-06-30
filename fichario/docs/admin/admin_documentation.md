@@ -24,5 +24,5 @@ Esta area permite manter documentos internos do Fichario a partir do painel admi
 - Nao registrar senhas, tokens, chaves de API, credenciais de banco ou dados pessoais sensiveis.
 - Manter os arquivos em UTF-8 sem BOM.
 - Preferir textos objetivos, operacionais e uteis para manutencao.
-- Quando uma decisao de interface for tomada durante o desenvolvimento, registrar o padrao nas orientacoes de desenvolvedor.
+- Quando uma decisao de interface for geral, registrar em `../../../docs/identidade-visual-ux.md` ou `../../../docs/tema-css-bootstrap-modulos.md`; se for apenas do Fichario, registrar no README do modulo apontando para os guias centrais.
 - Usar "nota" como termo padrao para o conjunto formado por citacao, observacao e tags.

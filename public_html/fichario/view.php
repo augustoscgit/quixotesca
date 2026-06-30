@@ -94,7 +94,7 @@ function render_article_header_tags(array $headerTagsByCategory): string
                     <?php $cColor = get_tag_colors($catLabel); ?>
                     <?php foreach ($catTags as $tag): ?>
                         <a href="tag_view.php?tag_id=<?= (int)$tag['id'] ?>" class="badge border tag-badge text-decoration-none"
-                           style="background:<?= $cColor['bg'] ?>; color:<?= $cColor['text'] ?>; border-color:<?= $cColor['border'] ?> !important;"
+                          
                            <?= tag_tooltip_attrs($tag) ?>>
                             <?= h($tag['name']) ?>
                         </a>
@@ -160,7 +160,7 @@ function render_article_alerts_button(array $headerTagsByCategory): string
     ?>
     <div class="d-inline-block" id="article-alerts-container" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="<?= h($tooltipText) ?>">
         <button class="btn <?= $hasAlerts ? 'btn-alert-active' : 'btn-alert-inactive' ?> rounded-circle d-flex align-items-center justify-content-center"
-                style="width: 34px; height: 34px; padding: 0; font-weight: bold; font-size: 1.1rem;"
+               
                 <?= $hasAlerts ? '' : 'disabled' ?>>
             !
         </button>
@@ -377,21 +377,21 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
 
     ob_start();
     ?>
-    <article class="glass-card p-4" id="article-tags-panel">
-        <div class="d-flex justify-content-between align-items-center mb-3" onclick="toggleCollapseCard('tags-card-body', 'tags-collapse-icon')" style="cursor: pointer; user-select: none;">
-            <h2 class="h5 text-white fw-bold mb-0">Tags & Conceitos Vinculados</h2>
+    <article class="card p-4" id="article-tags-panel">
+        <div class="d-flex justify-content-between align-items-center mb-3" onclick="toggleCollapseCard('tags-card-body', 'tags-collapse-icon')">
+            <h2 class="h5 text-body fw-bold mb-0">Tags & Conceitos Vinculados</h2>
             <span id="tags-collapse-icon" class="collapse-btn"><?= $isTagsEmpty ? "+" : "-" ?></span>
         </div>
 
         <div id="tags-card-body" class="<?= $isTagsEmpty ? 'd-none' : '' ?>">
             <?php if ($isLoggedIn): ?>
-                <div class="mb-4 p-3 rounded-3 bg-black bg-opacity-25 border border-secondary border-opacity-25">
+                <div class="mb-4 p-3 rounded-3 bg-body-tertiary bg-opacity-25 border border border-opacity-25">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <label class="form-label small mb-0 fw-semibold text-white d-flex align-items-center gap-1" for="active-project-selector">
+                        <label class="form-label small mb-0 fw-semibold text-body d-flex align-items-center gap-1" for="active-project-selector">
                             <i class="bi bi-folder2-open text-primary"></i> Projeto de Trabalho Ativo
                         </label>
                         <?php if ($activeProjectId > 0): ?>
-                            <a href="project.php?id=<?= $activeProjectId ?>" class="btn btn-sm btn-link p-0 text-primary text-decoration-none small" style="font-size: 0.75rem;">
+                            <a href="project.php?id=<?= $activeProjectId ?>" class="btn btn-sm btn-link p-0 text-primary text-decoration-none small">
                                 Ver Projeto <i class="bi bi-arrow-right-short"></i>
                             </a>
                         <?php endif; ?>
@@ -408,7 +408,7 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
             <?php endif; ?>
 
             <?php if ($tags === [] && $quotes === []): ?>
-                <div class="text-secondary small mb-3 p-3 bg-black bg-opacity-25 rounded-3 text-center" id="no-tags-notice">
+                <div class="text-secondary small mb-3 p-3 bg-body-tertiary bg-opacity-25 rounded-3 text-center" id="no-tags-notice">
                     Nenhuma tag vinculada a este artigo. Use o formulário abaixo para vincular.
                 </div>
             <?php else: ?>
@@ -416,18 +416,18 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                 <div class="vstack gap-3 mb-4" id="linked-tags-list">
                     <?php foreach ($viewTagsByCategory as $catLabel => $catTags): ?>
                         <?php $cColor = get_tag_colors($catLabel); ?>
-                        <div class="pb-2 border-bottom border-secondary border-opacity-25">
-                            <h3 class="h6 text-secondary text-uppercase mb-2" style="font-size:0.7rem; letter-spacing:0.05em;"><?= h($catLabel) ?></h3>
+                        <div class="pb-2 border-bottom border border-opacity-25">
+                            <h3 class="h6 text-secondary text-uppercase mb-2"><?= h($catLabel) ?></h3>
                             <div class="vstack gap-2">
                                 <?php foreach ($catTags as $tag): ?>
                                     <div class="p-2 tag-row d-flex flex-column gap-1">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <a href="tag_view.php?tag_id=<?= (int)$tag['id'] ?>" class="badge border tag-badge text-decoration-none" style="background:<?= $cColor['bg'] ?>; color:<?= $cColor['text'] ?>; border-color:<?= $cColor['border'] ?> !important;" <?= tag_tooltip_attrs($tag) ?>>
+                                            <a href="tag_view.php?tag_id=<?= (int)$tag['id'] ?>" class="badge border tag-badge text-decoration-none" <?= tag_tooltip_attrs($tag) ?>>
                                                 <?= h($tag['name']) ?>
                                             </a>
                                             <?php if ($canEditArticle): ?>
                                                 <div class="d-flex gap-2">
-                                                    <button class="btn btn-sm btn-link p-0 text-white-50" onclick="toggleEditComment(<?= $tag['id'] ?>)" title="Editar citação e observações">
+                                                    <button class="btn btn-sm btn-link p-0 text-body-secondary" onclick="toggleEditComment(<?= $tag['id'] ?>)" title="Editar citação e observações">
                                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                                                     </button>
                                                     <button class="btn btn-sm btn-link p-0 text-danger" onclick="unlinkTag(<?= $tag['id'] ?>, '<?= h($tag['name']) ?>')" title="Desvincular tag">&times;</button>
@@ -435,18 +435,18 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                             <?php endif; ?>
                                         </div>
 
-                                        <div class="small text-white-50" id="comment-display-<?= $tag['id'] ?>">
+                                        <div class="small text-body-secondary" id="comment-display-<?= $tag['id'] ?>">
                                             <?php if (trim($tag['tag_quote'] ?? '') === '' && trim($tag['tag_comment'] ?? '') === ''): ?>
-                                                <em class="text-secondary" style="font-size:0.8rem;">Sem citação ou observações.</em>
+                                                <em class="text-secondary">Sem citação ou observações.</em>
                                             <?php else: ?>
                                                 <?php if (trim($tag['tag_quote'] ?? '') !== ''): ?>
-                                                    <div class="note-text mb-2 text-white">
+                                                    <div class="note-text mb-2 text-body">
                                                         <span class="note-meta d-block text-uppercase fw-bold mb-1">Citação</span>
                                                         <div class="quote-box expandable-text collapsed" onclick="toggleExpandableText(this)" id="quote-text-<?= $tag['id'] ?>" title="Clique para expandir/recolher"><?= h($tag['tag_quote']) ?></div>
                                                     </div>
                                                 <?php endif; ?>
                                                 <?php if (trim($tag['tag_comment'] ?? '') !== ''): ?>
-                                                    <div class="note-text text-white-50">
+                                                    <div class="note-text text-body-secondary">
                                                         <span class="note-meta d-block text-uppercase fw-bold mb-1">Observação</span>
                                                         <div class="observation-box expandable-text collapsed" onclick="toggleExpandableText(this)" id="comment-text-<?= $tag['id'] ?>" title="Clique para expandir/recolher"><?= h($tag['tag_comment']) ?></div>
                                                     </div>
@@ -457,15 +457,15 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                         <?php if ($canEditArticle): ?>
                                             <div class="d-none mt-2" id="comment-edit-<?= $tag['id'] ?>">
                                                 <div class="mb-2">
-                                                    <label class="form-label text-secondary mb-1" style="font-size: 0.72rem;">Citação da Tag</label>
-                                                    <textarea class="form-control form-control-sm" id="input-quote-<?= $tag['id'] ?>" rows="2" placeholder="Citação (trecho do texto)..." style="font-size: 0.8rem;"><?= h($tag['tag_quote'] ?? '') ?></textarea>
+                                                    <label class="form-label text-secondary mb-1">Citação da Tag</label>
+                                                    <textarea class="form-control form-control-sm" id="input-quote-<?= $tag['id'] ?>" rows="2" placeholder="Citação (trecho do texto)..."><?= h($tag['tag_quote'] ?? '') ?></textarea>
                                                 </div>
                                                 <div class="mb-2">
-                                                    <label class="form-label text-secondary mb-1" style="font-size: 0.72rem;">Observações / Análise</label>
-                                                    <textarea class="form-control form-control-sm" id="input-comment-<?= $tag['id'] ?>" rows="2" placeholder="Observações..." style="font-size: 0.8rem;"><?= h($tag['tag_comment'] ?? '') ?></textarea>
+                                                    <label class="form-label text-secondary mb-1">Observações / Análise</label>
+                                                    <textarea class="form-control form-control-sm" id="input-comment-<?= $tag['id'] ?>" rows="2" placeholder="Observações..."><?= h($tag['tag_comment'] ?? '') ?></textarea>
                                                 </div>
                                                 <div class="d-flex justify-content-end gap-2">
-                                                    <button class="btn btn-sm btn-outline-secondary text-white rounded-pill px-3" onclick="toggleEditComment(<?= $tag['id'] ?>)">Cancelar</button>
+                                                    <button class="btn btn-sm btn-outline-secondary text-body rounded-pill px-3" onclick="toggleEditComment(<?= $tag['id'] ?>)">Cancelar</button>
                                                     <button class="btn btn-sm btn-primary rounded-pill px-3" onclick="saveTagComment(<?= $tag['id'] ?>)">Salvar</button>
                                                 </div>
                                             </div>
@@ -479,10 +479,10 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                 <?php endif; ?>
 
                 <?php if ($quotes !== []): ?>
-                    <div class="pt-3 mt-3 border-top border-secondary border-opacity-25">
+                    <div class="pt-3 mt-3 border-top border border-opacity-25">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h3 class="h6 text-secondary text-uppercase mb-0" style="font-size:0.7rem; letter-spacing:0.05em;">Marcações</h3>
-                            <button class="btn btn-sm btn-link p-0 text-secondary text-decoration-none" style="font-size: 0.7rem;" type="button" onclick="toggleAllMarkings(this, '.pt-3')">
+                            <h3 class="h6 text-secondary text-uppercase mb-0">Marcações</h3>
+                            <button class="btn btn-sm btn-link p-0 text-secondary text-decoration-none" type="button" onclick="toggleAllMarkings(this, '.pt-3')">
                                 Expandir todas
                             </button>
                         </div>
@@ -496,7 +496,7 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                     $quoteCommentTeaser = text_teaser($quoteComment, 150);
                                     $noteId = (int)$quote['id'];
                                 ?>
-                                <div class="note-card p-2 rounded-3 border border-secondary border-opacity-25 bg-black bg-opacity-25 small text-white-50"
+                                <div class="note-card p-2 rounded-3 border border border-opacity-25 bg-body-tertiary bg-opacity-25 small text-body-secondary"
                                      data-quote-id="<?= $noteId ?>"
                                      data-quote-text="<?= h($quote['quote_text']) ?>"
                                      data-quote-comment="<?= h((string) ($quote['comment'] ?? '')) ?>"
@@ -504,12 +504,12 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                     <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                                         <div class="d-flex flex-wrap gap-1">
                                             <?php if ($isIncompleteMarking): ?>
-                                                <span class="badge rounded-pill bg-warning text-dark" title="Nota sem citação ou observação">!</span>
+                                                <span class="badge rounded-pill text-bg-warning" title="Nota sem citação ou observação">!</span>
                                             <?php endif; ?>
                                             <?php if (($quote['tags'] ?? []) !== []): ?>
                                                 <?php foreach ($quote['tags'] as $quoteTag): ?>
                                                     <?php $qColor = get_tag_colors($quoteTag['category']); ?>
-                                                    <a href="tag_view.php?tag_id=<?= (int) $quoteTag['id'] ?>" class="badge border tag-badge text-decoration-none" style="background:<?= $qColor['bg'] ?>; color:<?= $qColor['text'] ?>; border-color:<?= $qColor['border'] ?> !important;" <?= tag_tooltip_attrs($quoteTag) ?>>
+                                                    <a href="tag_view.php?tag_id=<?= (int) $quoteTag['id'] ?>" class="badge border tag-badge text-decoration-none" <?= tag_tooltip_attrs($quoteTag) ?>>
                                                         <?= h($quoteTag['name']) ?>
                                                     </a>
                                                 <?php endforeach; ?>
@@ -518,16 +518,16 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                             <?php endif; ?>
                                         </div>
                                         <div class="d-flex gap-2 flex-shrink-0">
-                                            <button class="btn btn-sm btn-link p-0 text-white-50" type="button" onclick="openMarkingReadFromButton(this)" title="Ler nota">
+                                            <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="openMarkingReadFromButton(this)" title="Ler nota">
                                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
                                             </button>
                                             <?php if ($canEditArticle): ?>
-                                                <button class="btn btn-sm btn-link p-0 text-white-50" type="button" onclick="editQuoteFromButton(this)" title="Editar nota">
+                                                <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="editQuoteFromButton(this)" title="Editar nota">
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                                                 </button>
                                                 <button class="btn btn-sm btn-link p-0 text-danger" type="button" onclick="deleteQuoteFromButton(this)" title="Excluir nota">&times;</button>
                                             <?php else: ?>
-                                                <button class="btn btn-sm btn-link p-0 text-white-50 locked-action" type="button" onclick="showAuthRequired()" title="Editar nota">
+                                                <button class="btn btn-sm btn-link p-0 text-body-secondary locked-action" type="button" onclick="showAuthRequired()" title="Editar nota">
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                                                 </button>
                                                 <button class="btn btn-sm btn-link p-0 text-danger locked-action" type="button" onclick="showAuthRequired()" title="Excluir nota">&times;</button>
@@ -554,7 +554,7 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                     </div>
 
                                     <?php if ($activeProjectId > 0 && $isLoggedIn): ?>
-                                        <div class="mt-3 pt-2 border-top border-secondary border-opacity-25" style="font-size: 0.8rem;">
+                                        <div class="mt-3 pt-2 border-top border border-opacity-25">
                                             <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
                                                 <span class="text-secondary small d-flex align-items-center gap-1">
                                                     <i class="bi bi-link-45deg"></i> Projeto Ativo:
@@ -565,24 +565,24 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                                 <div class="d-flex flex-wrap gap-1 align-items-center" id="note-links-container-<?= $noteId ?>">
                                                     <?php if ($links !== []): ?>
                                                         <?php foreach ($links as $link): ?>
-                                                            <span class="badge bg-primary bg-opacity-15 text-primary border border-primary border-opacity-25 d-inline-flex align-items-center gap-1 py-1 px-2" style="font-size: 0.7rem; border-radius: 6px;">
+                                                            <span class="badge bg-primary bg-opacity-15 text-primary border border-primary border-opacity-25 d-inline-flex align-items-center gap-1 py-1 px-2">
                                                                 <i class="bi bi-folder-check"></i> <?= h($link['section_title']) ?>
                                                                 <?php if ($canEditArticle): ?>
-                                                                    <button type="button" class="btn btn-sm btn-link p-0 text-danger border-0 d-inline-flex align-items-center" onclick="unlinkNoteFromSection(<?= $noteId ?>, <?= $link['section_id'] ?>)" title="Remover vínculo" style="vertical-align: middle;">
-                                                                        <i class="bi bi-x-circle-fill text-danger ms-1" style="font-size: 0.82rem;"></i>
+                                                                    <button type="button" class="btn btn-sm btn-link p-0 text-danger border-0 d-inline-flex align-items-center" onclick="unlinkNoteFromSection(<?= $noteId ?>, <?= $link['section_id'] ?>)" title="Remover vínculo">
+                                                                        <i class="bi bi-x-circle-fill text-danger ms-1"></i>
                                                                     </button>
                                                                 <?php endif; ?>
                                                             </span>
                                                         <?php endforeach; ?>
                                                     <?php else: ?>
-                                                        <span class="text-secondary italic" style="font-size: 0.75rem;">Não vinculado</span>
+                                                        <span class="text-secondary italic">Não vinculado</span>
                                                     <?php endif; ?>
                                                 </div>
                                             </div>
 
                                             <?php if ($canEditArticle): ?>
                                                 <div class="d-flex gap-1 align-items-center">
-                                                    <select class="form-select form-select-sm py-0 px-2" id="note-link-select-<?= $noteId ?>" style="font-size: 0.72rem; height: auto;" onchange="handleNoteLinkAction(<?= $noteId ?>, this)">
+                                                    <select class="form-select form-select-sm py-0 px-2" id="note-link-select-<?= $noteId ?>" onchange="handleNoteLinkAction(<?= $noteId ?>, this)">
                                                         <option value="">+ Vincular a uma seção...</option>
                                                         <option value="0">Vincular diretamente (Geral)</option>
                                                         <?php foreach ($activeProjectSections as $sect): ?>
@@ -604,9 +604,9 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                                 
                                                 <div class="mt-2 d-none" id="new-section-input-container-<?= $noteId ?>">
                                                     <div class="input-group input-group-sm">
-                                                        <input type="text" class="form-control form-control-sm" id="new-section-title-<?= $noteId ?>" placeholder="Nome da nova seção..." style="font-size: 0.72rem;">
-                                                        <button class="btn btn-primary btn-sm" type="button" onclick="submitCreateSectionAndLink(<?= $noteId ?>)" style="font-size: 0.72rem;">Criar</button>
-                                                        <button class="btn btn-outline-secondary text-white btn-sm" type="button" onclick="cancelCreateSectionInline(<?= $noteId ?>)" style="font-size: 0.72rem;">X</button>
+                                                        <input type="text" class="form-control form-control-sm" id="new-section-title-<?= $noteId ?>" placeholder="Nome da nova seção...">
+                                                        <button class="btn btn-primary btn-sm" type="button" onclick="submitCreateSectionAndLink(<?= $noteId ?>)">Criar</button>
+                                                        <button class="btn btn-outline-secondary text-body btn-sm" type="button" onclick="cancelCreateSectionInline(<?= $noteId ?>)">X</button>
                                                     </div>
                                                 </div>
                                             <?php endif; ?>
@@ -629,8 +629,8 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
         </div>
 
         <?php if ($canEditArticle): ?>
-            <div class="mt-4 p-3 bg-black bg-opacity-25 border border-secondary border-opacity-25 rounded-3 d-none" id="link-tag-panel">
-                <h3 class="h6 text-white mb-3">Vincular Tag Existente</h3>
+            <div class="mt-4 p-3 bg-body-tertiary bg-opacity-25 border border border-opacity-25 rounded-3 d-none" id="link-tag-panel">
+                <h3 class="h6 text-body mb-3">Vincular Tag Existente</h3>
                 <?php if ($availableTags === []): ?>
                     <p class="text-secondary small mb-0">Todas as tags do sistema já estão vinculadas a este artigo.</p>
                 <?php else: ?>
@@ -650,7 +650,7 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                         <textarea class="form-control" id="link-comment" rows="2" placeholder="Observações sobre o vínculo desta tag..."></textarea>
                     </div>
                     <div class="d-flex justify-content-end gap-2">
-                        <button class="btn btn-sm btn-outline-secondary text-white rounded-pill" onclick="toggleLinkPanel()">Cancelar</button>
+                        <button class="btn btn-sm btn-outline-secondary text-body rounded-pill" onclick="toggleLinkPanel()">Cancelar</button>
                         <button class="btn btn-sm btn-primary rounded-pill px-3" onclick="submitLinkTag()">Confirmar</button>
                     </div>
                 <?php endif; ?>
@@ -1289,377 +1289,11 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= h($article['title']) ?> - Fichário Acadêmico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts: Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <style>
-        .blob {
-            animation: floatBlob 12s infinite alternate ease-in-out;
-        }
-
-        .legacy-decoration-secondary {
-            animation-delay: -6s;
-        }
-
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 40px) scale(1.15); }
-        }
-
-        .text-block {
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-            line-height: 1.6;
-            color: #d1d5db;
-        }
-
-        .full-text-box {
-            flex-grow: 1;
-            height: 0;
-            overflow-y: auto;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 20px;
-            border-radius: 8px;
-            font-family: inherit;
-        }
-
-        .metadata-value,
-        .metadata-value a {
-            overflow-wrap: anywhere;
-            word-break: break-word;
-        }
-
-        .tag-badge {
-            font-size: 0.72rem;
-            padding: 0.35em 0.85em;
-            border-radius: 99px;
-            cursor: help;
-        }
-
-        .marking-preview {
-            white-space: normal;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-            line-height: 1.45;
-            font-size: 0.82rem;
-        }
-
-        .note-teaser-label {
-            display: block;
-            color: var(--text-muted);
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 0.15rem;
-        }
-
-        .note-meta {
-            color: #94a3b8;
-            font-size: 0.78rem;
-        }
-
-        .note-text {
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-            line-height: 1.5;
-            font-size: 0.88rem;
-        }
-
-
-        .marking-modal-text {
-            max-height: 62vh;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-            line-height: 1.65;
-        }
-
-        .note-edit-textarea {
-            min-height: 34vh;
-            resize: vertical;
-        }
-
-        .form-control, .form-select {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #f3f4f6;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-
-        .form-control:focus, .form-select:focus {
-            background-color: rgba(255, 255, 255, 0.08);
-            border-color: #3b82f6;
-            color: #ffffff;
-            box-shadow: 0 0 10px var(--color-primary-glow);
-        }
-
-        .form-select option {
-            background-color: #121528;
-            color: #f3f4f6;
-        }
-
-        .form-label {
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .nav-tabs {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-tabs .nav-link {
-            color: #9ca3af;
-            border: none;
-            border-bottom: 2px solid transparent;
-            font-weight: 500;
-            padding: 0.75rem 1.2rem;
-            transition: all 0.2s;
-        }
-
-        .nav-tabs .nav-link:hover {
-            color: #ffffff;
-            border-bottom-color: rgba(255, 255, 255, 0.2);
-            background: none;
-        }
-
-        .nav-tabs .nav-link.active {
-            color: #3b82f6;
-            background: none;
-            border: none;
-            border-bottom: 2px solid #3b82f6;
-        }
-
-        .autosave-status {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .main-container {
-            position: relative;
-            z-index: 10;
-        }
-.tag-row {
-            transition: all 0.2s;
-            border-radius: 8px;
-        }
-
-        .collapse-btn {
-            width: 28px;
-            height: 28px;
-            display: inline-flex !important;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: #9ca3af;
-            transition: all 0.2s ease;
-            font-size: 0.75rem;
-            cursor: pointer;
-            user-select: none;
-        }
-        .collapse-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.25);
-            color: #ffffff;
-            transform: scale(1.1);
-        }
-
-        #normal-tabs-card {
-            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
-            min-height: 600px;
-        }
-        #normal-tabs-card:not(.d-none) {
-            display: flex !important;
-            flex-direction: column;
-        }
-        #reading-tabs-content .tab-pane.active {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        /* Full Text Legibility Custom Styles (Embedded) */
-        #focused-reading-card {
-            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
-            min-height: 600px;
-        }
-        #focused-reading-card:not(.d-none) {
-            display: flex !important;
-            flex-direction: column;
-        }
-        #focused-reading-card.dark-mode {
-            background-color: rgba(18, 21, 40, 0.95) !important;
-            color: #f3f4f6 !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        }
-        #focused-reading-card.light-mode {
-            background-color: #fcfaf2 !important;
-            color: #1f2937 !important;
-            border: 1px solid rgba(0, 0, 0, 0.15) !important;
-        }
-        #focused-reading-card.light-mode .text-white,
-        #focused-reading-card.light-mode h5,
-        #focused-reading-card.light-mode label {
-            color: #111827 !important;
-        }
-        #focused-reading-card.light-mode .btn-outline-light {
-            color: #1f2937 !important;
-            border-color: #1f2937 !important;
-        }
-        #focused-reading-card.light-mode .btn-outline-light:hover {
-            background-color: rgba(0, 0, 0, 0.05) !important;
-        }
-        #focused-reading-card.light-mode .btn-outline-dark {
-            color: #1f2937 !important;
-            border-color: #1f2937 !important;
-        }
-        #focused-reading-card.light-mode .btn-outline-dark:hover {
-            background-color: rgba(0, 0, 0, 0.08) !important;
-        }
-        .reading-modal-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 1rem;
-        }
-        #focused-reading-card.light-mode .reading-modal-header {
-            border-bottom-color: rgba(0, 0, 0, 0.1);
-        }
-        .reading-modal-body {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .reading-text-view {
-            font-size: 1.25rem;
-            line-height: 2.0;
-            max-width: 100%;
-            margin: 0;
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 300;
-
-            /* Adaptive height updates */
-            flex-grow: 1;
-            height: 0;
-            overflow-y: auto;
-        }
-        .reading-textarea {
-            font-size: 1.15rem;
-            line-height: 1.6;
-            max-width: 100%;
-            font-family: inherit;
-            background-color: rgba(0, 0, 0, 0.3) !important;
-            border: 1px solid #dac8b9 !important;
-            color: #ffffff !important;
-            border-radius: 8px;
-            padding: 1.25rem;
-            resize: none;
-        }
-        #focused-reading-card.light-mode .reading-textarea {
-            background-color: #ffffff !important;
-            color: #1f2937 !important;
-            border: 1px solid rgba(0, 0, 0, 0.2) !important;
-        }
-        #focused-reading-card.light-mode .form-label {
-            color: #4b5563 !important;
-        }
-        .btn-light-toggle {
-            transition: all 0.3s;
-        }
-
-        /* Autocomplete dropdown list styling */
-        .autocomplete-dropdown {
-            background: rgba(18, 21, 40, 0.98) !important;
-            backdrop-filter: none;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            border-radius: 8px;
-            box-shadow: none;
-            max-height: 220px;
-            overflow-y: auto;
-            position: absolute;
-            width: 100%;
-            z-index: 1100;
-            margin-top: 4px;
-        }
-        .autocomplete-item {
-            padding: 10px 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #5a4b43;
-            font-size: 0.875rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-        }
-        .autocomplete-item:last-child {
-            border-bottom: none;
-        }
-        .autocomplete-item:hover {
-            background: rgba(59, 130, 246, 0.2);
-            color: #ffffff;
-        }
-        .autocomplete-item.active {
-            background: rgba(59, 130, 246, 0.35);
-            color: #ffffff;
-        }
-        .locked-action {
-            opacity: 0.62;
-            cursor: not-allowed;
-        }
-        .locked-action:hover {
-            opacity: 0.82;
-        }
-        .btn-alert-active {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
-            color: #000000 !important;
-            border: none !important;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
-            animation: pulseAlertGlow 2s infinite ease-in-out;
-        }
-        .btn-alert-active:hover {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-            color: #000000 !important;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
-        }
-        .btn-alert-inactive {
-            background: transparent !important;
-            color: #9ca3af !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            font-weight: bold;
-        }
-        .btn-alert-inactive:hover {
-            color: #ffffff !important;
-            background: rgba(255, 255, 255, 0.05) !important;
-            border-color: rgba(255, 255, 255, 0.3) !important;
-        }
-        @keyframes pulseAlertGlow {
-            0% {
-                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
-            }
-        }
-    </style>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <!-- Background Animated Blobs -->
@@ -1672,22 +1306,22 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
                 <li class="breadcrumb-item"><a href="articles.php">Artigos</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page"><?= h($article['title']) ?></li>
+                <li class="breadcrumb-item active text-body" aria-current="page"><?= h($article['title']) ?></li>
             </ol>
         </nav>
 
         <!-- Top bar/Header -->
-        <header class="glass-card p-4 mb-4">
+        <header class="card p-4 mb-4">
             <div class="d-flex flex-column gap-3">
                 <div>
-                    <h1 class="h3 mb-2 text-white fw-bold"><?= h($article['title']) ?></h1>
+                    <h1 class="h3 mb-2 text-body fw-bold"><?= h($article['title']) ?></h1>
                     <p class="text-secondary mb-3">
                         <strong><?= h($article['authors']) ?></strong>
                         <?php if ((string) ($article['year'] ?? '') !== ''): ?>
                             <span class="mx-2">|</span><?= h((string) $article['year']) ?>
                         <?php endif; ?>
                         <?php if ((string) ($article['journal'] ?? '') !== ''): ?>
-                            <span class="mx-2">|</span><em class="text-white-50"><?= h($article['journal']) ?></em>
+                            <span class="mx-2">|</span><em class="text-body-secondary"><?= h($article['journal']) ?></em>
                         <?php endif; ?>
                         <?php 
                             $hasStart = !empty($article['data_year_start']);
@@ -1695,7 +1329,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                         ?>
                         <?php if ($hasStart || $hasEnd): ?>
                             <span class="mx-2">|</span>
-                            <span class="text-white-50" title="Período dos dados de coleta">
+                            <span class="text-body-secondary" title="Período dos dados de coleta">
                                 📅 Dados: 
                                 <?php if ($hasStart && $hasEnd): ?>
                                     <?= h((string) $article['data_year_start']) ?> a <?= h((string) $article['data_year_end']) ?>
@@ -1713,7 +1347,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                     <?= render_article_header_tags($headerTagsByCategory) ?>
                 </div>
                 <div class="d-flex flex-wrap gap-2 justify-content-end align-items-center mt-2">
-                    <a class="btn btn-outline-secondary text-white rounded-pill px-3" href="articles.php">Voltar</a>
+                    <a class="btn btn-outline-secondary text-body rounded-pill px-3" href="articles.php">Voltar</a>
                     <?php if (is_logged_in()): ?>
                         <button class="btn btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center gap-1"
                                 id="btn-reading-modal"
@@ -1765,7 +1399,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             <!-- Left Panel: Reading Pane -->
             <section class="col-lg-7 order-2 order-lg-1 d-flex flex-column">
                 <!-- Normal Tabs Card -->
-                <div class="glass-card p-4 h-100" id="normal-tabs-card">
+                <div class="card p-4 h-100" id="normal-tabs-card">
                     <nav>
                         <div class="nav nav-tabs mb-4" id="reading-tabs" role="tablist">
                             <button class="nav-link active" id="tab-meta-btn" data-bs-toggle="tab" data-bs-target="#tab-meta" type="button" role="tab" aria-controls="tab-meta" aria-selected="true">
@@ -1785,12 +1419,12 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                     <div class="tab-content flex-grow-1 d-flex flex-column" id="reading-tabs-content">
                         <!-- Metadata Tab -->
                         <div class="tab-pane fade show active" id="tab-meta" role="tabpanel" aria-labelledby="tab-meta-btn">
-                            <h2 class="h5 text-white mb-3">Dados Bibliográficos</h2>
-                            <dl class="row border-bottom border-secondary pb-3 mb-4">
+                            <h2 class="h5 text-body mb-3">Dados Bibliográficos</h2>
+                            <dl class="row border-bottom border pb-3 mb-4">
                                 <?php foreach ($metadata as $label => $value): ?>
                                     <?php if (trim((string) $value) !== ''): ?>
                                         <dt class="col-sm-4 text-secondary small"><?= h($label) ?></dt>
-                                        <dd class="col-sm-8 text-white metadata-value small">
+                                        <dd class="col-sm-8 text-body metadata-value small">
                                             <?php if ($label === 'URL' || $label === 'PDF'): ?>
                                                 <a href="<?= h((string) $value) ?>" target="_blank" rel="noopener noreferrer" class="text-primary"><?= h((string) $value) ?></a>
                                             <?php elseif ($label === 'DOI'): ?>
@@ -1805,15 +1439,15 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
 
                             <?php if (trim((string) ($article['abstract'] ?? '')) !== ''): ?>
                                 <div class="mb-4">
-                                    <h3 class="h6 text-white fw-bold mb-2">Resumo / Abstract</h3>
-                                    <div class="text-block small bg-black bg-opacity-20 p-3 rounded-3" style="border: 1px solid rgba(255,255,255,0.03);"><?= h($article['abstract']) ?></div>
+                                    <h3 class="h6 text-body fw-bold mb-2">Resumo / Abstract</h3>
+                                    <div class="text-block small bg-body-tertiary bg-opacity-20 p-3 rounded-3 border"><?= h($article['abstract']) ?></div>
                                 </div>
                             <?php endif; ?>
 
                             <?php if (trim((string) ($article['keywords'] ?? '')) !== ''): ?>
                                 <div>
-                                    <h3 class="h6 text-white fw-bold mb-2">Palavras-chave</h3>
-                                    <div class="text-white-50 small"><?= h($article['keywords']) ?></div>
+                                    <h3 class="h6 text-body fw-bold mb-2">Palavras-chave</h3>
+                                    <div class="text-body-secondary small"><?= h($article['keywords']) ?></div>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -1822,10 +1456,10 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                         <?php if (is_logged_in()): ?>
                             <div class="tab-pane fade" id="tab-text" role="tabpanel" aria-labelledby="tab-text-btn">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h2 class="h5 text-white mb-0">
+                                    <h2 class="h5 text-body mb-0">
                                         Texto Completo Bruto
                                         <?php if ($hasFullText): ?>
-                                            <span class="badge bg-secondary ms-2" style="font-size: 0.75rem; font-weight: normal; opacity: 0.8;">
+                                            <span class="badge bg-secondary ms-2">
                                                 <?= count_words($article['full_text'] ?? '') ?> palavras
                                             </span>
                                         <?php endif; ?>
@@ -1854,7 +1488,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
 
                         <!-- References Tab -->
                         <div class="tab-pane fade" id="tab-refs" role="tabpanel" aria-labelledby="tab-refs-btn">
-                            <h2 class="h5 text-white mb-3">Referências Bibliográficas</h2>
+                            <h2 class="h5 text-body mb-3">Referências Bibliográficas</h2>
                             <?php if (trim((string) ($article['references_text'] ?? '')) !== ''): ?>
                                 <div class="full-text-box text-block small"><?= h($article['references_text']) ?></div>
                             <?php else: ?>
@@ -1866,13 +1500,10 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
 
                 <!-- Focused Reading Card (Embedded & Toggleable) -->
                 <?php if (is_logged_in()): ?>
-                    <div class="glass-card p-4 h-100 d-none dark-mode" id="focused-reading-card">
-                        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary border-opacity-20 reading-modal-header">
-                            <h5 class="fw-bold mb-0 text-white">Leitura Focada</h5>
+                    <div class="card p-4 h-100 d-none" id="focused-reading-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border border-opacity-20 reading-modal-header">
+                            <h5 class="fw-bold mb-0 text-body">Leitura Focada</h5>
                             <div class="d-flex align-items-center gap-2">
-                                <button class="btn btn-sm btn-outline-light rounded-pill px-3 btn-light-toggle" id="btn-toggle-light" onclick="toggleReadingLight()">
-                                                    <span>Apagar a Luz</span>
-                                </button>
                                 <?php if ($canEditArticle): ?>
                                     <button class="btn btn-sm btn-outline-primary rounded-pill px-3" id="btn-toggle-edit" onclick="toggleReadingEditMode()">
                                         Editar Texto
@@ -1882,14 +1513,14 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                                         Editar Texto
                                     </button>
                                 <?php endif; ?>
-                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 text-white" onclick="exitFocusedReading()">
+                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 text-body" onclick="exitFocusedReading()">
                                     Voltar
                                 </button>
                             </div>
                         </div>
                         <div class="reading-modal-body p-0">
                             <!-- Display mode -->
-                            <div id="reading-view-container" class="reading-text-view mt-0" style="font-size: 1.15rem; line-height: 1.8; font-weight: 300;"></div>
+                            <div id="reading-view-container" class="reading-text-view mt-0"></div>
 
                             <?php if ($canEditArticle): ?>
                             <!-- Edit mode -->
@@ -1899,7 +1530,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                                     <textarea class="form-control reading-textarea flex-grow-1" id="reading-full-text-textarea" placeholder="Digite ou cole o texto completo do artigo científico..."></textarea>
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 mt-3">
-                                    <button class="btn btn-outline-secondary text-white rounded-pill px-4" onclick="cancelReadingEdit()">Cancelar</button>
+                                    <button class="btn btn-outline-secondary text-body rounded-pill px-4" onclick="cancelReadingEdit()">Cancelar</button>
                                     <button class="btn btn-primary rounded-pill px-4" id="btn-save-full-text" onclick="saveFullTextFromModal()">Salvar Alterações</button>
                                 </div>
                             </div>
@@ -1912,9 +1543,9 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             <!-- Right Panel: Fichamento Workspace -->
             <section class="col-lg-5 order-1 order-lg-2 vstack gap-4">
                 <!-- Overall Fichamento Card (Collapsible) -->
-                <article class="glass-card p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3" onclick="toggleCollapseCard('fichamento-card-body', 'fichamento-collapse-icon')" style="cursor: pointer; user-select: none;">
-                        <h2 class="h5 text-white fw-bold mb-0">Análise Geral / Síntese</h2>
+                <article class="card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3" onclick="toggleCollapseCard('fichamento-card-body', 'fichamento-collapse-icon')">
+                        <h2 class="h5 text-body fw-bold mb-0">Análise Geral / Síntese</h2>
                         <span id="fichamento-collapse-icon" class="collapse-btn"><?= $isAnalysisEmpty ? "+" : "-" ?></span>
                     </div>
 
@@ -1924,7 +1555,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="autosave-status" id="save-status">
-                                <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" style="vertical-align:-1px; opacity:0.8;"><path d="M12.736 14H5.66L1.833 7.082l.746-.746.01.01L5.66 12.34l7.082-7.082.746.746-.01-.01L12.736 14zm-9.3-5.264l-.746-.746.01-.01 2.828-2.828.746.746-.01.01L3.436 8.736z"/></svg>
+                                <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M12.736 14H5.66L1.833 7.082l.746-.746.01.01L5.66 12.34l7.082-7.082.746.746-.01-.01L12.736 14zm-9.3-5.264l-.746-.746.01-.01 2.828-2.828.746.746-.01.01L3.436 8.736z"/></svg>
                                 <span>Salvo</span>
                             </div>
                             <?php if ($canEditArticle): ?>
@@ -1941,9 +1572,9 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
         </div>
     </main>
 
-    <div id="quote-context-menu" class="d-none position-fixed bg-dark border border-secondary rounded-3 shadow-lg py-1" style="z-index: 2000; min-width: 150px;">
-        <button type="button" class="btn btn-sm btn-link text-white text-decoration-none w-100 text-start px-3" id="btn-context-copy-quote">Copiar</button>
-        <button type="button" class="btn btn-sm btn-link text-white text-decoration-none w-100 text-start px-3<?= $canEditArticle ? '' : ' locked-action' ?>" id="btn-context-create-quote">Criar marcação</button>
+    <div id="quote-context-menu" class="d-none position-fixed bg-body-tertiary border border rounded-3 shadow-lg py-1">
+        <button type="button" class="btn btn-sm btn-link text-body text-decoration-none w-100 text-start px-3" id="btn-context-copy-quote">Copiar</button>
+        <button type="button" class="btn btn-sm btn-link text-body text-decoration-none w-100 text-start px-3<?= $canEditArticle ? '' : ' locked-action' ?>" id="btn-context-create-quote">Criar marcação</button>
     </div>
 
     <?php if ($canEditArticle): ?>
@@ -1975,7 +1606,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                         <div class="alert alert-danger d-none mt-3 mb-0" id="quote-modal-error"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary text-white rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-outline-secondary text-body rounded-pill" data-bs-dismiss="modal">Cancelar</button>
                         <button type="button" class="btn btn-primary rounded-pill" id="btn-save-tag-quote">Salvar nota</button>
                     </div>
                 </div>
@@ -1994,16 +1625,16 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                     <div class="d-flex flex-wrap gap-2 mb-3" id="marking-read-tags"></div>
                     <section class="mb-3 d-none" id="marking-read-quote-section">
                         <h6 class="text-secondary text-uppercase small mb-2">Citação</h6>
-                        <div class="marking-modal-text text-white p-3 rounded-3 bg-black bg-opacity-25" id="marking-read-quote"></div>
+                        <div class="marking-modal-text text-body p-3 rounded-3 bg-body-tertiary bg-opacity-25" id="marking-read-quote"></div>
                     </section>
                     <section class="mb-0 d-none" id="marking-read-comment-section">
                         <h6 class="text-secondary text-uppercase small mb-2">Observação</h6>
-                        <div class="marking-modal-text text-white-50 p-3 rounded-3 bg-black bg-opacity-25" id="marking-read-comment"></div>
+                        <div class="marking-modal-text text-body-secondary p-3 rounded-3 bg-body-tertiary bg-opacity-25" id="marking-read-comment"></div>
                     </section>
                     <div class="text-warning d-none" id="marking-read-empty">! Marcação sem citação ou observação.</div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary text-white rounded-pill" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-outline-secondary text-body rounded-pill" data-bs-dismiss="modal">Fechar</button>
                     <?php if ($canEditArticle): ?>
                         <button type="button" class="btn btn-primary rounded-pill" id="btn-edit-marking-from-read">Editar</button>
                     <?php endif; ?>
@@ -2027,7 +1658,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary text-white rounded-pill" data-bs-dismiss="modal">Agora não</button>
+                    <button type="button" class="btn btn-outline-secondary text-body rounded-pill" data-bs-dismiss="modal">Agora não</button>
                     <?php if (!$isLoggedIn): ?>
                         <a class="btn btn-primary rounded-pill" href="<?= h($loginUrl) ?>">Entrar</a>
                     <?php endif; ?>
@@ -2036,7 +1667,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=20260615"></script>
     <script>
         const csrfToken = '<?= h(csrf_token()) ?>';
@@ -2177,11 +1808,13 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 if (data.success) {
                     saveStatusEl.style.opacity = '1';
                     saveStatusEl.querySelector('span').textContent = 'Salvo';
-                    saveStatusEl.style.color = ''; // Reset to default CSS color
+                    saveStatusEl.classList.remove('text-danger', 'text-warning');
+                    saveStatusEl.style.removeProperty('color');
                 } else {
                     saveStatusEl.style.opacity = '1';
                     saveStatusEl.querySelector('span').textContent = 'Erro';
-                    saveStatusEl.style.color = '#f87171'; // light red
+                    saveStatusEl.classList.remove('text-warning');
+                    saveStatusEl.classList.add('text-danger');
                     console.error(data.error);
                 }
             })
@@ -2189,7 +1822,8 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 releaseSaveAnalysisBusy();
                 saveStatusEl.style.opacity = '1';
                 saveStatusEl.querySelector('span').textContent = 'Falha de rede';
-                saveStatusEl.style.color = '#f87171'; // light red
+                saveStatusEl.classList.remove('text-warning');
+                saveStatusEl.classList.add('text-danger');
                 console.error(err);
             });
         }
@@ -2197,7 +1831,8 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
         function markUnsaved() {
             saveStatusEl.style.opacity = '1';
             saveStatusEl.querySelector('span').textContent = 'Alterações pendentes';
-            saveStatusEl.style.color = '#fbbf24'; // Amber
+            saveStatusEl.classList.remove('text-danger');
+            saveStatusEl.classList.add('text-warning');
         }
 
         analysisEl.addEventListener('input', markUnsaved);
@@ -2323,11 +1958,6 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 item.setAttribute('data-id', tag.id);
                 item.setAttribute('data-idx', idx);
 
-                const catColors = {
-                    'Tema': 'background: #ead6c7; color: #2b211c; border: 1px solid #dac8b9;',
-                    'Método': 'background: #fff8f1; color: #5a4b43; border: 1px solid #dac8b9;',
-                    'Fonte': 'background: #e8f0e5; color: #2f6f40; border: 1px solid #b8cdb0;'
-                };
                 const tokenStyles = {
                     'tema': 'background: var(--tag-tema-bg); color: var(--tag-tema-text); border: 1px solid var(--tag-tema-border);',
                     'metodo': 'background: var(--tag-metodo-bg); color: var(--tag-metodo-text); border: 1px solid var(--tag-metodo-border);',
@@ -2335,7 +1965,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 };
                 const style = tokenStyles[normalizeStr(tag.category || '')] || 'background: var(--tag-neutro-bg); color: var(--tag-neutro-text); border: 1px solid var(--tag-neutro-border);';
 
-                const catSpan = `<span class="badge border" style="${style} font-size:0.65rem;">${tag.category}</span>`;
+                const catSpan = `<span class="badge border">${tag.category}</span>`;
                 item.innerHTML = `<strong>${tag.name}</strong> ${catSpan}`;
 
                 item.addEventListener('click', () => {
@@ -2381,7 +2011,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 chip.dataset.bsToggle = 'tooltip';
                 chip.dataset.bsPlacement = 'top';
                 chip.dataset.bsTitle = chip.title;
-                chip.innerHTML = `<span>${tag.name}</span><button type="button" class="btn btn-sm btn-link text-white p-0 lh-1" aria-label="Remover tag">&times;</button>`;
+                chip.innerHTML = `<span>${tag.name}</span><button type="button" class="btn btn-sm btn-link text-body p-0 lh-1" aria-label="Remover tag">&times;</button>`;
                 chip.querySelector('button').addEventListener('click', () => removeSelectedLinkTag(tag.id));
                 holder.appendChild(chip);
             });
@@ -2525,7 +2155,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             matches.forEach((tag) => {
                 const item = document.createElement('div');
                 item.className = 'autocomplete-item d-flex justify-content-between align-items-center';
-                item.innerHTML = `<strong>${tag.name}</strong> <span class="badge border" style="font-size:0.65rem;">${tag.category}</span>`;
+                item.innerHTML = `<strong>${tag.name}</strong> <span class="badge border">${tag.category}</span>`;
                 item.addEventListener('click', () => {
                     selectTag(tag);
                     currentDropdown.classList.add('d-none');
@@ -2573,7 +2203,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             quoteTagMatches.forEach((tag) => {
                 const item = document.createElement('div');
                 item.className = 'autocomplete-item d-flex justify-content-between align-items-center';
-                item.innerHTML = `<strong>${tag.name}</strong> <span class="badge border" style="font-size:0.65rem;">${tag.category}</span>`;
+                item.innerHTML = `<strong>${tag.name}</strong> <span class="badge border">${tag.category}</span>`;
                 item.addEventListener('click', () => {
                     selectQuoteTag(tag);
                 });
@@ -2616,7 +2246,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 chip.dataset.bsToggle = 'tooltip';
                 chip.dataset.bsPlacement = 'top';
                 chip.dataset.bsTitle = chip.title;
-                chip.innerHTML = `<span>${tag.name}</span><button type="button" class="btn btn-sm btn-link text-white p-0 lh-1" aria-label="Remover tag">&times;</button>`;
+                chip.innerHTML = `<span>${tag.name}</span><button type="button" class="btn btn-sm btn-link text-body p-0 lh-1" aria-label="Remover tag">&times;</button>`;
                 chip.querySelector('button').addEventListener('click', () => removeSelectedQuoteTag(tag.id));
                 holder.appendChild(chip);
             });
@@ -3156,32 +2786,12 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             return value !== '';
         }
 
-        function getMarkingReadTagColors(category) {
-            const normalized = String(category || '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase();
-
-            if (normalized === 'metodo') {
-                return { bg: 'var(--tag-metodo-bg)', text: 'var(--tag-metodo-text)', border: 'var(--tag-metodo-border)' };
-            }
-            if (normalized === 'fonte') {
-                return { bg: 'var(--tag-fonte-bg)', text: 'var(--tag-fonte-text)', border: 'var(--tag-fonte-border)' };
-            }
-            if (normalized === 'tema') {
-                return { bg: 'var(--tag-tema-bg)', text: 'var(--tag-tema-text)', border: 'var(--tag-tema-border)' };
-            }
-
-            return { bg: 'var(--tag-neutro-bg)', text: 'var(--tag-neutro-text)', border: 'var(--tag-neutro-border)' };
-        }
-
         function renderMarkingReadTags(tags) {
             const container = document.getElementById('marking-read-tags');
             if (!container) return;
 
             container.innerHTML = '';
             tags.forEach(tag => {
-                const colors = getMarkingReadTagColors(tag.category);
                 const badge = document.createElement('span');
                 badge.className = 'badge rounded-pill border tag-badge';
                 badge.textContent = tag.name;
@@ -3189,9 +2799,6 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 badge.dataset.bsToggle = 'tooltip';
                 badge.dataset.bsPlacement = 'top';
                 badge.dataset.bsTitle = badge.title;
-                badge.style.background = colors.bg;
-                badge.style.color = colors.text;
-                badge.style.borderColor = colors.border;
                 container.appendChild(badge);
             });
         }
@@ -3323,26 +2930,6 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                     releaseQuoteBusy();
                 });
             });
-        }
-
-        function toggleReadingLight() {
-            const card = document.getElementById('focused-reading-card');
-            const btnLight = document.getElementById('btn-toggle-light');
-            isLightMode = !isLightMode;
-
-            if (isLightMode) {
-                card.classList.remove('dark-mode');
-                card.classList.add('light-mode');
-                btnLight.innerHTML = '<span>Acender a Luz</span>';
-                btnLight.classList.remove('btn-outline-light');
-                btnLight.classList.add('btn-outline-dark');
-            } else {
-                card.classList.remove('light-mode');
-                card.classList.add('dark-mode');
-                btnLight.innerHTML = '<span>Apagar a Luz</span>';
-                btnLight.classList.remove('btn-outline-dark');
-                btnLight.classList.add('btn-outline-light');
-            }
         }
 
         function saveFullTextFromModal() {
@@ -3553,52 +3140,10 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 <path d="M19 2v10a7 7 0 0 1-14 0V2"></path>
                 <path d="M5 22v-10a7 7 0 0 1 14 0v10"></path>
             </svg>
-            <span class="text-white fw-medium small tracking-wide">Aguarde...</span>
+            <span class="text-body fw-medium small tracking-wide">Aguarde...</span>
         </div>
     </div>
-    
-    <style>
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            opacity: 0;
-            transition: opacity 0.25s ease-in-out;
-            pointer-events: none;
-        }
-        .loading-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .loading-hourglass {
-            color: #f59e0b;
-            animation: rotateHourglass 2s infinite ease-in-out;
-        }
-        @keyframes rotateHourglass {
-            0% {
-                transform: rotate(0deg);
-            }
-            40% {
-                transform: rotate(180deg);
-            }
-            60% {
-                transform: rotate(180deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
-
-    <script>
+<script>
         (function() {
             let fetchTimer = null;
             let activeFetchCount = 0;

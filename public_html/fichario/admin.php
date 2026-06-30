@@ -18,57 +18,43 @@ $inactiveUsers = access_inactive_users_count();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Painel Administrativo - Fichário Acadêmico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts: Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <style>
-        .blob {
-            animation: floatBlob 12s infinite alternate ease-in-out;
-        }
-        .legacy-decoration-secondary {
-            animation-delay: -6s;
-        }
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 40px) scale(1.15); }
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <!-- Background Animated Blobs -->
 
 
     <?php render_admin_navbar('admin'); ?>
-    <main class="container py-4 main-container" style="position: relative; z-index: 10;">
-        <h1 class="h3 mb-4 text-white fw-bold">Painel Administrativo</h1>
+    <main class="container py-4 main-container">
+        <h1 class="h3 mb-4 text-body fw-bold">Painel Administrativo</h1>
         
         <div class="row g-3 mb-5">
             <div class="col-md-3">
-                <div class="glass-card p-3 text-center">
+                <div class="card p-3 text-center">
                     <div class="text-secondary small mb-1">Artigos</div>
-                    <div class="h3 mb-0 text-white fw-bold"><?= $articleCount ?></div>
+                    <div class="h3 mb-0 text-body fw-bold"><?= $articleCount ?></div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="glass-card p-3 text-center">
+                <div class="card p-3 text-center">
                     <div class="text-secondary small mb-1">Tags</div>
-                    <div class="h3 mb-0 text-white fw-bold"><?= $tagCount ?></div>
+                    <div class="h3 mb-0 text-body fw-bold"><?= $tagCount ?></div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="glass-card p-3 text-center">
+                <div class="card p-3 text-center">
                     <div class="text-secondary small mb-1">Usuários</div>
-                    <div class="h3 mb-0 text-white fw-bold"><?= $userCount ?></div>
+                    <div class="h3 mb-0 text-body fw-bold"><?= $userCount ?></div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="glass-card p-3 text-center">
+                <div class="card p-3 text-center">
                     <div class="text-secondary small mb-1">Inativos</div>
-                    <div class="h3 mb-0 text-white fw-bold"><?= $inactiveUsers ?></div>
+                    <div class="h3 mb-0 text-body fw-bold"><?= $inactiveUsers ?></div>
                 </div>
             </div>
         </div>
@@ -76,21 +62,21 @@ $inactiveUsers = access_inactive_users_count();
         <div class="row g-3 justify-content-center">
             <?php if (is_admin()): ?>
                 <div class="col-md-6">
-                    <a class="d-block glass-card p-4 text-decoration-none text-reset" href="<?= h(access_url('usuarios.php')) ?>">
-                        <h2 class="h5 text-white fw-bold mb-2">Gerenciar Usuários</h2>
+                    <a class="d-block card p-4 text-decoration-none text-reset" href="<?= h(access_url('usuarios.php')) ?>">
+                        <h2 class="h5 text-body fw-bold mb-2">Gerenciar Usuários</h2>
                         <p class="text-secondary mb-0">Criar usuários, reenviar confirmação por e-mail e bloquear ou gerenciar acessos de editores/leitores.</p>
                     </a>
                 </div>
                 <div class="col-md-6">
-                    <a class="d-block glass-card p-4 text-decoration-none text-reset" href="admin_docs.php">
-                        <h2 class="h5 text-white fw-bold mb-2">Documentação</h2>
+                    <a class="d-block card p-4 text-decoration-none text-reset" href="admin_docs.php">
+                        <h2 class="h5 text-body fw-bold mb-2">Documentação</h2>
                         <p class="text-secondary mb-0">Ler e manter requisitos, documentação administrativa e orientações de desenvolvedor em Markdown versionável.</p>
                     </a>
                 </div>
             <?php endif; ?>
         </div>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=20260603c"></script>
 </body>
 </html>

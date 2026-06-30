@@ -129,7 +129,7 @@ Na qualidade dos campos:
 
 As regras gerais de visual, UX, tema, botoes, filtros, tabelas, skeleton e menu ficam no guia central:
 
-`../docs/definicao-padroes.md`
+`../docs/identidade-visual-ux.md` e `../docs/tema-css-bootstrap-modulos.md`
 
 No CAT, permanecem como especificas do modulo:
 

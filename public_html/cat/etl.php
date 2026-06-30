@@ -71,337 +71,13 @@ try {
     <title>CAT - Painel de Controle de ETL</title>
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        :root, [data-bs-theme="light"] {
-            --bg-color: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.7);
-            --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #64748b;
-            --text-color: #1e293b;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
-            --navbar-bg: var(--bs-body-bg);
-            --console-bg: #0f172a;
-            --field-bg: #f8fafc;
-        }
-
-        [data-bs-theme="dark"] {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(22, 28, 45, 0.7);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: var(--accent-ui);
-            --accent-hover: var(--brand-cinza-4);
-            --text-muted: #94a3b8;
-            --text-color: #f8fafc;
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --navbar-bg: var(--bs-body-bg);
-            --console-bg: #090d16;
-            --field-bg: #111827;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .navbar {
-            background-color: var(--navbar-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: none;
-        }
-        .etl-table-card {
-            overflow: hidden;
-        }
-
-        .form-control,
-        .form-select {
-            background-color: var(--field-bg) !important;
-            color: var(--text-color) !important;
-            border-color: var(--border-color) !important;
-        }
-        .form-control::placeholder {
-            color: var(--text-muted);
-            opacity: 0.78;
-        }
-        .form-control:focus,
-        .form-select:focus {
-            background-color: var(--field-bg) !important;
-            color: var(--text-color) !important;
-            border-color: var(--accent-color) !important;
-            box-shadow: 0 0 0 0.2rem rgba(70, 75, 81, 0.18);
-        }
-        .form-select option {
-            background-color: var(--field-bg);
-            color: var(--text-color);
-        }
-        [data-bs-theme="light"] input[type="date"] { color-scheme: light; }
-        [data-bs-theme="dark"] input[type="date"] { color-scheme: dark; }
-
-        /* Stats Cards */
-        .stat-card {
-            padding: 20px;
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Buttons & Color Overrides */
-        .btn-accent {
-            background-color: var(--accent-solid);
-            border-color: var(--accent-border);
-            color: var(--accent-on-solid);
-            font-weight: 500;
-        }
-        .btn-accent:hover, .btn-accent:focus {
-            background-color: var(--accent-solid-hover);
-            border-color: var(--accent-solid-hover);
-            color: var(--accent-on-solid);
-        }
-        .btn-outline-accent {
-            border-color: var(--accent-border);
-            color: var(--accent-color);
-            font-weight: 500;
-        }
-        .btn-outline-accent:hover {
-            background-color: var(--accent-solid);
-            border-color: var(--accent-border);
-            color: var(--accent-on-solid);
-        }
-        .text-accent {
-            color: var(--accent-color) !important;
-        }
-
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            padding: 0 !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 auto;
-        }
-
-        .btn-icon.btn-sm {
-            width: 34px;
-            height: 34px;
-        }
-
-        /* Table Styling */
-        .etl-table-scroll {
-            max-width: 100%;
-            overflow-x: auto;
-            overflow-y: visible;
-            scrollbar-color: var(--accent-color) transparent;
-            scrollbar-width: thin;
-        }
-        .etl-table-scroll::-webkit-scrollbar {
-            height: 8px;
-        }
-        .etl-table-scroll::-webkit-scrollbar-thumb {
-            background: rgba(70, 75, 81, 0.25);
-            border-radius: 999px;
-        }
-        .table-custom {
-            border-collapse: separate;
-            border-spacing: 0 8px;
-            min-width: 1040px;
-            width: 100%;
-            table-layout: fixed;
-        }
-        .table-custom thead th {
-            border: none;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            padding: 12px 16px;
-        }
-        .table-custom tbody tr {
-            background-color: var(--card-bg);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .table-custom tbody tr:hover {
-            transform: translateY(-2px);
-            box-shadow: none;
-        }
-        .table-custom tbody td {
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            padding: 14px 12px;
-            vertical-align: middle;
-            overflow: hidden;
-        }
-        .table-custom tbody td:first-child {
-            border-left: 1px solid var(--border-color);
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-        }
-        .table-custom tbody td:last-child {
-            border-right: 1px solid var(--border-color);
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-        }
-
-        .cursor-help {
-            cursor: help;
-        }
-        .etl-file-cell {
-            width: 34%;
-            min-width: 280px;
-        }
-        .etl-file-name,
-        .etl-file-url {
-            display: block;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .etl-status-cell {
-            width: 92px;
-        }
-        .etl-number-cell {
-            width: 120px;
-            white-space: nowrap;
-        }
-        .etl-date-cell {
-            width: 118px;
-            white-space: nowrap;
-        }
-        .etl-doc-cell {
-            width: 130px;
-            white-space: nowrap;
-        }
-        .etl-actions-cell {
-            width: 190px;
-            min-width: 190px;
-            overflow: visible !important;
-        }
-        .etl-actions {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: .5rem;
-            flex-wrap: nowrap;
-        }
-
-        .cursor-pointer {
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .sortable:hover {
-            color: var(--accent-color) !important;
-        }
-
-        .progress-bar-custom {
-            height: 8px;
-            background: var(--bs-tertiary-bg);
-            border: 1px solid var(--bs-border-color);
-            border-radius: 999px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-solid);
-            width: 0%;
-            transition: width 0.2s ease;
-        }
-
-        .modal-console {
-            background-color: var(--console-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.8rem;
-            height: 180px;
-            overflow-y: auto;
-            color: #e2e8f0;
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
-        }
-
-        .console-line {
-            margin-bottom: 4px;
-        }
-        .console-line.info { color: #94a3b8; }
-        .console-line.success { color: #22c55e; }
-        .console-line.warn { color: #eab308; }
-        .console-line.error { color: #ef4444; }
-
-        .step-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 0;
-            color: var(--text-muted);
-        }
-
-        .step-item.active {
-            color: var(--accent-ui);
-            font-weight: 600;
-        }
-
-        .step-item.success {
-            color: #22c55e;
-        }
-
-        .step-item.error {
-            color: #ef4444;
-        }
-
-        .step-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            border: 1.5px solid currentColor;
-            font-size: 0.75rem;
-        }
-    </style>
-    <link href="../assets/css/style.css" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
+<script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
@@ -418,53 +94,53 @@ try {
         <!-- Header Section -->
         <header class="row mb-4 align-items-center">
             <div class="col-md-8">
-                <h1 class="display-5 text-accent mb-2" style="font-weight: 800;">Gerenciamento de Ingestão (ETL)</h1>
+                <h1 class="display-5 text-primary mb-2">Gerenciamento de Ingestão (ETL)</h1>
                 <p class="lead text-secondary">
                     Controle de sincronização e ingestão das bases de dados de CAT do governo federal. Execute cargas incrementais, verifique logs de erros de processamento e limpe caches temporários.
                 </p>
             </div>
             <div class="col-md-4 text-md-end text-start mt-3 mt-md-0 d-flex gap-2 justify-content-md-end">
-                <button id="btn-sync-api" class="btn btn-accent btn-icon rounded-circle" title="Sincronizar lista" aria-label="Sincronizar lista" <?= ($db_status !== "Conectado") ? 'disabled' : '' ?>>
-                    <i class="fa-solid fa-rotate"></i>
+                <button id="btn-sync-api" class="btn btn-primary btn-icon rounded-circle" title="Sincronizar lista" aria-label="Sincronizar lista" <?= ($db_status !== "Conectado") ? 'disabled' : '' ?>>
+                    <i class="bi bi-arrow-clockwise"></i>
                 </button>
             </div>
         </header>
 
         <?php if ($db_error): ?>
-            <div class="alert alert-danger p-4 glass-card border-danger mb-5" role="alert">
-                <h4 class="alert-heading text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i>Erro de Conexão com o Banco de Dados</h4>
-                <p class="mb-0 font-monospace text-light bg-dark bg-opacity-50 p-3 rounded border border-danger mt-3"><?= htmlspecialchars($db_error) ?></p>
+            <div class="alert alert-danger p-4 card border-danger mb-5" role="alert">
+                <h4 class="alert-heading text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Erro de Conexão com o Banco de Dados</h4>
+                <p class="mb-0 font-monospace text-body bg-body-tertiary bg-opacity-50 p-3 rounded border border-danger mt-3"><?= htmlspecialchars($db_error) ?></p>
             </div>
         <?php endif; ?>
 
         <!-- Stats Section -->
         <section class="row row-cols-2 row-cols-md-3 row-cols-xl-5 g-4 mb-4">
             <div class="col">
-                <div class="glass-card stat-card">
+                <div class="card stat-card">
                     <div class="stat-number" id="stats-total-files"><?= number_format($total_files, 0, ',', '.') ?></div>
                     <div class="stat-label">Arquivos Sincronizados</div>
                 </div>
             </div>
             <div class="col">
-                <div class="glass-card stat-card">
+                <div class="card stat-card">
                     <div class="stat-number text-success" id="stats-loaded-files"><?= number_format($loaded_files, 0, ',', '.') ?></div>
                     <div class="stat-label">Arquivos Carregados</div>
                 </div>
             </div>
             <div class="col">
-                <div class="glass-card stat-card">
+                <div class="card stat-card">
                     <div class="stat-number text-warning" id="stats-total-rows"><?= number_format($total_rows, 0, ',', '.') ?></div>
                     <div class="stat-label">Acidentes de Trabalho</div>
                 </div>
             </div>
             <div class="col">
-                <div class="glass-card stat-card">
+                <div class="card stat-card">
                     <div class="stat-number text-info" id="stats-duplicate-rows"><?= number_format($duplicate_rows, 0, ',', '.') ?></div>
                     <div class="stat-label">Registros Duplicados</div>
                 </div>
             </div>
             <div class="col">
-                <div class="glass-card stat-card">
+                <div class="card stat-card">
                     <div class="stat-number text-danger" id="stats-failed-files"><?= number_format($failed_files, 0, ',', '.') ?></div>
                     <div class="stat-label">Falhas de ETL</div>
                 </div>
@@ -472,15 +148,15 @@ try {
         </section>
 
         <!-- ETL Pane -->
-        <div class="glass-card p-4 etl-table-card">
-            <h4 class="mb-4 text-light"><i class="fa-solid fa-cloud-arrow-down text-accent me-2"></i>Repositório de Arquivos Públicos (INSS)</h4>
+        <div class="card p-4 etl-table-card">
+            <h4 class="mb-4 text-body"><i class="bi bi-cloud-arrow-down text-primary me-2"></i>Repositório de Arquivos Públicos (INSS)</h4>
             
             <?php if (empty($files)): ?>
                 <div class="text-center py-5 text-secondary">
-                    <i class="fa-solid fa-folder-open display-4 mb-3 d-block text-muted"></i>
+                    <i class="bi bi-folder2-open display-4 mb-3 d-block text-muted"></i>
                     <p class="mb-3">Nenhum arquivo catalogado ainda. Clique no botão de sincronização para listar as fontes da API do INSS.</p>
-                    <button id="btn-sync-api-empty" class="btn btn-accent btn-icon rounded-circle" title="Buscar arquivos públicos" aria-label="Buscar arquivos públicos" <?= ($db_status !== "Conectado") ? 'disabled' : '' ?>>
-                        <i class="fa-solid fa-rotate"></i>
+                    <button id="btn-sync-api-empty" class="btn btn-primary btn-icon rounded-circle" title="Buscar arquivos públicos" aria-label="Buscar arquivos públicos" <?= ($db_status !== "Conectado") ? 'disabled' : '' ?>>
+                        <i class="bi bi-arrow-clockwise"></i>
                     </button>
                 </div>
             <?php else: ?>
@@ -492,13 +168,13 @@ try {
                                  <th class="text-center">Status</th>
                                  <th>Linhas Carregadas</th>
                                  <th class="sortable cursor-pointer" onclick="sortTableByDate(3)" id="th-menor-data" title="Ordenar por Menor Data do acidente">
-                                     Menor Data <i class="fa-solid fa-sort ms-1 text-muted small"></i>
+                                     Menor Data <i class="bi bi-arrow-down-up ms-1 text-muted small"></i>
                                  </th>
                                  <th class="sortable cursor-pointer" onclick="sortTableByDate(4)" id="th-maior-data" title="Ordenar por Maior Data do acidente">
-                                     Maior Data <i class="fa-solid fa-sort ms-1 text-muted small"></i>
+                                     Maior Data <i class="bi bi-arrow-down-up ms-1 text-muted small"></i>
                                  </th>
                                  <th class="sortable cursor-pointer" onclick="sortTableByDate(5)" id="th-last-run" title="Ordenar por Última Execução do ETL">
-                                     Última Execução <i class="fa-solid fa-sort ms-1 text-muted small"></i>
+                                     Última Execução <i class="bi bi-arrow-down-up ms-1 text-muted small"></i>
                                  </th>
                                  <th>Documentação</th>
                                  <th class="text-end">Ações</th>
@@ -508,34 +184,34 @@ try {
                             <?php foreach ($files as $file): ?>
                                 <tr id="file-row-<?= $file['id'] ?>">
                                     <td class="etl-file-cell">
-                                        <strong class="text-light etl-file-name" title="<?= htmlspecialchars($file['nome']) ?>"><?= htmlspecialchars($file['nome']) ?></strong>
+                                        <strong class="text-body etl-file-name" title="<?= htmlspecialchars($file['nome']) ?>"><?= htmlspecialchars($file['nome']) ?></strong>
                                         <span class="small text-muted etl-file-url" title="<?= htmlspecialchars($file['url_download']) ?>"><?= htmlspecialchars($file['url_download']) ?></span>
                                     </td>
                                      <td class="text-center etl-status-cell">
                                          <div class="d-inline-flex gap-3 fs-5">
                                              <!-- Extração Icon -->
                                              <?php if ($file['situacao_extracao'] === 'Extraído'): ?>
-                                                 <i class="fa-solid fa-file-zipper text-success cursor-help" title="Extração: Arquivo ZIP extraído e validado com sucesso"></i>
+                                                 <i class="bi bi-file-zip text-success cursor-help" title="Extração: Arquivo ZIP extraído e validado com sucesso"></i>
                                              <?php elseif ($file['situacao_extracao'] === 'Falhou'): ?>
-                                                 <i class="fa-solid fa-file-zipper text-danger cursor-help" title="Extração: Erro ao baixar ou extrair arquivo (verifique o log)"></i>
+                                                 <i class="bi bi-file-zip text-danger cursor-help" title="Extração: Erro ao baixar ou extrair arquivo (verifique o log)"></i>
                                              <?php else: ?>
-                                                 <i class="fa-solid fa-file-zipper text-muted cursor-help" title="Extração: Pendente"></i>
+                                                 <i class="bi bi-file-zip text-muted cursor-help" title="Extração: Pendente"></i>
                                              <?php endif; ?>
 
                                              <!-- Carga Icon -->
                                              <?php if ($file['situacao_carga'] === 'Carregado'): ?>
-                                                 <i class="fa-solid fa-database text-success cursor-help" title="Carga: Carga concluída com sucesso"></i>
+                                                 <i class="bi bi-database text-success cursor-help" title="Carga: Carga concluída com sucesso"></i>
                                              <?php elseif ($file['situacao_carga'] === 'Carregando'): ?>
-                                                 <i class="fa-solid fa-spinner fa-spin text-warning cursor-help" title="Carga: Importação em andamento..."></i>
+                                                 <i class="bi bi-arrow-clockwise bootstrap-spin text-warning cursor-help" title="Carga: Importação em andamento..."></i>
                                              <?php elseif ($file['situacao_carga'] === 'Falhou'): ?>
-                                                 <i class="fa-solid fa-database text-danger cursor-help" title="Carga: Falhou (Erro: <?= htmlspecialchars($file['mensagem_erro'] ?? '') ?>)"></i>
+                                                 <i class="bi bi-database text-danger cursor-help" title="Carga: Falhou (Erro: <?= htmlspecialchars($file['mensagem_erro'] ?? '') ?>)"></i>
                                              <?php else: ?>
-                                                 <i class="fa-solid fa-database text-muted cursor-help" title="Carga: Pendente"></i>
+                                                 <i class="bi bi-database text-muted cursor-help" title="Carga: Pendente"></i>
                                              <?php endif; ?>
                                          </div>
                                      </td>
                                      <td class="etl-number-cell">
-                                         <span class="font-monospace text-light" id="row-count-<?= $file['id'] ?>"><?= number_format($file['linhas_processadas'], 0, ',', '.') ?></span>
+                                         <span class="font-monospace text-body" id="row-count-<?= $file['id'] ?>"><?= number_format($file['linhas_processadas'], 0, ',', '.') ?></span>
                                      </td>
                                      <td class="etl-date-cell">
                                          <span class="font-monospace text-muted"><?= htmlspecialchars($file['menor_data'] ?? '-') ?></span>
@@ -548,7 +224,7 @@ try {
                                      </td>
                                      <td class="etl-doc-cell">
                                          <?php if (!empty($file['documentacao_atualizada_em'])): ?>
-                                             <div class="small text-light">
+                                             <div class="small text-body">
                                                  <?= number_format((int)$file['total_registros_documentados'], 0, ',', '.') ?> registros
                                              </div>
                                              <div class="small text-muted">
@@ -563,31 +239,31 @@ try {
                                         <div class="etl-actions">
                                              <?php if ($file['situacao_carga'] === 'Carregado'): ?>
                                                  <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, false)" class="btn btn-outline-warning btn-sm btn-icon rounded" title="Reexecutar ETL completo" aria-label="Reexecutar ETL completo">
-                                                     <i class="fa-solid fa-arrow-rotate-right"></i>
+                                                     <i class="bi bi-arrow-clockwise"></i>
                                                  </button>
                                              <?php else: ?>
                                                  <?php if ($file['linhas_processadas'] > 0): ?>
-                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, true)" class="btn btn-accent btn-sm btn-icon rounded" title="Continuar ETL do ponto de parada" aria-label="Continuar ETL do ponto de parada">
-                                                         <i class="fa-solid fa-play"></i>
+                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, true)" class="btn btn-primary btn-sm btn-icon rounded" title="Continuar ETL do ponto de parada" aria-label="Continuar ETL do ponto de parada">
+                                                         <i class="bi bi-play-fill"></i>
                                                      </button>
-                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, false)" class="btn btn-outline-accent btn-sm btn-icon rounded" title="Reiniciar do zero" aria-label="Reiniciar do zero">
-                                                         <i class="fa-solid fa-backward"></i>
+                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, false)" class="btn btn-outline-primary btn-sm btn-icon rounded" title="Reiniciar do zero" aria-label="Reiniciar do zero">
+                                                         <i class="bi bi-skip-backward-fill"></i>
                                                      </button>
                                                  <?php else: ?>
-                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, false)" class="btn btn-accent btn-sm btn-icon rounded" title="Executar ETL completo" aria-label="Executar ETL completo">
-                                                         <i class="fa-solid fa-play"></i>
+                                                     <button onclick="triggerETL(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>, false)" class="btn btn-primary btn-sm btn-icon rounded" title="Executar ETL completo" aria-label="Executar ETL completo">
+                                                         <i class="bi bi-play-fill"></i>
                                                      </button>
                                                  <?php endif; ?>
                                              <?php endif; ?>
                                             
                                              <button onclick="showLogHistory(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>)" class="btn btn-outline-info btn-sm btn-icon rounded" title="Visualizar logs de execução" aria-label="Visualizar logs de execução">
-                                                 <i class="fa-solid fa-list-ul"></i>
+                                                 <i class="bi bi-list-ul"></i>
                                              </button>
                                              <button onclick="showFileInfo(<?= $file['id'] ?>, <?= htmlspecialchars($fileNameJs, ENT_QUOTES, 'UTF-8') ?>)" class="btn btn-outline-secondary btn-sm btn-icon rounded" title="Ver documentação do arquivo" aria-label="Ver documentação do arquivo">
-                                                 <i class="fa-solid fa-circle-info"></i>
+                                                 <i class="bi bi-info-circle"></i>
                                              </button>
                                              <button onclick="resetETL(<?= $file['id'] ?>)" class="btn btn-outline-danger btn-sm btn-icon rounded" title="Limpar dados carregados" aria-label="Limpar dados carregados" <?= ($file['situacao_extracao'] === 'Pendente' && $file['situacao_carga'] === 'Pendente' && $file['linhas_processadas'] == 0) ? 'disabled' : '' ?>>
-                                                 <i class="fa-solid fa-trash-can"></i>
+                                                 <i class="bi bi-trash"></i>
                                              </button>
                                         </div>
                                     </td>
@@ -604,18 +280,18 @@ try {
     <!-- ETL Execution Progress Modal -->
     <div class="modal fade" id="etlModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="etlModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content glass-card border border-secondary text-light">
-                <div class="modal-header border-secondary pb-3">
-                    <h5 class="modal-title" id="etlModalLabel"><i class="fa-solid fa-cogs text-accent me-2"></i>Executando Pipeline ETL</h5>
+            <div class="modal-content card border border text-body">
+                <div class="modal-header border pb-3">
+                    <h5 class="modal-title" id="etlModalLabel"><i class="bi bi-gear-wide-connected text-primary me-2"></i>Executando Pipeline ETL</h5>
                 </div>
                 <div class="modal-body py-4">
                     
-                    <h6 class="mb-3 text-light" id="etl-target-name">Processando...</h6>
+                    <h6 class="mb-3 text-body" id="etl-target-name">Processando...</h6>
                     
                     <!-- Steps Checklist -->
                     <div class="mb-4">
                         <div class="step-item" id="step-download">
-                            <span class="step-icon" id="step-icon-download"><i class="fa-solid fa-spinner fa-spin d-none"></i>1</span>
+                            <span class="step-icon" id="step-icon-download"><i class="bi bi-arrow-clockwise bootstrap-spin d-none"></i>1</span>
                             <span>Download: Baixando arquivo ZIP do S3 do governo...</span>
                         </div>
                         <div class="step-item" id="step-extract">
@@ -649,8 +325,8 @@ try {
                     </div>
 
                 </div>
-                <div class="modal-footer border-secondary pt-3">
-                    <button type="button" id="btn-modal-close" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar" disabled><i class="fa-solid fa-xmark"></i></button>
+                <div class="modal-footer border pt-3">
+                    <button type="button" id="btn-modal-close" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar" disabled><i class="bi bi-x-lg"></i></button>
                 </div>
             </div>
         </div>
@@ -659,19 +335,19 @@ try {
     <!-- Log History Modal -->
     <div class="modal fade" id="logHistoryModal" tabindex="-1" aria-labelledby="logHistoryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content glass-card border border-secondary text-light">
-                <div class="modal-header border-secondary pb-3">
-                    <h5 class="modal-title" id="logHistoryModalLabel"><i class="fa-solid fa-file-invoice text-info me-2"></i>Histórico de Logs de Execução</h5>
+            <div class="modal-content card border border text-body">
+                <div class="modal-header border pb-3">
+                    <h5 class="modal-title" id="logHistoryModalLabel"><i class="bi bi-receipt text-info me-2"></i>Histórico de Logs de Execução</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body py-4">
-                    <h6 class="mb-3 text-light" id="log-history-target-name">Arquivo...</h6>
-                    <div class="modal-console" id="log-history-content" style="max-height: 400px; overflow-y: auto;">
+                    <h6 class="mb-3 text-body" id="log-history-target-name">Arquivo...</h6>
+                    <div class="modal-console" id="log-history-content">
                         <div class="text-muted text-center py-4">Nenhum log registrado para este arquivo.</div>
                     </div>
                 </div>
-                <div class="modal-footer border-secondary pt-3">
-                    <button type="button" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+                <div class="modal-footer border pt-3">
+                    <button type="button" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"><i class="bi bi-x-lg"></i></button>
                 </div>
             </div>
         </div>
@@ -679,42 +355,42 @@ try {
 
     <div class="modal fade" id="fileInfoModal" tabindex="-1" aria-labelledby="fileInfoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content glass-card border border-secondary text-light">
-                <div class="modal-header border-secondary pb-3">
-                    <h5 class="modal-title" id="fileInfoModalLabel"><i class="fa-solid fa-circle-info text-accent me-2"></i>Documentação do Arquivo</h5>
+            <div class="modal-content card border border text-body">
+                <div class="modal-header border pb-3">
+                    <h5 class="modal-title" id="fileInfoModalLabel"><i class="bi bi-info-circle text-primary me-2"></i>Documentação do Arquivo</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body py-4">
-                    <h6 id="file-info-target-name" class="text-accent mb-3">-</h6>
+                    <h6 id="file-info-target-name" class="text-primary mb-3">-</h6>
                     <div id="file-info-content" class="small text-muted">Carregando...</div>
                 </div>
-                <div class="modal-footer border-secondary pt-3">
-                    <a href="campos.php" class="btn btn-outline-accent btn-icon rounded-circle" title="Ver matriz completa" aria-label="Ver matriz completa">
-                        <i class="fa-solid fa-table-list"></i>
+                <div class="modal-footer border pt-3">
+                    <a href="campos.php" class="btn btn-outline-primary btn-icon rounded-circle" title="Ver matriz completa" aria-label="Ver matriz completa">
+                        <i class="bi bi-table"></i>
                     </a>
-                    <button type="button" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"><i class="bi bi-x-lg"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Bootstrap 5 Bundle JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
     <!-- Javascript Actions and AJAX ETL Engine -->
     <!-- Confirmation Modal (custom instead of native confirm) -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass-card border border-secondary text-light">
-            <div class="modal-header border-secondary pb-3">
-                <h5 class="modal-title" id="confirmModalLabel"><i class="fa-solid fa-exclamation-triangle text-warning me-2"></i>Confirmação</h5>
+        <div class="modal-content card border border text-body">
+            <div class="modal-header border pb-3">
+                <h5 class="modal-title" id="confirmModalLabel"><i class="bi bi-exclamation-triangle text-warning me-2"></i>Confirmação</h5>
             </div>
             <div class="modal-body">
                 <p id="confirmModalMessage"></p>
             </div>
-            <div class="modal-footer border-secondary pt-3">
-                <button type="button" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Cancelar" aria-label="Cancelar"><i class="fa-solid fa-xmark"></i></button>
-                <button type="button" class="btn btn-primary btn-icon rounded-circle" id="confirmModalConfirmBtn" title="Confirmar" aria-label="Confirmar"><i class="fa-solid fa-check"></i></button>
+            <div class="modal-footer border pt-3">
+                <button type="button" class="btn btn-outline-secondary btn-icon rounded-circle" data-bs-dismiss="modal" title="Cancelar" aria-label="Cancelar"><i class="bi bi-x-lg"></i></button>
+                <button type="button" class="btn btn-primary btn-icon rounded-circle" id="confirmModalConfirmBtn" title="Confirmar" aria-label="Confirmar"><i class="bi bi-check-lg"></i></button>
             </div>
         </div>
     </div>
@@ -817,13 +493,13 @@ function showConfirmModal(message, onConfirm) {
             
             if (status === 'active') {
                 el.classList.add('active');
-                icon.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+                icon.innerHTML = `<i class="bi bi-arrow-clockwise bootstrap-spin"></i>`;
             } else if (status === 'success') {
                 el.classList.add('success');
-                icon.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+                icon.innerHTML = `<i class="bi bi-check-circle"></i>`;
             } else if (status === 'error') {
                 el.classList.add('error');
-                icon.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
+                icon.innerHTML = `<i class="bi bi-x-circle"></i>`;
             }
         }
 
@@ -850,7 +526,7 @@ function showConfirmModal(message, onConfirm) {
             btn.disabled = true;
             btn.setAttribute('title', 'Sincronizando lista');
             btn.setAttribute('aria-label', 'Sincronizando lista');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+            btn.innerHTML = `<i class="bi bi-arrow-clockwise bootstrap-spin"></i>`;
 
             document.getElementById('etl-target-name').textContent = "Atualizando metadados da API pública do INSS";
             mConsoleLog.innerHTML = '';
@@ -1074,7 +750,7 @@ function showConfirmModal(message, onConfirm) {
             const contentEl = document.getElementById('log-history-content');
             
             targetNameEl.textContent = nome;
-            contentEl.innerHTML = '<div class="text-muted text-center py-4"><i class="fa-solid fa-spinner fa-spin me-2"></i>Carregando logs...</div>';
+            contentEl.innerHTML = '<div class="text-muted text-center py-4"><i class="bi bi-arrow-clockwise bootstrap-spin me-2"></i>Carregando logs...</div>';
             
             const logModal = new bootstrap.Modal(modalEl);
             logModal.show();
@@ -1106,7 +782,7 @@ function showConfirmModal(message, onConfirm) {
             const contentEl = document.getElementById('file-info-content');
 
             targetNameEl.textContent = nome;
-            contentEl.innerHTML = '<div class="text-muted text-center py-4"><i class="fa-solid fa-spinner fa-spin me-2"></i>Carregando documentação...</div>';
+            contentEl.innerHTML = '<div class="text-muted text-center py-4"><i class="bi bi-arrow-clockwise bootstrap-spin me-2"></i>Carregando documentação...</div>';
 
             const infoModal = new bootstrap.Modal(modalEl);
             infoModal.show();
@@ -1128,7 +804,7 @@ function showConfirmModal(message, onConfirm) {
                     const examples = (field.exemplos || []).join(' | ') || '-';
                     return `
                         <tr>
-                            <td class="font-monospace text-light">${escapeHtml(field.campo)}</td>
+                            <td class="font-monospace text-body">${escapeHtml(field.campo)}</td>
                             <td class="text-end">${new Intl.NumberFormat('pt-BR').format(field.ocorrencias)}</td>
                             <td class="text-end">${new Intl.NumberFormat('pt-BR').format(field.preenchidos)}</td>
                             <td>${escapeHtml(formats)}</td>
@@ -1144,35 +820,35 @@ function showConfirmModal(message, onConfirm) {
                 contentEl.innerHTML = `
                     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 mb-4">
                         <div class="col">
-                            <div class="glass-card p-3">
+                            <div class="card p-3">
                                 <div class="text-muted small">Registros no arquivo</div>
-                                <div class="h5 mb-0 text-light">${new Intl.NumberFormat('pt-BR').format(file.total_registros_documentados || 0)}</div>
+                                <div class="h5 mb-0 text-body">${new Intl.NumberFormat('pt-BR').format(file.total_registros_documentados || 0)}</div>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="glass-card p-3">
+                            <div class="card p-3">
                                 <div class="text-muted small">Campos presentes</div>
-                                <div class="h5 mb-0 text-light">${new Intl.NumberFormat('pt-BR').format(file.total_campos_documentados || fields.length)}</div>
+                                <div class="h5 mb-0 text-body">${new Intl.NumberFormat('pt-BR').format(file.total_campos_documentados || fields.length)}</div>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="glass-card p-3">
+                            <div class="card p-3">
                                 <div class="text-muted small">Registros duplicados</div>
                                 <div class="h5 mb-0 text-warning">${new Intl.NumberFormat('pt-BR').format(file.duplicate_rows || 0)}</div>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="glass-card p-3">
+                            <div class="card p-3">
                                 <div class="text-muted small">Atualizado em</div>
-                                <div class="small text-light">${escapeHtml(file.documentacao_atualizada_em || 'Pendente')}</div>
+                                <div class="small text-body">${escapeHtml(file.documentacao_atualizada_em || 'Pendente')}</div>
                             </div>
                         </div>
                     </div>
-                    <div class="alert alert-secondary glass-card border border-secondary small">
-                        <strong class="text-light">Formatos de data detectados</strong><br>${dateSummary}
+                    <div class="alert alert-secondary card border border small">
+                        <strong class="text-body">Formatos de data detectados</strong><br>${dateSummary}
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-sm table-dark table-striped align-middle mb-0">
+                        <table class="table table-sm table-striped align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>Campo</th>
@@ -1224,7 +900,7 @@ function showConfirmModal(message, onConfirm) {
             headers.forEach(th => {
                 const icon = th.querySelector('i');
                 if (icon) {
-                    icon.className = 'fa-solid fa-sort ms-1 text-muted small';
+                    icon.className = 'bi bi-arrow-down-up ms-1 text-muted small';
                 }
             });
             
@@ -1236,7 +912,7 @@ function showConfirmModal(message, onConfirm) {
             if (activeTh) {
                 const icon = activeTh.querySelector('i');
                 if (icon) {
-                    icon.className = currentSortDesc ? 'fa-solid fa-sort-down ms-1 text-accent small' : 'fa-solid fa-sort-up ms-1 text-accent small';
+                    icon.className = currentSortDesc ? 'bi bi-sort-down ms-1 text-primary small' : 'bi bi-sort-up ms-1 text-primary small';
                 }
             }
 

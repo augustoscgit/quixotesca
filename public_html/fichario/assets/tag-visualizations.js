@@ -33,22 +33,42 @@
 
     function tagTypeSolidColor(category) {
         const normalized = String(category || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-        if (normalized === 'tema') return '#006392';
-        if (normalized === 'metodo') return '#944F00';
-        if (normalized === 'fonte') return '#5DCF00';
-        return '#464B51';
+        if (normalized === 'tema') return cssVar('--bs-primary');
+        if (normalized === 'metodo') return cssVar('--bs-warning-text-emphasis');
+        if (normalized === 'fonte') return cssVar('--bs-success-text-emphasis');
+        return cssVar('--bs-secondary-color');
     }
 
-    function themedWordColor(word) {
-        const explicitColor = Array.isArray(word) ? word[4] : '';
-        const category = Array.isArray(word) ? word[3] : '';
+    function cssVar(name, fallback = '') {
+        const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return value || fallback;
+    }
+
+    function rgbaVar(name, alpha, fallbackRgb = '13, 110, 253') {
+        const rgb = cssVar(name, fallbackRgb);
+        return `rgba(${rgb}, ${alpha})`;
+    }
+
+    function themedWordColor(wordText) {
+        let explicitColor = '';
+        let category = '';
+        
+        // Find the word in the global configuration list to extract its category and color
+        if (window.FicharioTagVisualizationsConfig && Array.isArray(window.FicharioTagVisualizationsConfig.wordList)) {
+            const item = window.FicharioTagVisualizationsConfig.wordList.find(i => i[0] === wordText);
+            if (item) {
+                category = item[3];
+                explicitColor = item[4];
+            }
+        }
+        
         return explicitColor || tagTypeSolidColor(category);
     }
 
-    function hexToRgba(hex, alpha, isDark) {
+    function hexToRgba(hex, alpha) {
         const normalized = String(hex || '').replace('#', '').trim();
         if (!/^[0-9a-f]{6}$/i.test(normalized)) {
-            return isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(15, 23, 42, 0.08)';
+            return rgbaVar('--bs-primary-rgb', alpha);
         }
 
         const value = parseInt(normalized, 16);
@@ -74,7 +94,7 @@
                 if (config.maxCount <= 0) return 22;
                 return 18 + (size / config.maxCount) * 26;
             },
-            fontFamily: 'Outfit, sans-serif',
+            fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
             color: themedWordColor,
             rotateRatio: 0,
             backgroundColor: 'transparent',
@@ -96,19 +116,20 @@
 
         const rawNodes = config.nodes || [];
         const rawEdges = config.edges || [];
-        const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
-        const labelColor = isDark ? '#f8fafc' : '#111827';
-        const mutedEdgeColor = isDark ? 'rgba(148, 163, 184, 0.13)' : 'rgba(71, 85, 105, 0.11)';
-        const categoryFallback = isDark
-            ? { bg: '#273444', text: '#e5e7eb', border: '#6b7280' }
-            : { bg: '#f8f9fa', text: '#464B51', border: '#adb5bd' };
+        const labelColor = cssVar('--bs-body-color');
+        const mutedEdgeColor = rgbaVar('--bs-secondary-rgb', 0.18, '108, 117, 125');
+        const categoryFallback = {
+            bg: cssVar('--bs-tertiary-bg'),
+            text: cssVar('--bs-body-color'),
+            border: cssVar('--bs-border-color')
+        };
         const categoryStyles = new Map();
 
         rawNodes.forEach((node) => {
             const category = node.category || 'Sem tipo';
             if (!categoryStyles.has(category)) {
                 categoryStyles.set(category, {
-                    bg: node.colorSolid ? hexToRgba(node.colorSolid, isDark ? 0.32 : 0.16, isDark) : (node.colorBg || categoryFallback.bg),
+                    bg: node.colorSolid ? hexToRgba(node.colorSolid, 0.16) : (node.colorBg || categoryFallback.bg),
                     text: node.colorSolid || categoryFallback.text,
                     border: node.colorSolid || node.colorBorder || categoryFallback.border
                 });
@@ -166,18 +187,18 @@
                 font: {
                     color: labelColor,
                     size: 14,
-                    face: 'Outfit, sans-serif',
+                    face: 'system-ui, -apple-system, Segoe UI, sans-serif',
                     multi: false
                 },
                 color: {
                     background: style.bg,
                     border: style.border,
                     highlight: {
-                        background: hexToRgba(style.text, isDark ? 0.34 : 0.18, isDark),
+                        background: hexToRgba(style.text, 0.18),
                         border: style.text
                     },
                     hover: {
-                        background: hexToRgba(style.text, isDark ? 0.26 : 0.13, isDark),
+                        background: hexToRgba(style.text, 0.13),
                         border: style.text
                     }
                 },
@@ -193,15 +214,9 @@
             return {
                 ...edge,
                 color: {
-                    color: isHierarchy
-                        ? (isDark ? 'rgba(248, 250, 252, 0.2)' : 'rgba(15, 23, 42, 0.16)')
-                        : mutedEdgeColor,
-                    highlight: isHierarchy
-                        ? (isDark ? 'rgba(226, 232, 240, 0.32)' : 'rgba(51, 65, 85, 0.26)')
-                        : (isDark ? 'rgba(226, 232, 240, 0.5)' : 'rgba(51, 65, 85, 0.42)'),
-                    hover: isHierarchy
-                        ? (isDark ? 'rgba(226, 232, 240, 0.32)' : 'rgba(51, 65, 85, 0.26)')
-                        : (isDark ? 'rgba(226, 232, 240, 0.5)' : 'rgba(51, 65, 85, 0.42)')
+                    color: isHierarchy ? rgbaVar('--bs-body-color-rgb', 0.16, '33, 37, 41') : mutedEdgeColor,
+                    highlight: rgbaVar('--bs-body-color-rgb', 0.32, '33, 37, 41'),
+                    hover: rgbaVar('--bs-body-color-rgb', 0.32, '33, 37, 41')
                 },
                 dashes: isHierarchy ? [3, 7] : false,
                 width: isHierarchy ? 0.8 : (edge.value ? Math.min(3, 0.7 + (edge.value * 0.35)) : 0.8)
@@ -373,15 +388,6 @@
         document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tabButton) => {
             tabButton.addEventListener('shown.bs.tab', renderAll);
         });
-
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.attributeName === 'data-bs-theme') {
-                    renderAll();
-                }
-            });
-        });
-        observer.observe(document.documentElement, { attributes: true });
 
         let resizeTimeout;
         window.addEventListener('resize', () => {

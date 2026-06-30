@@ -164,7 +164,7 @@ render_header('Usuarios', 'usuarios');
                             </td>
                             <td><?= h($item['email']) ?></td>
                             <td><span class="badge <?= $item['status'] === 'active' ? 'bg-success' : 'bg-warning' ?>"><?= h($item['status']) ?></span></td>
-                            <td class="text-end"><a class="btn btn-sm btn-outline-light" href="usuarios.php?edit=<?= h((string) $item['id']) ?>">Editar</a></td>
+                            <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="usuarios.php?edit=<?= h((string) $item['id']) ?>">Editar</a></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
@@ -227,7 +227,7 @@ render_header('Usuarios', 'usuarios');
                             <input class="form-control" id="password_confirm" name="password_confirm" type="password" autocomplete="new-password">
                         </div>
                     <?php endif; ?>
-                    <button class="btn btn-light" type="submit">Salvar</button>
+                    <button class="btn btn-primary" type="submit">Salvar</button>
                 </form>
             <?php else: ?>
                 <p class="muted mb-0">Seu usuario nao possui permissao para esta operacao.</p>

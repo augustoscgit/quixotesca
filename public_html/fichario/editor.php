@@ -167,33 +167,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Editor - Fichário Acadêmico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts: Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <style>
-        .blob {
-            animation: floatBlob 12s infinite alternate ease-in-out;
-        }
-
-        .legacy-decoration-secondary {
-            animation-delay: -6s;
-        }
-
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 40px) scale(1.15); }
-        }
-
-
-        .main-container {
-            position: relative;
-            z-index: 10;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <!-- Background Animated Blobs -->
@@ -203,12 +181,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main class="container py-4 main-container">
         <div class="d-flex flex-column gap-2 mb-4">
             <div>
-                <h1 class="h3 mb-1 text-white fw-bold"><?= $isEditing ? 'Editar Artigo' : 'Novo Artigo' ?></h1>
+                <h1 class="h3 mb-1 text-body fw-bold"><?= $isEditing ? 'Editar Artigo' : 'Novo Artigo' ?></h1>
                 <p class="text-secondary mb-0"><?= $isEditing ? 'Revise os campos e salve as alterações.' : 'Cadastro de artigo com extrator automático.' ?></p>
             </div>
             <?php if (!$isEditing): ?>
                 <div class="d-flex justify-content-end mt-2">
-                    <button class="btn btn-outline-primary rounded-pill px-4 text-white border-primary" type="button" data-bs-toggle="modal" data-bs-target="#bibtexModal">
+                    <button class="btn btn-outline-primary rounded-pill px-4 text-body border-primary" type="button" data-bs-toggle="modal" data-bs-target="#bibtexModal">
                         Importar BibTeX
                     </button>
                 </div>
@@ -230,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <form method="post" class="glass-card p-4 mb-4" id="articleForm">
+        <form method="post" class="card p-4 mb-4" id="articleForm">
             <?= csrf_field() ?>
             <input type="hidden" name="id" value="<?= h((string) $editId) ?>">
             <input type="hidden" name="bibtex_key" id="bibtex_key" value="<?= h($article['bibtex_key']) ?>">
@@ -337,7 +315,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="alert d-none mt-3 mb-0" id="urlExtractMessage" role="alert"></div>
 
             <div class="d-flex justify-content-end gap-2 mt-4">
-                <a class="btn btn-outline-secondary text-white rounded-pill px-4" href="<?= $isEditing ? 'view.php?id=' . $editId : 'articles.php' ?>">Cancelar</a>
+                <a class="btn btn-outline-secondary text-body rounded-pill px-4" href="<?= $isEditing ? 'view.php?id=' . $editId : 'articles.php' ?>">Cancelar</a>
                 <button class="btn btn-primary rounded-pill px-4" type="submit"><?= $isEditing ? 'Salvar alterações' : 'Salvar artigo' ?></button>
             </div>
         </form>
@@ -363,7 +341,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=20260603c"></script>
     <script>
         const importButton = document.getElementById('importBibtexButton');

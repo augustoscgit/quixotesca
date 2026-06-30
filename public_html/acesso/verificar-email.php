@@ -21,6 +21,6 @@ render_header('Verificacao de e-mail');
         </ol>
     </div>
 
-    <a class="btn btn-light" href="login.php">Voltar ao login</a>
+    <a class="btn btn-outline-primary" href="login.php">Voltar ao login</a>
 </section>
 <?php render_footer(); ?>

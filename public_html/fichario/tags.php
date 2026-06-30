@@ -265,17 +265,17 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
         $stats = tag_stats($tagStatsStmt, $id);
 
         echo '<li class="my-2">';
-        echo '  <div class="d-flex align-items-center justify-content-between p-2 tag-tree-item rounded" style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04);">';
+        echo '  <div class="d-flex align-items-center justify-content-between p-2 tag-tree-item rounded border">';
         echo '    <div class="d-flex align-items-center gap-2 flex-grow-1 min-w-0">';
-        echo '      <a class="text-white fw-medium text-decoration-none text-truncate tag-link" href="tag_view.php?tag_id=' . $id . '"' . tag_tooltip_attrs($tag) . '>' . h($tag['name']) . '</a>';
+        echo '      <a class="fw-medium text-decoration-none text-truncate tag-link" href="tag_view.php?tag_id=' . $id . '"' . tag_tooltip_attrs($tag) . '>' . h($tag['name']) . '</a>';
         if (trim((string)($tag['definition'] ?? '')) === '') {
-            echo '      <span class="text-secondary opacity-25" title="Sem definição" style="cursor: help; line-height: 1;">';
-            echo '        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+            echo '      <span class="text-secondary opacity-25" title="Sem definição">';
+            echo '        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
             echo '      </span>';
         }
         echo '    </div>';
         echo '    <div class="d-flex align-items-center gap-2 ms-2">';
-        echo '      <span class="badge bg-black bg-opacity-40 border border-secondary border-opacity-20 text-secondary font-monospace" style="font-size:0.65rem;" title="Notas vinculadas">';
+        echo '      <span class="badge border font-monospace tag-count-badge" title="Notas vinculadas">';
         echo $stats['notes'];
         echo '      </span>';
         echo '    </div>';
@@ -296,79 +296,12 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Navegar por Tags - Fichário Acadêmico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts: Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="assets/app.css?v=20260629-tags" rel="stylesheet">
-    <link href="assets/tag-visualizations.css?v=20260629-tags" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <style>
-        .tag-tree-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        .tag-tree-container::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.02);
-            border-radius: 4px;
-        }
-        .tag-tree-container::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-        }
-        .tag-tree-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .dropdown-toggle::after {
-            display: none !important;
-        }
-
-        .tag-tree-item {
-            transition: all 0.2s;
-        }
-        .tag-tree-item:hover {
-            background: rgba(255, 255, 255, 0.04) !important;
-            border-color: rgba(255,255,255,0.12) !important;
-        }
-
-        .tag-parents-select {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.15);
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        .tag-view-tabs {
-            border-bottom-color: var(--bs-border-color);
-        }
-
-        .tag-view-tabs .nav-link {
-            color: var(--bs-secondary-color);
-            border: 0;
-            border-bottom: 2px solid transparent;
-            border-radius: 0;
-            padding-inline: 0;
-            margin-right: 1.5rem;
-            background: transparent;
-            font-weight: 600;
-        }
-
-        .tag-view-tabs .nav-link:hover,
-        .tag-view-tabs .nav-link:focus {
-            color: var(--bs-body-color);
-            border-bottom-color: var(--bs-border-color);
-        }
-
-        .tag-view-tabs .nav-link.active {
-            color: var(--bs-primary);
-            background: transparent;
-            border-bottom-color: var(--bs-primary);
-        }
-
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="assets/tag-visualizations.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
@@ -379,14 +312,14 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page">Tags</li>
+                <li class="breadcrumb-item active text-body" aria-current="page">Tags</li>
             </ol>
         </nav>
 
         <!-- Top bar -->
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
             <div>
-                <h1 class="h3 mb-1 text-white fw-bold">Navegar por Tags</h1>
+                <h1 class="h3 mb-1 text-body fw-bold">Navegar por Tags</h1>
                 <p class="text-secondary mb-0">Explore e visualize a taxonomia temática de termos em hierarquias e boxes.</p>
             </div>
             <?php if ($canManageTags): ?>
@@ -422,14 +355,14 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
 
         <div class="tab-content" id="tag-view-tabs-content">
             <section class="tab-pane fade show active" id="tab-tree" role="tabpanel" aria-labelledby="tab-tree-btn" tabindex="0">
-                <div class="glass-card p-3 mb-4">
+                <div class="card p-3 mb-4">
                     <input type="text" class="form-control" id="tagSearchInput" placeholder="Buscar tag por nome...">
                 </div>
 
                 <div class="row g-4">
             <?php if ($tagsByCategory === []): ?>
                 <div class="col-12">
-                    <div class="glass-card p-5 text-center text-secondary">Nenhuma tag cadastrada no fichário.</div>
+                    <div class="card p-5 text-center text-secondary">Nenhuma tag cadastrada no fichário.</div>
                 </div>
             <?php else: ?>
                 <?php foreach ($tagsByCategory as $catName => $catTags): ?>
@@ -465,17 +398,17 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
                     $cColor = get_tag_colors($catName);
                     ?>
                     <div class="col-xl-4 col-md-6 tag-box-column" data-box-cat="<?= h($catName) ?>">
-                        <div class="glass-card p-4 h-100 d-flex flex-column">
-                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom border-secondary border-opacity-20 pb-2">
-                                <h2 class="h5 text-white fw-bold mb-0 d-flex align-items-center gap-2">
-                                    <span class="badge border tag-badge" style="background:<?= $cColor['bg'] ?>; color:<?= $cColor['text'] ?>; border-color:<?= $cColor['border'] ?> !important;">
+                        <div class="card p-4 h-100 d-flex flex-column">
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom border border-opacity-20 pb-2">
+                                <h2 class="h5 text-body fw-bold mb-0 d-flex align-items-center gap-2">
+                                    <span class="badge border tag-badge">
                                         <?= h($catName) ?>
                                     </span>
                                 </h2>
                                 <span class="text-secondary small"><?= count($catTags) ?> tag(s)</span>
                             </div>
                             
-                            <div class="flex-grow-1 tag-tree-container" style="max-height: 480px; overflow-y: auto;">
+                            <div class="flex-grow-1 tag-tree-container">
                                 <?php
                                 $visited = [];
                                 render_category_tree($rootTags, $parentToChildren, $catTagsById, $childToParents, $visited);
@@ -489,12 +422,12 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
             </section>
 
             <section class="tab-pane fade" id="tab-cloud" role="tabpanel" aria-labelledby="tab-cloud-btn" tabindex="0">
-                <div class="glass-card p-4">
+                <div class="card p-4">
                     <?php if ($wordList === []): ?>
                         <div class="p-5 text-center text-secondary">Nenhuma tag com artigo associado para exibir na nuvem.</div>
                     <?php else: ?>
-                        <div class="d-flex justify-content-center align-items-center py-2" style="position: relative; overflow: hidden; width: 100%;">
-                            <canvas id="word-cloud-canvas" style="width: 100%; max-width: 900px; height: 420px;"></canvas>
+                        <div class="d-flex justify-content-center align-items-center py-2">
+                            <canvas id="word-cloud-canvas"></canvas>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -502,12 +435,12 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
 
             <section class="tab-pane fade" id="tab-graph" role="tabpanel" aria-labelledby="tab-graph-btn" tabindex="0">
                 <?php if (count($nodes) > 0): ?>
-                    <div id="tag-network-container" class="glass-card tag-network-container">
+                    <div id="tag-network-container" class="card tag-network-container">
                         <div id="tag-network-viewport" class="tag-network-viewport"></div>
                         <div id="tag-network-controls" class="tag-network-controls" aria-label="Filtros do grafo de tags"></div>
                     </div>
                 <?php else: ?>
-                    <div class="glass-card p-5 text-center text-secondary">Ainda nÃ£o hÃ¡ relaÃ§Ãµes suficientes para exibir o grafo.</div>
+                    <div class="card p-5 text-center text-secondary">Ainda nÃ£o hÃ¡ relaÃ§Ãµes suficientes para exibir o grafo.</div>
                 <?php endif; ?>
             </section>
         </div>
@@ -519,7 +452,7 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="modal-title h5 text-white fw-bold" id="tagModalLabel">Criar Nova Tag</h2>
+                    <h2 class="modal-title h5 text-body fw-bold" id="tagModalLabel">Criar Nova Tag</h2>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
@@ -561,10 +494,10 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
                                     <?php foreach ($tagsList as $optionTag): ?>
                                         <div class="form-check" id="parent-checkbox-wrapper-<?= $optionTag['id'] ?>">
                                             <input class="form-check-input parent-tag-checkbox" type="checkbox" name="parents[]" value="<?= $optionTag['id'] ?>" id="parent_tag_<?= $optionTag['id'] ?>">
-                                            <label class="form-check-label text-white small" for="parent_tag_<?= $optionTag['id'] ?>">
+                                            <label class="form-check-label text-body small" for="parent_tag_<?= $optionTag['id'] ?>">
                                                 <?= h($optionTag['name']) ?>
                                                 <?php if (trim($optionTag['category'] ?? '') !== ''): ?>
-                                                    <span class="text-secondary font-monospace" style="font-size:0.75rem;">(<?= h($optionTag['category']) ?>)</span>
+                                                    <span class="text-secondary font-monospace">(<?= h($optionTag['category']) ?>)</span>
                                                 <?php endif; ?>
                                             </label>
                                         </div>
@@ -574,8 +507,8 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
                             <div class="form-text text-secondary">Marque os conceitos mais amplos e genéricos sob os quais este conceito se enquadra hierarquicamente.</div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border-secondary border-opacity-25">
-                            <button type="button" class="btn btn-outline-secondary text-white rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border border-opacity-25">
+                            <button type="button" class="btn btn-outline-secondary text-body rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-primary rounded-pill px-4" id="submitBtn">Criar Tag</button>
                         </div>
                     </form>
@@ -585,7 +518,7 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
     </div>
 
     <!-- Hidden form for deleting tags -->
-    <form method="post" action="tags.php" id="deleteForm" style="display:none;">
+    <form method="post" action="tags.php" id="deleteForm" hidden>
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="delete">
         <input type="hidden" name="id" id="deleteFormId" value="0">
@@ -594,7 +527,7 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
     </form>
     <?php endif; ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=20260603c"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js"></script>
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
@@ -807,6 +740,6 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
             }
         });
     </script>
-    <script src="assets/tag-visualizations.js?v=20260629-tags"></script>
+    <script src="assets/tag-visualizations.js?v=20260629-tags3"></script>
 </body>
 </html>

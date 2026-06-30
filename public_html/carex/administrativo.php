@@ -63,8 +63,8 @@ Security::allowReadOnlyRequest();
 $settings = json_decode(file_exists($settingsFile) ? file_get_contents($settingsFile) : '{}', true);
 $allowMarkdownEdit = $settings['allow_markdown_edit'] ?? true;
 
-$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
-$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js';
+$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css';
+$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js';
 $csrfToken = Security::csrfToken();
 $databaseWritesAllowed = Connection::writesAllowed($config['database']);
 
@@ -91,14 +91,15 @@ try {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light">
     <meta name="csrf-token" content="<?= Security::e($csrfToken) ?>">
     <title>CAREX | Administrativo</title>
     <link href="../assets/favicon.png" rel="icon" type="image/png">
-    <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="assets/app.css" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
@@ -195,7 +196,7 @@ try {
                                     <th scope="col">Itens da Matriz</th>
                                     <th scope="col">Itens Classificados</th>
                                     <th scope="col">Avan�o Geral</th>
-                                    <th scope="col" style="width: 150px;">A��es</th>
+                                    <th scope="col">A��es</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -207,14 +208,14 @@ try {
                                         <td><?= number_format((int) $matrix['total_classificados'], 0, ',', '.') ?></td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="progress flex-grow-1" style="height: 6px; min-width: 80px;" role="progressbar" aria-valuenow="<?= Security::e($matrix['percentual_classificado']) ?>" aria-valuemin="0" aria-valuemax="100">
-                                                    <div class="progress-bar" style="width: <?= Security::e($matrix['percentual_classificado']) ?>%"></div>
+                                                <div class="progress flex-grow-1" role="progressbar" aria-valuenow="<?= Security::e($matrix['percentual_classificado']) ?>" aria-valuemin="0" aria-valuemax="100">
+                                                    <div class="progress-bar"></div>
                                                 </div>
                                                 <span class="small fw-semibold"><?= number_format((float) $matrix['percentual_classificado'], 1, ',', '.') ?>%</span>
                                             </div>
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-outline-primary py-1 px-2" style="font-size: 0.75rem;" href="matriz.php?id_matriz=<?= urlencode($matrix['id_matriz']) ?>">
+                                            <a class="btn btn-xs btn-outline-primary py-1 px-2" href="matriz.php?id_matriz=<?= urlencode($matrix['id_matriz']) ?>">
                                                 Gerenciar
                                             </a>
                                         </td>
@@ -290,7 +291,7 @@ try {
                                                 <span class="text-body-secondary" data-refresh-progress-elapsed>00:00</span>
                                             </div>
                                             <div class="progress matview-refresh-progress" role="progressbar" aria-label="Progresso estimado da atualizacao" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                                <div class="progress-bar" data-refresh-progress-bar style="width: 0%">0%</div>
+                                                <div class="progress-bar" data-refresh-progress-bar>0%</div>
                                             </div>
                                             <div class="text-body-secondary small mt-1" data-refresh-progress-note>
                                                 Progresso estimado por tempo decorrido; a conclusao real e confirmada pelo banco.
@@ -312,7 +313,7 @@ try {
                     </div>
                 </div>
 
-                <div class="d-flex flex-column gap-4" style="max-width: 680px;">
+                <div class="d-flex flex-column gap-4">
 
 
 
@@ -347,7 +348,7 @@ try {
         </div>
     </main>
 
-    <script src="<?= Security::e($bootstrapJs) ?>" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="<?= Security::e($bootstrapJs) ?>" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/admin.js?v=<?= time() ?>"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@ Este projeto tem o seu escopo estritamente delimitado para garantir a independê
 ### ✅ O que está no escopo deste projeto:
 1. **Landing Page Principal**: O portal de entrada unificado ([index.html](index.html)) que apresenta e fornece acesso aos sistemas.
 2. **Landing Pages dos Módulos**: As páginas de boas-vindas/índice iniciais de cada módulo ([carex/index.php](carex/index.php), [fichario/index.php](fichario/index.php), [ldrt/index.php](ldrt/index.php), [ldrt/public/index.php](ldrt/public/index.php)).
-3. **Identidade Visual e Ativos Globais**: Logotipos, folha de estilo global ([assets/css/style.css](assets/css/style.css)), favicons e o guias de [identidade visual e UX](docs/identidade-visual-ux.md) e [desenvolvimento e segurança](docs/desenvolvimento-seguranca.md).
+3. **Identidade Visual e Ativos Globais**: Logotipos, folha de estilo global ([public_html/assets/css/style.css](public_html/assets/css/style.css)), favicons e os guias Bootstrap-first de [documentação visual centralizada](docs/documentacao-visual-centralizada.md), [tema/CSS/Bootstrap por módulo](docs/tema-css-bootstrap-modulos.md), [diretrizes visuais RENAST](docs/diretrizes-visuais-renast.md) e [desenvolvimento e segurança](docs/desenvolvimento-seguranca.md).
 4. **Orientações para Agentes**: Manuais de diretrizes técnicas e visuais (`instrucoes-agente.md`) hospedados na pasta de cada módulo para guiar os respectivos desenvolvedores/agentes especialistas.
 
 ### ❌ O que NÃO está no escopo deste projeto:
@@ -57,7 +57,7 @@ Lógica de negócios e informações sensíveis blindadas de acesso HTTP direto:
 ## 🛠️ Diretrizes de Integração de Módulos
 
 Ao integrar ou atualizar um módulo, certifique-se de:
-1. **Seguir o Guia de Design**: Manter o padrão visual unificado com temas claro, escuro e auto, conforme os guias de [identidade visual e UX](docs/identidade-visual-ux.md) e [desenvolvimento e segurança](docs/desenvolvimento-seguranca.md).
+1. **Seguir o Guia de Design**: Manter o padrão visual Bootstrap-first em tema claro, conforme os guias de [documentação visual centralizada](docs/documentacao-visual-centralizada.md), [tema/CSS/Bootstrap por módulo](docs/tema-css-bootstrap-modulos.md), [diretrizes visuais RENAST](docs/diretrizes-visuais-renast.md) e [desenvolvimento e segurança](docs/desenvolvimento-seguranca.md).
 2. **Link de Retorno**: Garantir que o logotipo do cabeçalho da landing page do módulo aponte de volta para o portal (`../` ou `../../`).
 3. **Resiliência a Falhas**: Páginas de entrada do módulo devem tratar falhas de banco de dados silenciosamente para evitar que a indisponibilidade de banco derrube a página de apresentação.
 
@@ -66,8 +66,12 @@ Ao integrar ou atualizar um módulo, certifique-se de:
 
 A organização da documentação de aparência, UX, design e interface está centralizada em:
 
-- `assets/css/documentacao-visual-centralizada.md`
+- `docs/documentacao-visual-centralizada.md`
+- `docs/tema-css-bootstrap-modulos.md`
+- `docs/diretrizes-visuais-renast.md`
+- `docs/identidade-visual-ux.md` (ponte legada)
 - `docs/desenvolvimento-seguranca.md`
-- `docs/identidade-visual-ux.md`
 
 Documentos de módulo devem conter apenas regras específicas do módulo e apontar para o guia central quando tratarem de visual, UX, tema, navbar, botões, tabelas ou formulários.
+
+O CSS canonico em runtime fica em `public_html/assets/css/style.css`; o bootstrapper de tema claro fica em `public_html/assets/js/theme-switcher.js`. Acesso e Administracao herdam o contrato visual comum documentado em `acesso/README.md` e `docs/tema-css-bootstrap-modulos.md`.

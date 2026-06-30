@@ -95,104 +95,22 @@ try {
     $error = $config['app']['debug'] ? $exception->getMessage() : 'Não foi possível carregar os detalhes da matriz.';
 }
 
-$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
-$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js';
+$bootstrapCss = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css';
+$bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js';
 ?>
 <!doctype html>
 <html lang="pt-BR" data-module="carex">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light">
     <title>CAREX | Matriz <?= Security::e($matrix ? $matrix['no_matriz'] : '') ?></title>
     <link href="../assets/favicon.png" rel="icon" type="image/png">
-    <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="<?= Security::e($bootstrapCss) ?>" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="assets/app.css" rel="stylesheet">
-    <script src="../assets/js/theme-switcher.js"></script>
-    <link href="../assets/css/style.css?v=20260629-contrast" rel="stylesheet">
-    <style>
-        .matrix-breadcrumb {
-            background: var(--bs-body-bg);
-            border: 1px solid var(--bs-border-color);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-        }
-
-        .matrix-breadcrumb .breadcrumb {
-            margin-bottom: 0;
-        }
-
-        .matrix-breadcrumb a,
-        .matrix-link-accent {
-            color: var(--accent-ui) !important;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .matrix-breadcrumb a:hover,
-        .matrix-link-accent:hover {
-            text-decoration: underline;
-        }
-
-        .matrix-table-wrap,
-        .matrix-empty-state {
-            background: var(--bs-body-bg) !important;
-            border: 1px solid var(--bs-border-color) !important;
-            border-radius: 8px !important;
-            box-shadow: none !important;
-        }
-
-        .matrix-table thead th {
-            background: var(--bs-tertiary-bg) !important;
-            color: var(--bs-body-color) !important;
-            border-color: var(--bs-border-color) !important;
-        }
-
-        .matrix-table td,
-        .matrix-table th {
-            border-color: var(--bs-border-color) !important;
-        }
-
-        .matrix-section-title {
-            color: var(--accent-ui) !important;
-        }
-
-        .matrix-progress .progress-bar {
-            background-color: var(--accent-solid) !important;
-            color: var(--accent-on-solid) !important;
-        }
-
-        .matrix-tabs .nav-link {
-            color: var(--bs-secondary-color) !important;
-            border-color: transparent !important;
-        }
-
-        .matrix-tabs .nav-link:hover {
-            color: var(--accent-ui) !important;
-            border-color: var(--bs-border-color) !important;
-        }
-
-        .matrix-tabs .nav-link.active {
-            background: var(--bs-body-bg) !important;
-            border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg) !important;
-            color: var(--accent-ui) !important;
-            font-weight: 600;
-        }
-
-        .btn-outline-primary {
-            border-color: var(--accent-border) !important;
-            color: var(--accent-ui) !important;
-            background: transparent !important;
-        }
-
-        .btn-outline-primary:hover,
-        .btn-outline-primary:focus {
-            background: var(--accent-solid) !important;
-            border-color: var(--accent-solid) !important;
-            color: var(--accent-on-solid) !important;
-        }
-    </style>
+    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <?php
@@ -234,7 +152,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
             <div class="tab-content" id="matrixTabContent">
                 <!-- Tab 1: Informações Gerais -->
                 <div class="tab-pane fade show active" id="info-panel" role="tabpanel" aria-labelledby="info-tab">
-                    <div class="card mb-4 border-secondary-subtle">
+                    <div class="card mb-4 border-subtle">
                         <div class="card-body">
                             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                                 <div>
@@ -258,15 +176,15 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                                     <span class="text-body-secondary fw-semibold">Avanço da Classificação</span>
                                     <span class="fw-bold matrix-section-title"><?= number_format($matrix['percentual_classificado'], 1, ',', '.') ?>%</span>
                                 </div>
-                                <div class="progress matrix-progress" style="height: 10px;" role="progressbar" aria-valuenow="<?= Security::e($matrix['percentual_classificado']) ?>" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar" style="width: <?= Security::e($matrix['percentual_classificado']) ?>%"></div>
+                                <div class="progress matrix-progress" role="progressbar" aria-valuenow="<?= Security::e($matrix['percentual_classificado']) ?>" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Linked Specialists Card -->
-                    <div class="card border-secondary-subtle p-4 mb-4">
+                    <div class="card border-subtle p-4 mb-4">
                         <h2 class="h5 mb-3 matrix-section-title"><i class="bi bi-people-fill"></i> Especialistas Vinculados</h2>
                         <?php if (empty($linkedSpecialists)): ?>
                             <p class="text-body-secondary mb-0">Nenhum especialista vinculado a esta matriz no momento.</p>
@@ -283,7 +201,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                     </div>
 
                     <!-- Specifications & Metadata Panel -->
-                    <div class="card border-secondary-subtle p-4 mb-4">
+                    <div class="card border-subtle p-4 mb-4">
                         <h2 class="h5 mb-3 matrix-section-title"><i class="bi bi-file-earmark-text-fill"></i> Especificações e Metadados da Matriz</h2>
                         <div class="row g-3">
                             <div class="col-12 col-md-4">
@@ -362,17 +280,17 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                         <h2 class="h5 mb-0">Itens e Classificações</h2>
                         <form id="searchForm" class="d-flex gap-2" role="search">
-                            <input id="searchInput" class="form-control form-control-sm search-input" style="min-width: 250px;" type="search" placeholder="Buscar código, nome ou classificação..." autocomplete="off">
+                            <input id="searchInput" class="form-control form-control-sm search-input" type="search" placeholder="Buscar código, nome ou classificação..." autocomplete="off">
                             <button class="btn btn-sm btn-primary" type="submit">Buscar</button>
                         </form>
                     </div>
 
                     <!-- Dynamic Filters -->
-                    <div id="filterSection" class="card mb-3 border-secondary-subtle">
+                    <div id="filterSection" class="card mb-3 border-subtle">
                         <div class="card-body py-2 px-3">
                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="fw-semibold small text-uppercase text-body-secondary" style="letter-spacing: 0.5px;">Filtros Dinâmicos</span>
-                                <button id="addFilterBtn" class="btn btn-xs btn-outline-primary py-1 px-2 small" style="font-size: 0.75rem;" type="button">
+                                <span class="fw-semibold small text-uppercase text-body-secondary">Filtros Dinâmicos</span>
+                                <button id="addFilterBtn" class="btn btn-xs btn-outline-primary py-1 px-2 small" type="button">
                                     <strong>+ Adicionar Filtro</strong>
                                 </button>
                             </div>
@@ -386,16 +304,16 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
 
                     <!-- Table -->
                     <div class="table-responsive matrix-table-wrap mb-3">
-                        <table class="table table-striped table-hover align-middle matrix-table mb-0" style="font-size: 0.9rem;">
+                        <table class="table table-striped table-hover align-middle matrix-table mb-0">
                             <thead>
                                 <tr>
-                                    <th scope="col" style="width: 80px;">Origem</th>
-                                    <th scope="col" style="width: 130px;">Tipo de Objeto</th>
-                                    <th scope="col" style="width: 100px;">Código</th>
+                                    <th scope="col">Origem</th>
+                                    <th scope="col">Tipo de Objeto</th>
+                                    <th scope="col">Código</th>
                                     <th scope="col">Nome/Descrição do Objeto</th>
-                                    <th scope="col" style="width: 160px;">Classificação direta</th>
-                                    <th scope="col" style="width: 240px;">Classificação final</th>
-                                    <th scope="col" style="width: 100px;">Probabilidade</th>
+                                    <th scope="col">Classificação direta</th>
+                                    <th scope="col">Classificação final</th>
+                                    <th scope="col">Probabilidade</th>
                                     <th scope="col">Observações</th>
                                 </tr>
                             </thead>
@@ -442,7 +360,7 @@ $bootstrapJs = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.b
         <?php endif; ?>
     </main>
 
-    <script src="<?= Security::e($bootstrapJs) ?>" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="<?= Security::e($bootstrapJs) ?>" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script>
         const state = {
             matrixId: <?= json_encode($matrixId) ?>,

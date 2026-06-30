@@ -554,7 +554,9 @@ function require_login(): void
     }
 
     $next = $_SERVER['REQUEST_URI'] ?? 'index.php';
-    header('Location: login.php?next=' . rawurlencode($next));
+    $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+    $loginUrl = str_contains($scriptName, '/acesso/') ? 'login.php' : '../acesso/login.php';
+    header('Location: ' . $loginUrl . '?next=' . rawurlencode($next));
     exit;
 }
 
@@ -756,19 +758,19 @@ function render_header(string $title, string $active = ''): void
     $user = current_user();
     $notice = flash('notice');
     $error = flash('error');
+    $module = str_contains($_SERVER['SCRIPT_NAME'] ?? '', '/admin/') ? 'admin' : 'acesso';
 
-    echo '<!doctype html><html lang="pt-BR"><head>';
+    echo '<!doctype html><html lang="pt-BR" data-module="' . h($module) . '"><head>';
     echo '<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">';
     echo '<title>' . h($title) . ' - Acesso RENAST</title>';
     echo '<link rel="icon" type="image/png" href="../favicon.png">';
-    echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">';
+    echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">';
     echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">';
-    echo '<link href="assets/app.css" rel="stylesheet">';
-    echo '<link href="../assets/css/style.css" rel="stylesheet">';
-    echo '<script src="../assets/js/theme-switcher.js"></script>';
+    echo '<link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">';
+    echo '<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">';
+    echo '<script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>';
     echo '</head><body>';
     require_once __DIR__ . '/../../includes/navbar.php';
-    $module = str_contains($_SERVER['SCRIPT_NAME'] ?? '', '/admin/') ? 'admin' : 'acesso';
     render_platform_navbar($module, $active);
     echo '<main class="container py-4">';
 
@@ -782,12 +784,15 @@ function render_header(string $title, string $active = ''): void
 
 function render_footer(): void
 {
+    $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+    $appJs = str_contains($scriptName, '/admin/') ? '../acesso/assets/app.js?v=20260629-vanilla' : 'assets/app.js?v=20260629-vanilla';
+
     echo '</main>';
     echo '<div id="cookieBanner" class="cookie-banner" role="region" aria-label="Aviso de cookies">';
     echo '<div>Usamos cookies essenciais para manter sua sessao autenticada e proteger o acesso.</div>';
-    echo '<button class="btn btn-sm btn-light" type="button" id="acceptCookies">Entendi</button>';
+    echo '<button class="btn btn-sm btn-primary" type="button" id="acceptCookies">Entendi</button>';
     echo '</div>';
-    echo '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>';
-    echo '<script src="assets/app.js"></script>';
+    echo '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>';
+    echo '<script src="' . h($appJs) . '"></script>';
     echo '</body></html>';
 }

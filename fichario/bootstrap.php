@@ -204,9 +204,6 @@ function inject_default_html_metadata(string $html): string
         '    <meta property="og:description" content="' . h($description) . '" data-fichario-seo="1">',
         '    <meta property="og:type" content="website" data-fichario-seo="1">',
         '    <meta property="og:url" content="' . h($canonical) . '" data-fichario-seo="1">',
-        '    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" data-fichario-seo="1">',
-        '    <script src="../assets/js/theme-switcher.js" data-fichario-seo="1"></script>',
-'    <link rel="stylesheet" href="../assets/css/style.css?v=20260629-tags" data-fichario-seo="1">',
         '    <script type="application/ld+json" data-fichario-seo="1">' . json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>',
     ]) . "\n";
 
@@ -872,77 +869,9 @@ function render_navbar(string $activePage = ''): void
 
 function render_admin_navbar(string $activePage = ''): void
 {
-    $user = current_user();
-    $links = '';
-
-    if (is_admin()) {
-        $links .= '<li class="nav-item"><a class="nav-link text-white-50 ' . ($activePage === 'admin' ? 'active fw-bold text-white' : '') . '" href="admin.php">Painel</a></li>';
-        $links .= '<li class="nav-item"><a class="nav-link text-white-50 ' . ($activePage === 'users' ? 'active fw-bold text-white' : '') . '" href="' . h(access_url('usuarios.php')) . '">Usuarios</a></li>';
-        $links .= '<li class="nav-item"><a class="nav-link text-white-50 ' . ($activePage === 'docs' ? 'active fw-bold text-white' : '') . '" href="admin_docs.php">Documentação</a></li>';
-    }
-
-    $authHtml = '';
-    if ($user !== null) {
-        $displayName = !empty($user['first_name']) ? $user['first_name'] : $user['name'];
-        $authHtml .= '
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-white-50 d-flex align-items-center gap-1" href="#" id="adminUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Olá, ' . h($displayName) . '
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end py-2" aria-labelledby="adminUserDropdown">
-                <li><a class="dropdown-item" href="' . h(access_url('index.php')) . '">Minha conta</a></li>
-                <li><a class="dropdown-item" href="index.php">Frontend</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="' . h(access_url('logout.php')) . '">Sair</a></li>
-            </ul>
-        </li>';
-    }
-
-    echo '
-    <nav class="navbar navbar-expand-md app-navbar mb-4 py-3">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center me-0" href="../index.php">
-                <img src="../assets/img/logo-fundo-escuro-horizontal.png" alt="RENAST" class="platform-logo-img navbar-logo-img">
-            </a>
-            <span class="navbar-brand-divider text-muted mx-1">|</span>
-            <a class="navbar-brand d-flex align-items-center me-0" href="./index.php">
-                <span class="module-brand-text">fichário <span class="text-muted" style="font-weight: 300; font-size: 0.85rem; text-transform: none;">admin</span></span>
-            </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="adminNavbar">
-                <ul class="navbar-nav ms-auto align-items-center gap-3">
-                    ' . $links . '
-                    ' . $authHtml . '
-                    <li class="nav-item dropdown">
-                        <button class="btn btn-link nav-link dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Alternar tema (auto)">
-                            <i class="theme-icon-active bi bi-circle-half"></i>
-                            <span class="d-lg-none ms-2">Tema</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end py-2" aria-labelledby="bd-theme">
-                            <li>
-                                <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="light" aria-pressed="false">
-                                    <i class="bi bi-sun-fill opacity-50"></i> Claro <i class="bi bi-check2 ms-auto d-none"></i>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="dark" aria-pressed="false">
-                                    <i class="bi bi-moon-stars-fill opacity-50"></i> Escuro <i class="bi bi-check2 ms-auto d-none"></i>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-bs-theme-value="auto" aria-pressed="true">
-                                    <i class="bi bi-circle-half opacity-50"></i> Auto <i class="bi bi-check2 ms-auto d-none"></i>
-                                </button>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    ';
+    require_once __DIR__ . '/../includes/navbar.php';
+    render_platform_navbar('fichario', $activePage);
+    return;
 }
 
 function count_words(string $text): int

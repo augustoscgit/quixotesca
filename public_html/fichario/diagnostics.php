@@ -147,62 +147,15 @@ $results['env_keys'] = [
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Diagnóstico - Fichário Acadêmico</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="../assets/css/style.css?v=20260629-tags" rel="stylesheet">
-    <style>
-        :root {
-            --bg-gradient: none;
-        }
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: var(--bs-body-bg);
-            color: var(--bs-body-color);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-        .glass-card {
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            background-color: var(--bs-body-bg);
-            border: 1px solid var(--bs-border-color);
-            border-radius: 8px;
-            box-shadow: none;
-            padding: 2.5rem;
-            max-width: 800px;
-            width: 100%;
-        }
-        .status-dot {
-            height: 12px;
-            width: 12px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .status-success { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
-        .status-warning { background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
-        .status-danger { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
-        
-        .list-group-item {
-            background-color: var(--bs-body-bg);
-            border: 1px solid var(--bs-border-color);
-            color: var(--bs-body-color);
-            margin-bottom: 0.75rem;
-            border-radius: 8px !important;
-            transition: all 0.2s;
-        }
-        .list-group-item:hover {
-            background-color: var(--bs-tertiary-bg);
-            border-color: var(--accent-ui);
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
+<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
-    <div class="glass-card">
+    <div class="card">
         <div class="text-center mb-4">
-            <h1 class="h3 text-white fw-bold mb-1">Diagnóstico do Sistema</h1>
+            <h1 class="h3 text-body fw-bold mb-1">Diagnóstico do Sistema</h1>
             <p class="text-secondary small">Fichário Acadêmico - Verificação de Integridade para Hospedagem</p>
         </div>
 
@@ -210,23 +163,23 @@ $results['env_keys'] = [
             <?php foreach ($results as $key => $item): ?>
                 <div class="list-group-item p-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h2 class="h6 mb-0 text-white fw-bold d-flex align-items-center gap-2">
+                        <h2 class="h6 mb-0 text-body fw-bold d-flex align-items-center gap-2">
                             <span class="status-dot status-<?= $item['status'] ?>"></span>
                             <?= htmlspecialchars($item['title']) ?>
                         </h2>
-                        <span class="badge bg-<?= $item['status'] === 'success' ? 'success-subtle text-success' : ($item['status'] === 'warning' ? 'warning-subtle text-warning' : 'danger-subtle text-danger') ?> px-2.5 py-1 rounded-pill" style="font-size: 0.75rem;">
+                        <span class="badge bg-<?= $item['status'] === 'success' ? 'success-subtle text-success' : ($item['status'] === 'warning' ? 'warning-subtle text-warning' : 'danger-subtle text-danger') ?> px-2.5 py-1 rounded-pill">
                             <?= htmlspecialchars($item['value']) ?>
                         </span>
                     </div>
-                    <p class="mb-0 text-secondary small" style="line-height: 1.5;">
+                    <p class="mb-0 text-secondary small">
                         <?= $item['message'] ?>
                     </p>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <div class="mt-4 pt-3 border-top border-secondary border-opacity-20 d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <a href="index.php" class="btn btn-outline-primary rounded-pill px-4 text-white border-primary" style="font-size: 0.9rem;">
+        <div class="mt-4 pt-3 border-top border border-opacity-20 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <a href="index.php" class="btn btn-outline-primary rounded-pill px-4 text-body border-primary">
                 Ir para o Início
             </a>
             <span class="text-secondary small">Sugestão: Exclua este arquivo após resolver os problemas para evitar expor o status do servidor.</span>
