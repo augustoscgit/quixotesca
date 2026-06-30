@@ -1,6 +1,17 @@
 <?php
 declare(strict_types=1);
 
+ini_set('default_charset', 'UTF-8');
+if (function_exists('mb_internal_encoding')) {
+    mb_internal_encoding('UTF-8');
+}
+
+if (PHP_SAPI !== 'cli' && !headers_sent()) {
+    header('Content-Type: text/html; charset=utf-8');
+}
+
+require_once __DIR__ . '/../includes/markdown.php';
+
 load_env(__DIR__ . DIRECTORY_SEPARATOR . 'secrets' . DIRECTORY_SEPARATOR . '.env');
 load_env(__DIR__ . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . '.env');
 load_env(__DIR__ . DIRECTORY_SEPARATOR . '.env');
@@ -263,6 +274,28 @@ function db(): PDO
         @file_put_contents($projLockFile3, date('Y-m-d H:i:s'));
     }
 
+    $refLockFile1 = __DIR__ . DIRECTORY_SEPARATOR . 'secrets' . DIRECTORY_SEPARATOR . 'article_reference_migration.lock';
+    $refLockFile2 = __DIR__ . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'article_reference_migration.lock';
+    $refLockFile3 = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'article_reference_migration.lock';
+
+    if (!file_exists($refLockFile1) && !file_exists($refLockFile2) && !file_exists($refLockFile3)) {
+        ensure_article_reference_columns($pdo);
+        @file_put_contents($refLockFile1, date('Y-m-d H:i:s'));
+        @file_put_contents($refLockFile2, date('Y-m-d H:i:s'));
+        @file_put_contents($refLockFile3, date('Y-m-d H:i:s'));
+    }
+
+    $agentLockFile1 = __DIR__ . DIRECTORY_SEPARATOR . 'secrets' . DIRECTORY_SEPARATOR . 'project_agent_instructions_migration.lock';
+    $agentLockFile2 = __DIR__ . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'project_agent_instructions_migration.lock';
+    $agentLockFile3 = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'project_agent_instructions_migration.lock';
+
+    if (!file_exists($agentLockFile1) && !file_exists($agentLockFile2) && !file_exists($agentLockFile3)) {
+        ensure_project_agent_instructions_column($pdo);
+        @file_put_contents($agentLockFile1, date('Y-m-d H:i:s'));
+        @file_put_contents($agentLockFile2, date('Y-m-d H:i:s'));
+        @file_put_contents($agentLockFile3, date('Y-m-d H:i:s'));
+    }
+
     return $pdo;
 }
 
@@ -302,6 +335,9 @@ function migrate(PDO $pdo): void
             keywords TEXT,
             bibtex_key TEXT,
             bibtex_raw TEXT,
+            reference_abnt TEXT NOT NULL DEFAULT '',
+            reference_abnt_locked BOOLEAN NOT NULL DEFAULT false,
+            reference_abnt_missing TEXT NOT NULL DEFAULT '',
             analysis TEXT,
             pdf_url TEXT,
             data_year_start INTEGER,
@@ -393,6 +429,7 @@ function migrate_project_tables(PDO $pdo): void
             owner_user_id INTEGER NOT NULL,
             title TEXT NOT NULL,
             description TEXT NOT NULL DEFAULT '',
+            agent_instructions TEXT NOT NULL DEFAULT '',
             created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() at time zone 'utc'),
             updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (now() at time zone 'utc')
         )
@@ -439,6 +476,18 @@ function migrate_project_tables(PDO $pdo): void
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_project_sections_project_position ON project_sections(project_id, position, id)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_project_section_notes_note_id ON project_section_notes(note_id)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_project_section_notes_section_position ON project_section_notes(section_id, position, note_id)");
+}
+
+function ensure_article_reference_columns(PDO $pdo): void
+{
+    $pdo->exec("ALTER TABLE articles ADD COLUMN IF NOT EXISTS reference_abnt TEXT NOT NULL DEFAULT ''");
+    $pdo->exec("ALTER TABLE articles ADD COLUMN IF NOT EXISTS reference_abnt_locked BOOLEAN NOT NULL DEFAULT false");
+    $pdo->exec("ALTER TABLE articles ADD COLUMN IF NOT EXISTS reference_abnt_missing TEXT NOT NULL DEFAULT ''");
+}
+
+function ensure_project_agent_instructions_column(PDO $pdo): void
+{
+    $pdo->exec("ALTER TABLE projects ADD COLUMN IF NOT EXISTS agent_instructions TEXT NOT NULL DEFAULT ''");
 }
 
 
@@ -498,6 +547,42 @@ function env_bool(string $key, bool $default = false): bool
     return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
 }
 
+function truthy_value(mixed $value): bool
+{
+    if (is_bool($value)) {
+        return $value;
+    }
+
+    if (is_int($value) || is_float($value)) {
+        return (int) $value === 1;
+    }
+
+    return in_array(strtolower(trim((string) $value)), ['1', 'true', 't', 'yes', 'on'], true);
+}
+
+function default_project_agent_instructions(): string
+{
+    return implode("\n", [
+        '- Use somente as informacoes deste pacote como base factual, salvo instrucao explicita do usuario.',
+        '- Se for pesquisar texto completo, registre quais fontes externas foram consultadas e se o texto completo/PDF foi encontrado.',
+        '- Priorize DOI, URL original e PDF URL antes de buscas amplas por titulo.',
+        '- Use apenas fontes legais e verificaveis: DOI/editora, periodico, SciELO, PubMed/PMC, repositorios institucionais, paginas oficiais e bases academicas abertas.',
+        '- Nao invente dados bibliograficos ausentes. Se algo faltar, mantenha a pendencia explicitamente.',
+        '- Preserve a estrutura das secoes do projeto como eixo analitico principal.',
+        '- Use apenas as notas vinculadas ao projeto/secoes; outras notas do fichario nao foram exportadas.',
+        '- Cite os artigos usando a citacao curta indicada em cada nota e monte a lista final com as referencias ABNT fornecidas.',
+        '- Diferencie citacao literal, observacao/fichamento e metadados bibliograficos.',
+        '- Quando uma conclusao depender de inferencia, sinalize a inferencia.',
+    ]);
+}
+
+function effective_project_agent_instructions(array $project): string
+{
+    $custom = trim((string) ($project['agent_instructions'] ?? ''));
+
+    return $custom !== '' ? $custom : default_project_agent_instructions();
+}
+
 function env_int(string $key, int $default): int
 {
     $value = env_value($key);
@@ -533,6 +618,16 @@ spl_autoload_register(function (string $class) {
 function h(?string $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+
+function fichario_markdown_render_inline(string $text): string
+{
+    return platform_markdown_render_inline($text);
+}
+
+function fichario_render_markdown(?string $markdown): string
+{
+    return platform_markdown_render($markdown);
 }
 
 function app_url(string $path = ''): string
@@ -905,6 +1000,165 @@ function text_teaser(string $text, int $maxLength = 180): string
     }
 
     return rtrim(implode('', array_slice($chars, 0, $maxLength))) . '...';
+}
+
+function article_abnt_single_line(?string $value): string
+{
+    return trim((string) preg_replace('/\s+/u', ' ', (string) $value));
+}
+
+function article_abnt_authors(?string $authors): array
+{
+    $authors = article_abnt_single_line($authors);
+    if ($authors === '') {
+        return [];
+    }
+
+    $normalized = str_ireplace([' and ', ' & '], ';', $authors);
+    $parts = array_map('trim', explode(';', $normalized));
+
+    return array_values(array_filter($parts, static fn (string $part): bool => $part !== ''));
+}
+
+function article_abnt_initials(string $givenNames): string
+{
+    $particles = ['da', 'das', 'de', 'di', 'do', 'dos', 'e'];
+    $initials = [];
+
+    foreach (preg_split('/\s+/u', trim(str_replace(',', ' ', $givenNames))) ?: [] as $part) {
+        $part = trim($part, " .\t\n\r\0\x0B");
+        if ($part === '' || in_array(mb_strtolower($part, 'UTF-8'), $particles, true)) {
+            continue;
+        }
+        $initials[] = mb_strtoupper(mb_substr($part, 0, 1, 'UTF-8'), 'UTF-8') . '.';
+    }
+
+    return implode(' ', $initials);
+}
+
+function article_abnt_author(string $author): string
+{
+    $author = article_abnt_single_line($author);
+    if ($author === '') {
+        return '';
+    }
+
+    if (str_contains($author, ',')) {
+        [$lastName, $givenNames] = array_pad(array_map('trim', explode(',', $author, 2)), 2, '');
+        $initials = article_abnt_initials($givenNames);
+
+        return trim(mb_strtoupper($lastName, 'UTF-8') . ($initials !== '' ? ', ' . $initials : ''));
+    }
+
+    $parts = preg_split('/\s+/u', $author) ?: [];
+    if (count($parts) === 1) {
+        return mb_strtoupper($parts[0], 'UTF-8');
+    }
+
+    $suffixes = ['filho', 'junior', 'júnior', 'neto', 'sobrinho'];
+    $lastName = (string) array_pop($parts);
+    $previous = $parts[count($parts) - 1] ?? '';
+    if ($previous !== '' && in_array(mb_strtolower($lastName, 'UTF-8'), $suffixes, true)) {
+        $lastName = (string) array_pop($parts) . ' ' . $lastName;
+    }
+
+    $initials = article_abnt_initials(implode(' ', $parts));
+
+    return trim(mb_strtoupper($lastName, 'UTF-8') . ($initials !== '' ? ', ' . $initials : ''));
+}
+
+function article_abnt_author_list(?string $authors): string
+{
+    $formatted = [];
+    foreach (article_abnt_authors($authors) as $author) {
+        $item = article_abnt_author($author);
+        if ($item !== '') {
+            $formatted[] = $item;
+        }
+    }
+
+    return implode('; ', $formatted);
+}
+
+function article_abnt_missing_fields(array $article): array
+{
+    $missing = [];
+    if (article_abnt_single_line($article['authors'] ?? '') === '') {
+        $missing[] = 'autores';
+    }
+    if (article_abnt_single_line($article['title'] ?? '') === '') {
+        $missing[] = 'titulo';
+    }
+    if (article_abnt_single_line((string) ($article['year'] ?? '')) === '') {
+        $missing[] = 'ano';
+    }
+    if (
+        article_abnt_single_line($article['journal'] ?? '') === ''
+        && article_abnt_single_line($article['publisher'] ?? '') === ''
+    ) {
+        $missing[] = 'periodico/fonte ou editora';
+    }
+    if (article_abnt_single_line($article['pages'] ?? '') === '') {
+        $missing[] = 'paginas';
+    }
+    if (
+        article_abnt_single_line($article['doi'] ?? '') === ''
+        && article_abnt_single_line($article['url'] ?? '') === ''
+    ) {
+        $missing[] = 'DOI ou URL';
+    }
+
+    return $missing;
+}
+
+function build_article_abnt_reference(array $article): string
+{
+    $authors = article_abnt_author_list($article['authors'] ?? '');
+    $title = rtrim(article_abnt_single_line($article['title'] ?? 'Artigo sem titulo'), '.');
+    $journal = rtrim(article_abnt_single_line($article['journal'] ?? ''), '.');
+    $publisher = rtrim(article_abnt_single_line($article['publisher'] ?? ''), '.');
+    $year = article_abnt_single_line((string) ($article['year'] ?? ''));
+    $volume = article_abnt_single_line($article['volume'] ?? '');
+    $issue = article_abnt_single_line($article['issue'] ?? '');
+    $pages = article_abnt_single_line($article['pages'] ?? '');
+    $doi = article_abnt_single_line($article['doi'] ?? '');
+    $url = article_abnt_single_line($article['url'] ?? '');
+    $pdfUrl = article_abnt_single_line($article['pdf_url'] ?? '');
+
+    $parts = [];
+    if ($authors !== '') {
+        $parts[] = rtrim($authors, '.') . '.';
+    }
+    if ($title !== '') {
+        $parts[] = $title . '.';
+    }
+    if ($journal !== '') {
+        $parts[] = $journal . '.';
+    } elseif ($publisher !== '') {
+        $parts[] = $publisher . '.';
+    }
+    if ($volume !== '') {
+        $parts[] = 'v. ' . $volume . '.';
+    }
+    if ($issue !== '') {
+        $parts[] = 'n. ' . $issue . '.';
+    }
+    if ($pages !== '') {
+        $parts[] = 'p. ' . $pages . '.';
+    }
+    if ($year !== '') {
+        $parts[] = $year . '.';
+    }
+    if ($doi !== '') {
+        $parts[] = 'DOI: ' . $doi . '.';
+    }
+    if ($url !== '') {
+        $parts[] = 'Disponivel em: ' . $url . '.';
+    } elseif ($pdfUrl !== '') {
+        $parts[] = 'Disponivel em: ' . $pdfUrl . '.';
+    }
+
+    return trim((string) preg_replace('/\s+/u', ' ', implode(' ', $parts)));
 }
 
 function article_has_notes_sql(string $tableAlias = 'articles'): string

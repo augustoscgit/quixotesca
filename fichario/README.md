@@ -47,14 +47,52 @@ secrets/.env
 
 A estrutura é migrada automaticamente por `bootstrap.php` na primeira execução caso não existam os arquivos `.lock` correspondentes nas pastas `secrets/`, `private/` ou `data/`.
 
+## Cadastro bibliografico e referencias
+
+O cadastro de artigo mantem metadados bibliograficos, texto completo em texto simples, lista de referencias do artigo, BibTeX original e uma referencia ABNT curada.
+
+- `bibtex_raw`: armazena o BibTeX original quando informado no cadastro ou via importador.
+- `bibtex_key`: chave extraida automaticamente do BibTeX, quando possivel.
+- `reference_abnt`: referencia ABNT usada em visualizacao e exportacao.
+- `reference_abnt_locked`: indica que a referencia foi validada/editada manualmente e nao deve ser recalculada automaticamente.
+- `reference_abnt_missing`: lista pendencias de metadados para ABNT completa, como paginas, DOI/URL ou fonte.
+
+Fluxo recomendado:
+
+1. Cadastre ou importe metadados do artigo.
+2. O sistema gera uma referencia ABNT inicial.
+3. Revise pendencias apontadas pelo formulario.
+4. Se colar uma referencia completa do Google Academico ou de gerenciador bibliografico, clique em **Travar versao validada**.
+5. Use **Destravar e recalcular** quando quiser voltar a gerar a ABNT pelos metadados atuais.
+
+## Projetos e exportacao para agente de IA
+
+Cada projeto organiza notas vinculadas em secoes com contexto proprio. A pagina do projeto possui o botao **Exportar para agente**, que gera um pacote `.zip` para uso em ChatGPT, Claude, agentes RAG ou fluxos de redacao assistida.
+
+O pacote inclui:
+
+- `AGENT_CONTEXT.md`: arquivo principal para o agente ler primeiro.
+- `SOURCE_RETRIEVAL_GUIDE.md`: roteiro para buscar texto completo, PDF, DOI e fontes abertas.
+- `project_export.json`: dados estruturados do projeto, secoes, notas, artigos e referencias.
+- `source_retrieval.json`: checklist estruturado para busca de textos completos.
+- `articles_index.csv`: indice tabular com DOI, URL, PDF URL, ABNT e consultas sugeridas.
+- `references_abnt.txt` e `references.bib`: referencias bibliograficas.
+- `articles/*.md`: um arquivo por artigo citado no projeto.
+
+As orientacoes gerais do agente ficam centralizadas em `default_project_agent_instructions()` no `bootstrap.php`. Na interface do projeto, elas aparecem como padrao editavel. Quando o projeto usa o texto padrao, o banco armazena vazio e herda futuras melhorias do sistema. Quando o usuario personaliza as instrucoes, o texto fica salvo em `projects.agent_instructions` e passa a ser incluido no pacote exportado.
+
+O texto completo dos artigos nao e incluido no pacote por padrao. O exportador sinaliza quando existe texto completo armazenado no Fichario e fornece DOI, URL, PDF URL e consultas sugeridas para recuperacao externa legal e verificavel.
+
 ## Testes rapidos
 
 Para validar sintaxe dos arquivos PHP principais no PowerShell, a partir da pasta do projeto:
 
 ```powershell
 C:\xampp\php\php.exe -l bootstrap.php
-C:\xampp\php\php.exe -l editor.php
-C:\xampp\php\php.exe -l view.php
+C:\xampp\php\php.exe -l ..\public_html\fichario\editor.php
+C:\xampp\php\php.exe -l ..\public_html\fichario\project.php
+C:\xampp\php\php.exe -l ..\public_html\fichario\export_project.php
+C:\xampp\php\php.exe -l ..\public_html\fichario\view.php
 ```
 
 ## Segurança de Acesso e Proteção de Dados

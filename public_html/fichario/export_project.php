@@ -174,7 +174,7 @@ function export_abnt_reference(array $article): string
 
     $parts = [];
     if ($authors !== '') {
-        $parts[] = $authors . '.';
+        $parts[] = rtrim($authors, '.') . '.';
     }
     $parts[] = $title . '.';
     if ($journal !== '') {
@@ -261,6 +261,86 @@ function export_bibtex_entry(array $article, string $fallbackKey): string
     return implode("\n", $lines);
 }
 
+function export_csv_cell(mixed $value): string
+{
+    $value = str_replace(["\r\n", "\r"], "\n", (string) $value);
+    $value = str_replace('"', '""', $value);
+
+    return '"' . $value . '"';
+}
+
+function export_doi_url(?string $doi): string
+{
+    $doi = export_single_line($doi);
+    if ($doi === '') {
+        return '';
+    }
+
+    $doi = preg_replace('~^https?://(dx\.)?doi\.org/~i', '', $doi) ?? $doi;
+
+    return 'https://doi.org/' . ltrim($doi, '/');
+}
+
+function export_article_search_queries(array $article): array
+{
+    $title = export_single_line($article['title'] ?? '');
+    $authors = export_single_line($article['authors'] ?? '');
+    $year = export_single_line((string) ($article['year'] ?? ''));
+    $doi = export_single_line($article['doi'] ?? '');
+    $journal = export_single_line($article['journal'] ?? '');
+
+    $queries = [];
+    if ($doi !== '') {
+        $queries[] = $doi;
+        $queries[] = '"' . $doi . '" pdf';
+    }
+    if ($title !== '') {
+        $queries[] = '"' . $title . '"';
+        $queries[] = '"' . $title . '" pdf';
+        $queries[] = '"' . $title . '" "full text"';
+    }
+    if ($title !== '' && $year !== '') {
+        $queries[] = '"' . $title . '" ' . $year;
+    }
+    if ($title !== '' && $authors !== '') {
+        $firstAuthor = export_split_authors($authors)[0] ?? '';
+        $queries[] = '"' . $title . '" "' . export_single_line($firstAuthor) . '"';
+    }
+    if ($title !== '' && $journal !== '') {
+        $queries[] = '"' . $title . '" "' . $journal . '"';
+    }
+
+    return array_values(array_unique(array_filter($queries, static fn (string $query): bool => trim($query) !== '')));
+}
+
+function export_article_access_urls(array $article): array
+{
+    $urls = [];
+    $doiUrl = export_doi_url($article['doi'] ?? '');
+    if ($doiUrl !== '') {
+        $urls[] = ['type' => 'doi', 'url' => $doiUrl];
+    }
+    if (export_single_line($article['url'] ?? '') !== '') {
+        $urls[] = ['type' => 'article_url', 'url' => export_single_line($article['url'])];
+    }
+    if (export_single_line($article['pdf_url'] ?? '') !== '') {
+        $urls[] = ['type' => 'pdf_url', 'url' => export_single_line($article['pdf_url'])];
+    }
+
+    $seen = [];
+    $deduped = [];
+    foreach ($urls as $url) {
+        $key = strtolower((string) $url['url']);
+        if (isset($seen[$key])) {
+            continue;
+        }
+        $seen[$key] = true;
+        $deduped[] = $url;
+    }
+
+    return $deduped;
+}
+
 function export_note_text(array $note): string
 {
     $lines = [];
@@ -297,19 +377,21 @@ function export_agent_context(array $payload): string
     $lines[] = 'Finalidade: apoiar a redacao de relatorio, nota tecnica, artigo ou sintese com base no projeto exportado do Fichario.';
     $lines[] = '';
     $lines[] = '## Regras para o agente';
-    $lines[] = '- Use somente as informacoes deste pacote como base factual, salvo instrucao explicita do usuario.';
-    $lines[] = '- Preserve a estrutura das secoes do projeto como eixo analitico principal.';
-    $lines[] = '- Use apenas as notas vinculadas ao projeto/secoes; outras notas do fichario nao foram exportadas.';
-    $lines[] = '- Cite os artigos usando a citacao curta indicada em cada nota e monte a lista final com as referencias ABNT fornecidas.';
-    $lines[] = '- Diferencie citacao literal, observacao/fichamento e metadados bibliograficos.';
-    $lines[] = '- Quando uma conclusao depender de inferencia, sinalize a inferencia.';
+    foreach (explode("\n", export_text($payload['agent_instructions'] ?? '')) as $instructionLine) {
+        $instructionLine = trim($instructionLine);
+        if ($instructionLine !== '') {
+            $lines[] = $instructionLine;
+        }
+    }
+    $lines[] = '';
+    $lines[] = 'Fonte das orientacoes: ' . (string) ($payload['agent_instructions_source'] ?? 'default');
     $lines[] = '';
     $lines[] = '## Projeto';
     $lines[] = 'ID: ' . (int) $project['id'];
     $lines[] = 'Titulo: ' . export_single_line($project['title'] ?? '');
     $lines[] = 'Exportado em: ' . $payload['generated_at'];
     $lines[] = 'Escopo das notas: somente notas vinculadas ao projeto.';
-    $lines[] = 'Texto completo dos artigos: nao incluido nesta exportacao.';
+    $lines[] = 'Texto completo dos artigos: nao incluido nesta exportacao; use as URLs, DOI, PDF URL e consultas sugeridas para buscar os textos completos quando necessario.';
     $lines[] = '';
     if (export_text($project['description'] ?? '') !== '') {
         $lines[] = '### Descricao do projeto';
@@ -359,6 +441,22 @@ function export_agent_context(array $payload): string
         $lines[] = '### ' . $article['article_key'] . ' - ' . export_single_line($article['title'] ?? 'Artigo sem titulo');
         $lines[] = 'Citacao curta: ' . $article['citation_label'];
         $lines[] = 'Referencia ABNT: ' . $article['reference_abnt'];
+        $lines[] = 'Fonte da ABNT: ' . ($article['reference_abnt_source'] ?? 'stored');
+        if (export_single_line($article['reference_abnt_missing'] ?? '') !== '') {
+            $lines[] = 'Pendencias da ABNT: ' . export_single_line($article['reference_abnt_missing']);
+        }
+        if (($article['access_urls'] ?? []) !== []) {
+            $lines[] = 'Acesso e busca de texto completo:';
+            foreach ($article['access_urls'] as $accessUrl) {
+                $lines[] = '- ' . strtoupper((string) $accessUrl['type']) . ': ' . (string) $accessUrl['url'];
+            }
+        }
+        if (($article['search_queries'] ?? []) !== []) {
+            $lines[] = 'Consultas sugeridas:';
+            foreach (array_slice($article['search_queries'], 0, 5) as $query) {
+                $lines[] = '- ' . $query;
+            }
+        }
         if (export_text($article['abstract'] ?? '') !== '') {
             $lines[] = 'Resumo: ' . export_text($article['abstract']);
         }
@@ -392,6 +490,10 @@ function export_article_context(array $article): string
     $lines[] = 'Chave no pacote: ' . $article['article_key'];
     $lines[] = 'Citacao curta: ' . $article['citation_label'];
     $lines[] = 'Referencia ABNT: ' . $article['reference_abnt'];
+    $lines[] = 'Fonte da ABNT: ' . ($article['reference_abnt_source'] ?? 'stored');
+    if (export_single_line($article['reference_abnt_missing'] ?? '') !== '') {
+        $lines[] = 'Pendencias da ABNT: ' . export_single_line($article['reference_abnt_missing']);
+    }
     $lines[] = '';
     $fields = [
         'Autores' => 'authors',
@@ -412,6 +514,20 @@ function export_article_context(array $article): string
             $lines[] = $label . ': ' . $value;
         }
     }
+    if (($article['access_urls'] ?? []) !== []) {
+        $lines[] = '';
+        $lines[] = '## Acesso e busca de texto completo';
+        foreach ($article['access_urls'] as $accessUrl) {
+            $lines[] = '- ' . strtoupper((string) $accessUrl['type']) . ': ' . (string) $accessUrl['url'];
+        }
+    }
+    if (($article['search_queries'] ?? []) !== []) {
+        $lines[] = '';
+        $lines[] = '## Consultas sugeridas';
+        foreach ($article['search_queries'] as $query) {
+            $lines[] = '- ' . $query;
+        }
+    }
     if (export_text($article['abstract'] ?? '') !== '') {
         $lines[] = '';
         $lines[] = '## Resumo';
@@ -429,6 +545,100 @@ function export_article_context(array $article): string
     }
 
     return implode("\n", $lines) . "\n";
+}
+
+function export_retrieval_guide(array $payload): string
+{
+    $lines = [];
+    $lines[] = '# Guia de busca de textos completos e PDFs';
+    $lines[] = '';
+    $lines[] = 'Use este arquivo quando a redacao exigir verificacao externa, leitura integral do artigo ou recuperacao do PDF.';
+    $lines[] = '';
+    $lines[] = '## Ordem recomendada de busca';
+    $lines[] = '1. Abrir DOI, se houver.';
+    $lines[] = '2. Abrir URL original do artigo, se houver.';
+    $lines[] = '3. Abrir PDF URL, se houver.';
+    $lines[] = '4. Usar as consultas sugeridas em bases abertas e buscadores academicos.';
+    $lines[] = '5. Registrar no relatorio quando o texto completo nao for encontrado.';
+    $lines[] = '';
+    $lines[] = '## Cuidados';
+    $lines[] = '- Nao use fontes sem relacao clara com o artigo.';
+    $lines[] = '- Confira titulo, autores e ano antes de incorporar informacoes externas.';
+    $lines[] = '- Nao substitua uma referencia ABNT travada por metadados externos sem aviso do usuario.';
+    $lines[] = '- Se houver divergencia entre Fichario e fonte externa, aponte a divergencia.';
+    $lines[] = '';
+    $lines[] = '## Artigos e rotas de acesso';
+
+    foreach ($payload['articles'] as $article) {
+        $lines[] = '';
+        $lines[] = '### ' . $article['article_key'] . ' - ' . export_single_line($article['title'] ?? 'Artigo sem titulo');
+        $lines[] = 'Referencia ABNT: ' . $article['reference_abnt'];
+        $lines[] = 'Texto completo armazenado no Fichario: ' . (((int) ($article['full_text_char_count'] ?? 0)) > 0 ? 'sim, mas nao incluido neste pacote' : 'nao identificado');
+        if (($article['access_urls'] ?? []) !== []) {
+            $lines[] = 'URLs diretas:';
+            foreach ($article['access_urls'] as $accessUrl) {
+                $lines[] = '- ' . strtoupper((string) $accessUrl['type']) . ': ' . (string) $accessUrl['url'];
+            }
+        } else {
+            $lines[] = 'URLs diretas: nenhuma cadastrada.';
+        }
+        if (($article['search_queries'] ?? []) !== []) {
+            $lines[] = 'Consultas sugeridas:';
+            foreach ($article['search_queries'] as $query) {
+                $lines[] = '- ' . $query;
+            }
+        }
+    }
+
+    return implode("\n", $lines) . "\n";
+}
+
+function export_articles_index_csv(array $articles): string
+{
+    $headers = [
+        'article_key',
+        'title',
+        'authors',
+        'year',
+        'journal',
+        'doi',
+        'doi_url',
+        'url',
+        'pdf_url',
+        'reference_abnt',
+        'reference_abnt_source',
+        'reference_abnt_missing',
+        'full_text_available_in_fichario',
+        'search_query_1',
+        'search_query_2',
+        'search_query_3',
+    ];
+    $rows = [implode(',', array_map('export_csv_cell', $headers))];
+
+    foreach ($articles as $article) {
+        $queries = $article['search_queries'] ?? [];
+        $row = [
+            $article['article_key'] ?? '',
+            $article['title'] ?? '',
+            $article['authors'] ?? '',
+            $article['year'] ?? '',
+            $article['journal'] ?? '',
+            $article['doi'] ?? '',
+            $article['doi_url'] ?? '',
+            $article['url'] ?? '',
+            $article['pdf_url'] ?? '',
+            $article['reference_abnt'] ?? '',
+            $article['reference_abnt_source'] ?? '',
+            $article['reference_abnt_missing'] ?? '',
+            ((int) ($article['full_text_char_count'] ?? 0)) > 0 ? 'yes' : 'no',
+            $queries[0] ?? '',
+            $queries[1] ?? '',
+            $queries[2] ?? '',
+        ];
+        $rows[] = implode(',', array_map('export_csv_cell', $row));
+    }
+
+    return implode("\n", $rows) . "\n";
 }
 
 $project = export_fetch_project($pdo, $projectId, $userId);
@@ -495,6 +705,10 @@ $notesStmt = $pdo->prepare("
         a.keywords,
         a.bibtex_key,
         a.bibtex_raw,
+        a.reference_abnt,
+        a.reference_abnt_locked,
+        a.reference_abnt_missing,
+        length(trim(COALESCE(a.full_text, ''))) AS full_text_char_count,
         a.analysis,
         a.data_year_start,
         a.data_year_end,
@@ -533,6 +747,10 @@ foreach ($linkedRows as $row) {
             'keywords' => $row['keywords'],
             'bibtex_key' => $row['bibtex_key'],
             'bibtex_raw' => $row['bibtex_raw'],
+            'reference_abnt' => $row['reference_abnt'] ?? '',
+            'reference_abnt_locked' => $row['reference_abnt_locked'] ?? false,
+            'reference_abnt_missing' => $row['reference_abnt_missing'] ?? '',
+            'full_text_char_count' => (int) ($row['full_text_char_count'] ?? 0),
             'analysis' => $row['analysis'],
             'data_year_start' => $row['data_year_start'],
             'data_year_end' => $row['data_year_end'],
@@ -565,7 +783,12 @@ $articleKeysById = [];
 foreach ($articles as $index => &$article) {
     $article['article_key'] = 'A' . str_pad((string) ($index + 1), 3, '0', STR_PAD_LEFT);
     $article['citation_label'] = export_citation_label($article);
-    $article['reference_abnt'] = export_abnt_reference($article);
+    $storedReference = export_text($article['reference_abnt'] ?? '');
+    $article['reference_abnt_source'] = $storedReference !== '' ? 'stored' : 'generated';
+    $article['reference_abnt'] = $storedReference !== '' ? $storedReference : export_abnt_reference($article);
+    $article['doi_url'] = export_doi_url($article['doi'] ?? '');
+    $article['access_urls'] = export_article_access_urls($article);
+    $article['search_queries'] = export_article_search_queries($article);
     $article['note_ids'] = array_values(array_unique(array_map('intval', $article['note_ids'] ?? [])));
     $articleKeysById[(int) $article['id']] = $article['article_key'];
 }
@@ -600,14 +823,22 @@ foreach ($sections as $index => $section) {
 }
 
 $generatedAt = gmdate('Y-m-d\TH:i:s\Z');
+$agentInstructions = effective_project_agent_instructions($project);
+$defaultAgentInstructions = default_project_agent_instructions();
+$customAgentInstructions = trim((string) ($project['agent_instructions'] ?? ''));
+$agentInstructionsSource = ($customAgentInstructions !== '' && $customAgentInstructions !== trim($defaultAgentInstructions))
+    ? 'project_custom'
+    : 'system_default';
 $payload = [
     'export_version' => 'fichario-agent-project-v1',
     'generated_at' => $generatedAt,
     'intended_consumer' => 'AI agent / RAG / report drafting workflow',
+    'agent_instructions' => $agentInstructions,
+    'agent_instructions_source' => $agentInstructionsSource,
     'scope' => [
         'project_id' => $projectId,
         'notes' => 'only notes linked to this project sections',
-        'article_full_text' => 'excluded',
+        'article_full_text' => 'excluded; retrieval metadata and direct URLs are included',
         'anonymization' => 'none',
     ],
     'project' => $project,
@@ -625,7 +856,10 @@ $manifest = [
     'entrypoint' => 'AGENT_CONTEXT.md',
     'files' => [
         'AGENT_CONTEXT.md' => 'Primary context file for the AI agent.',
+        'SOURCE_RETRIEVAL_GUIDE.md' => 'Step-by-step guide for finding full texts and PDFs.',
         'project_export.json' => 'Structured export preserving sections, contexts, notes, articles and ABNT references.',
+        'articles_index.csv' => 'Flat article index with DOI, URLs, PDF URLs, ABNT status and search queries.',
+        'source_retrieval.json' => 'Machine-readable retrieval checklist for cited articles.',
         'references_abnt.txt' => 'ABNT references for articles cited by linked notes.',
         'references.bib' => 'BibTeX records from stored metadata, when available.',
         'articles/*.md' => 'One support file per cited article, without full_text.',
@@ -650,6 +884,39 @@ $jsonFlags = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
 $zip->addFromString('manifest.json', json_encode($manifest, $jsonFlags) . "\n");
 $zip->addFromString('project_export.json', json_encode($payload, $jsonFlags) . "\n");
 $zip->addFromString('AGENT_CONTEXT.md', export_agent_context($payload));
+$zip->addFromString('SOURCE_RETRIEVAL_GUIDE.md', export_retrieval_guide($payload));
+$zip->addFromString('articles_index.csv', export_articles_index_csv($articles));
+
+$retrievalPayload = [
+    'generated_at' => $generatedAt,
+    'project_id' => $projectId,
+    'project_title' => $project['title'] ?? '',
+    'instructions' => [
+        'Prioritize DOI, article URL and PDF URL before broad title searches.',
+        'Use only legal, verifiable sources for full text and PDFs.',
+        'Confirm title, authors and year before using external full-text information.',
+        'Record when full text or PDF was not found.',
+    ],
+    'articles' => array_map(static function (array $article): array {
+        return [
+            'article_key' => $article['article_key'] ?? '',
+            'title' => $article['title'] ?? '',
+            'citation_label' => $article['citation_label'] ?? '',
+            'reference_abnt' => $article['reference_abnt'] ?? '',
+            'reference_abnt_source' => $article['reference_abnt_source'] ?? '',
+            'reference_abnt_missing' => $article['reference_abnt_missing'] ?? '',
+            'doi' => $article['doi'] ?? '',
+            'doi_url' => $article['doi_url'] ?? '',
+            'url' => $article['url'] ?? '',
+            'pdf_url' => $article['pdf_url'] ?? '',
+            'access_urls' => $article['access_urls'] ?? [],
+            'search_queries' => $article['search_queries'] ?? [],
+            'full_text_available_in_fichario' => ((int) ($article['full_text_char_count'] ?? 0)) > 0,
+            'full_text_included_in_package' => false,
+        ];
+    }, $articles),
+];
+$zip->addFromString('source_retrieval.json', json_encode($retrievalPayload, $jsonFlags) . "\n");
 
 $abntLines = array_map(static fn (array $article): string => $article['reference_abnt'], $articles);
 $zip->addFromString('references_abnt.txt', implode("\n\n", $abntLines) . "\n");

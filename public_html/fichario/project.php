@@ -172,16 +172,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'update_project') {
             $title = trim((string) ($_POST['title'] ?? ''));
             $description = trim((string) ($_POST['description'] ?? ''));
+            $agentInstructions = trim((string) ($_POST['agent_instructions'] ?? ''));
+            if ($agentInstructions === trim(default_project_agent_instructions())) {
+                $agentInstructions = '';
+            }
             if ($title === '') {
                 throw new RuntimeException('Informe um nome para o projeto.');
             }
 
             $stmt = $pdo->prepare('
                 UPDATE projects
-                SET title = :title, description = :description, updated_at = CURRENT_TIMESTAMP
+                SET title = :title,
+                    description = :description,
+                    agent_instructions = :agent_instructions,
+                    updated_at = CURRENT_TIMESTAMP
                 WHERE id = :id
             ');
-            $stmt->execute([':title' => $title, ':description' => $description, ':id' => $projectId]);
+            $stmt->execute([
+                ':title' => $title,
+                ':description' => $description,
+                ':agent_instructions' => $agentInstructions,
+                ':id' => $projectId,
+            ]);
             set_project_flash('Projeto atualizado.');
             redirect_to_project($projectId);
         }
@@ -279,7 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             touch_project($pdo, $projectId);
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['success' => true]);
                 exit;
             }
@@ -312,7 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             touch_project($pdo, $projectId);
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['success' => true]);
                 exit;
             }
@@ -430,7 +442,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             touch_project($pdo, $projectId);
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['success' => true]);
                 exit;
             }
@@ -534,7 +546,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             touch_project($pdo, $projectId);
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['success' => true]);
                 exit;
             }
@@ -544,7 +556,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (Throwable $e) {
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            header('Content-Type: application/json');
+            header('Content-Type: application/json; charset=utf-8');
             http_response_code(400);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
             exit;
@@ -556,6 +568,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $project = fetch_project($pdo, $projectId, $userId);
 $flash = take_project_flash();
+$effectiveAgentInstructions = effective_project_agent_instructions($project);
+$defaultAgentInstructions = default_project_agent_instructions();
+$usesDefaultAgentInstructions = trim((string) ($project['agent_instructions'] ?? '')) === ''
+    || trim((string) ($project['agent_instructions'] ?? '')) === trim($defaultAgentInstructions);
 
 $projectTagsStmt = $pdo->prepare('
     SELECT t.*
@@ -667,14 +683,14 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
     <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
 
     <?php render_navbar('projects'); ?>
 
-    <main class="container py-4 main-container">
+    <main class="main-container py-4">
         <!-- Breadcrumbs -->
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
@@ -684,15 +700,15 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
             </ol>
         </nav>
 
-        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <header class="page-header mb-4">
             <div>
-                <h1 class="h3 mb-1 text-body fw-bold"><?= h((string) ($project['title'] ?? 'Projeto')) ?></h1>
+                <h1 class="h2 mb-0"><?= h((string) ($project['title'] ?? 'Projeto')) ?></h1>
             </div>
             <div class="d-flex flex-wrap gap-2">
-                <a class="btn btn-outline-primary rounded-pill px-4 d-flex align-items-center gap-2" href="export_project.php?id=<?= $projectId ?>">
+                <a class="btn btn-outline-primary d-flex align-items-center gap-2" href="export_project.php?id=<?= $projectId ?>">
                     <i class="bi bi-robot"></i> Exportar para agente
                 </a>
-                <button class="btn btn-outline-primary rounded-pill px-4 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#editProjectModal">
+                <button class="btn btn-outline-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#editProjectModal">
                     <i class="bi bi-pencil"></i> Editar projeto
                 </button>
                 <form method="post" 
@@ -703,10 +719,10 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                       class="m-0">
                     <?= csrf_field() ?>
                     <input type="hidden" name="action" value="delete_project">
-                    <button class="btn btn-outline-danger rounded-pill px-4" type="submit">Excluir projeto</button>
+                    <button class="btn btn-outline-danger" type="submit">Excluir projeto</button>
                 </form>
             </div>
-        </div>
+        </header>
 
         <?php if ($flash !== null): ?>
             <div class="alert alert-<?= h((string) $flash['type']) ?>" role="alert">
@@ -721,10 +737,27 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                     <i class="bi bi-info-circle text-primary"></i> Sobre o Projeto
                 </h2>
                 <?php if (trim((string) ($project['description'] ?? '')) !== ''): ?>
-                    <div class="text-body-secondary small mb-0"><?= h((string) $project['description']) ?></div>
+                    <div class="text-body-secondary small mb-0 markdown-body fichario-markdown"><?= fichario_render_markdown((string) $project['description']) ?></div>
                 <?php else: ?>
                     <div class="text-secondary small mb-0">Sem descrição cadastrada.</div>
                 <?php endif; ?>
+            </div>
+
+            <hr class="border border-opacity-25 my-4">
+
+            <div class="mb-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <h2 class="h5 text-body fw-bold mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-robot text-primary"></i> Orientações para agente
+                    </h2>
+                    <span class="badge <?= $usesDefaultAgentInstructions ? 'text-bg-secondary' : 'text-bg-success' ?>">
+                        <?= $usesDefaultAgentInstructions ? 'Padrão do sistema' : 'Personalizadas' ?>
+                    </span>
+                </div>
+                <details class="border rounded-3 p-3 bg-body-tertiary bg-opacity-25">
+                    <summary class="text-body fw-semibold small">Ver orientações incluídas no pacote de exportação</summary>
+                    <div class="text-body-secondary small mt-3 mb-0 markdown-body fichario-markdown"><?= fichario_render_markdown($effectiveAgentInstructions) ?></div>
+                </details>
             </div>
 
             <hr class="border border-opacity-25 my-4">
@@ -782,7 +815,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                     </select>
                 </div>
                 <div class="col-lg-auto text-end">
-                    <button class="btn btn-primary rounded-pill px-4" type="submit">Vincular tag</button>
+                    <button class="btn btn-primary" type="submit">Vincular tag</button>
                 </div>
             </form>
             </div>
@@ -791,10 +824,10 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
         <div class="project-layout">
             <section class="vstack gap-4">
                 <div class="d-flex justify-content-end align-items-center gap-2 mb-1">
-                    <button class="btn btn-sm btn-outline-secondary rounded-pill text-body px-3" type="button" onclick="toggleAllSections(this)">
+                    <button class="btn btn-sm btn-outline-secondary text-body px-3" type="button" onclick="toggleAllSections(this)">
                         Recolher todas as seções
                     </button>
-                    <button class="btn btn-primary btn-sm rounded-pill px-3 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#newSectionModal">
+                    <button class="btn btn-primary btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#newSectionModal">
                         <i class="bi bi-plus-lg"></i> Nova seção
                     </button>
                 </div>
@@ -806,7 +839,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                 <button class="btn btn-link p-0 text-body text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse('general')">
                                     <i class="bi bi-chevron-down section-toggle-icon" id="section-toggle-icon-general"></i>
                                     Notas vinculadas diretamente ao projeto
-                                    <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2 rounded-pill"><?= count($generalNotes) ?> nota(s)</span>
+                                    <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2"><?= count($generalNotes) ?> nota(s)</span>
                                 </button>
                             </h2>
                             <p class="text-secondary mb-0 small ms-4">Notas associadas ao projeto como um todo, sem seção específica.</p>
@@ -921,13 +954,13 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                         <?php if ($quoteText !== ''): ?>
                                             <div class="marking-preview marking-preview-quote mb-2">
                                                 <span class="note-teaser-label">Citação</span>
-                                                <div class="quote-box expandable-text collapsed" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= h($quoteText) ?></div>
+                                                <div class="quote-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= fichario_render_markdown($quoteText) ?></div>
                                             </div>
                                         <?php endif; ?>
                                         <?php if ($comment !== ''): ?>
                                             <div class="marking-preview marking-preview-comment">
                                                 <span class="note-teaser-label">Observação</span>
-                                                <div class="observation-box expandable-text collapsed" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= h($comment) ?></div>
+                                                <div class="observation-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= fichario_render_markdown($comment) ?></div>
                                             </div>
                                         <?php endif; ?>
                                     </div>
@@ -957,7 +990,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                         <button class="btn btn-link p-0 text-body text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse(<?= $sectionId ?>)">
                                             <i class="bi bi-chevron-down section-toggle-icon" id="section-toggle-icon-<?= $sectionId ?>"></i>
                                             <?= h((string) $section['title']) ?>
-                                            <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2 rounded-pill"><?= count($sectionNotes) ?> nota(s)</span>
+                                            <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2"><?= count($sectionNotes) ?> nota(s)</span>
                                         </button>
                                     </h2>
                                 </div>
@@ -997,7 +1030,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
 
                             <div id="section-body-<?= $sectionId ?>" class="section-body">
                                 <?php if (trim((string) ($section['context'] ?? '')) !== ''): ?>
-                                <p class="text-body-secondary small mb-4"><?= h((string) $section['context']) ?></p>
+                                <div class="text-body-secondary small mb-4 markdown-body fichario-markdown"><?= fichario_render_markdown((string) $section['context']) ?></div>
                             <?php endif; ?>
 
                             <div class="border-top border border-opacity-25 pt-4">
@@ -1111,13 +1144,13 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                     <?php if ($quoteText !== ''): ?>
                                                         <div class="marking-preview marking-preview-quote mb-2">
                                                             <span class="note-teaser-label">Citação</span>
-                                                            <div class="quote-box expandable-text collapsed" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= h($quoteText) ?></div>
+                                                            <div class="quote-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= fichario_render_markdown($quoteText) ?></div>
                                                         </div>
                                                     <?php endif; ?>
                                                     <?php if ($comment !== ''): ?>
                                                         <div class="marking-preview marking-preview-comment">
                                                             <span class="note-teaser-label">Observação</span>
-                                                            <div class="observation-box expandable-text collapsed" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= h($comment) ?></div>
+                                                            <div class="observation-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= fichario_render_markdown($comment) ?></div>
                                                         </div>
                                                     <?php endif; ?>
                                                 </div>
@@ -1137,11 +1170,11 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
 
     <!-- Modal: Editar Projeto -->
     <div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content card">
                 <div class="modal-header border border-opacity-25">
                     <h5 class="modal-title text-body fw-bold" id="editProjectModalLabel">Editar Dados do Projeto</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form method="post">
                     <?= csrf_field() ?>
@@ -1153,12 +1186,23 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="project-modal-description">Descrição</label>
-                            <textarea class="form-control" id="project-modal-description" name="description" rows="5"><?= h((string) ($project['description'] ?? '')) ?></textarea>
+                            <textarea class="form-control markdown-input" id="project-modal-description" name="description" rows="8"><?= h((string) ($project['description'] ?? '')) ?></textarea>
+                            <div class="form-text markdown-help">Aceita Markdown simples: **negrito**, *itálico*, listas, citações, links e código.</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                <label class="form-label mb-0" for="project-modal-agent-instructions">Orientacoes para agente de IA</label>
+                                <button class="btn btn-sm btn-outline-secondary" type="button" id="restoreDefaultAgentInstructions">
+                                    Restaurar padrao
+                                </button>
+                            </div>
+                            <textarea class="form-control markdown-input" id="project-modal-agent-instructions" name="agent_instructions" rows="10"><?= h($effectiveAgentInstructions) ?></textarea>
+                            <div class="form-text markdown-help">Estas instrucoes serao incluidas no pacote exportado. Edite para orientar estilo, limites, busca externa, citacoes e forma do relatorio.</div>
                         </div>
                     </div>
                     <div class="modal-footer border border-opacity-25">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar alterações</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar alterações</button>
                     </div>
                 </form>
             </div>
@@ -1167,11 +1211,11 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
 
     <!-- Modal: Nova Seção -->
     <div class="modal fade" id="newSectionModal" tabindex="-1" aria-labelledby="newSectionModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content card">
                 <div class="modal-header border border-opacity-25">
                     <h5 class="modal-title text-body fw-bold" id="newSectionModalLabel">Nova Seção</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form method="post">
                     <?= csrf_field() ?>
@@ -1183,12 +1227,13 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="new-section-modal-context">Contexto</label>
-                            <textarea class="form-control" id="new-section-modal-context" name="context" rows="6" placeholder="Texto longo de contexto da seção..."></textarea>
+                            <textarea class="form-control markdown-input" id="new-section-modal-context" name="context" rows="8" placeholder="Texto longo de contexto da seção..."></textarea>
+                            <div class="form-text markdown-help">Aceita Markdown simples para organizar objetivos, hipóteses, listas e links.</div>
                         </div>
                     </div>
                     <div class="modal-footer border border-opacity-25">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">Criar seção</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Criar seção</button>
                     </div>
                 </form>
             </div>
@@ -1197,11 +1242,11 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
 
     <!-- Modal: Editar Seção -->
     <div class="modal fade" id="editSectionModal" tabindex="-1" aria-labelledby="editSectionModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content card">
                 <div class="modal-header border border-opacity-25">
                     <h5 class="modal-title text-body fw-bold" id="editSectionModalLabel">Editar Seção</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form method="post" data-busy-ignore="1">
                     <?= csrf_field() ?>
@@ -1214,12 +1259,13 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="edit-section-context">Contexto</label>
-                            <textarea class="form-control" id="edit-section-context" name="context" rows="6" placeholder="Contexto longo desta seção..."></textarea>
+                            <textarea class="form-control markdown-input" id="edit-section-context" name="context" rows="8" placeholder="Contexto longo desta seção..."></textarea>
+                            <div class="form-text markdown-help">Aceita Markdown simples para organizar objetivos, hipóteses, listas e links.</div>
                         </div>
                     </div>
                     <div class="modal-footer border border-opacity-25">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar alterações</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar alterações</button>
                     </div>
                 </form>
             </div>
@@ -1232,7 +1278,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
             <div class="modal-content card">
                 <div class="modal-header border border-opacity-25">
                     <h5 class="modal-title text-body fw-bold" id="editNoteModalLabel">Editar Nota</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form method="post" id="editNoteForm" data-busy-ignore="1">
                     <?= csrf_field() ?>
@@ -1241,16 +1287,17 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label text-body-secondary" for="edit-note-quote">Citação</label>
-                            <textarea class="form-control" id="edit-note-quote" name="quote_text" rows="5" placeholder="Texto da citação..."></textarea>
+                            <textarea class="form-control markdown-input" id="edit-note-quote" name="quote_text" rows="7" placeholder="Texto da citação..."></textarea>
+                            <div class="form-text markdown-help">Aceita Markdown simples. Use &gt; para citações longas e listas para decompor ideias.</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-body-secondary" for="edit-note-comment">Observação</label>
-                            <textarea class="form-control" id="edit-note-comment" name="comment" rows="5" placeholder="Observações/Comentários..."></textarea>
+                            <textarea class="form-control markdown-input" id="edit-note-comment" name="comment" rows="7" placeholder="Observações/Comentários..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer border border-opacity-25">
-                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar alterações</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar alterações</button>
                     </div>
                 </form>
             </div>
@@ -1293,6 +1340,16 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                 modalIdInput.value = noteId;
                 modalQuoteInput.value = quoteText || '';
                 modalCommentInput.value = comment || '';
+            });
+        }
+
+        const defaultAgentInstructions = <?= json_encode($defaultAgentInstructions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+        const restoreDefaultAgentInstructions = document.getElementById('restoreDefaultAgentInstructions');
+        const agentInstructionsInput = document.getElementById('project-modal-agent-instructions');
+        if (restoreDefaultAgentInstructions && agentInstructionsInput) {
+            restoreDefaultAgentInstructions.addEventListener('click', function () {
+                agentInstructionsInput.value = defaultAgentInstructions;
+                agentInstructionsInput.focus();
             });
         }
     </script>

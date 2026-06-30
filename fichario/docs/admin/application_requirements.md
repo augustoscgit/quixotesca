@@ -72,6 +72,9 @@
 
 - A versão consolidada atual da plataforma usa PostgreSQL. As configurações de conexão ficam em `secrets/.env` ou `private/.env`.
 - PostgreSQL 15.6 e extensoes `unaccent`, `pg_trgm` sao utilizados para busca textual e autocomplete robustos.
+- Tabelas para artigos, tags, usuarios, projetos e notas estruturadas com indices GIN e relacionamentos em cascata.
+- Artigos devem armazenar BibTeX original, referencia ABNT curada, indicador de trava da ABNT e pendencias de metadados para revisao bibliografica.
+- Projetos devem armazenar orientacoes opcionais para agente de IA; quando vazias, herdam o padrao central do sistema.
 - Tabelas para artigos, tags, usuarios e notas estruturadas com índices GIN e relacionamentos em cascata.
 - A estrutura de banco de dados é migrada automaticamente na primeira execução através do `bootstrap.php`.
 
@@ -88,6 +91,8 @@
 - A aplicacao pode usar Gemini ou outra API externa para apoio a IA.
 - Nao ha LLM local previsto neste momento.
 - Chaves devem ficar em `private/.env` ou outro local fora do Git.
+- A exportacao de projeto para agente deve gerar pacote autocontido, com contexto principal em Markdown, JSON estruturado, referencias ABNT/BibTeX, indice CSV de artigos e guia de recuperacao de texto completo/PDF.
+- O pacote de exportacao nao deve incluir texto completo por padrao; deve incluir DOI, URL, PDF URL e consultas sugeridas para recuperacao externa legal e verificavel.
 
 ## Seguranca
 

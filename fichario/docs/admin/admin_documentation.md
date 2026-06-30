@@ -26,3 +26,4 @@ Esta area permite manter documentos internos do Fichario a partir do painel admi
 - Preferir textos objetivos, operacionais e uteis para manutencao.
 - Quando uma decisao de interface for geral, registrar em `../../../docs/identidade-visual-ux.md` ou `../../../docs/tema-css-bootstrap-modulos.md`; se for apenas do Fichario, registrar no README do modulo apontando para os guias centrais.
 - Usar "nota" como termo padrao para o conjunto formado por citacao, observacao e tags.
+- Registrar no README do modulo mudancas de fluxo bibliografico, exportacao para agente de IA, campos persistentes novos e migracoes automaticas.

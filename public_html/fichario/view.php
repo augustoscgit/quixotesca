@@ -442,13 +442,13 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                                 <?php if (trim($tag['tag_quote'] ?? '') !== ''): ?>
                                                     <div class="note-text mb-2 text-body">
                                                         <span class="note-meta d-block text-uppercase fw-bold mb-1">Citação</span>
-                                                        <div class="quote-box expandable-text collapsed" onclick="toggleExpandableText(this)" id="quote-text-<?= $tag['id'] ?>" title="Clique para expandir/recolher"><?= h($tag['tag_quote']) ?></div>
+                                                        <div class="quote-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" id="quote-text-<?= $tag['id'] ?>" title="Clique para expandir/recolher"><?= fichario_render_markdown((string) $tag['tag_quote']) ?></div>
                                                     </div>
                                                 <?php endif; ?>
                                                 <?php if (trim($tag['tag_comment'] ?? '') !== ''): ?>
                                                     <div class="note-text text-body-secondary">
                                                         <span class="note-meta d-block text-uppercase fw-bold mb-1">Observação</span>
-                                                        <div class="observation-box expandable-text collapsed" onclick="toggleExpandableText(this)" id="comment-text-<?= $tag['id'] ?>" title="Clique para expandir/recolher"><?= h($tag['tag_comment']) ?></div>
+                                                        <div class="observation-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" id="comment-text-<?= $tag['id'] ?>" title="Clique para expandir/recolher"><?= fichario_render_markdown((string) $tag['tag_comment']) ?></div>
                                                     </div>
                                                 <?php endif; ?>
                                             <?php endif; ?>
@@ -458,15 +458,15 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                             <div class="d-none mt-2" id="comment-edit-<?= $tag['id'] ?>">
                                                 <div class="mb-2">
                                                     <label class="form-label text-secondary mb-1">Citação da Tag</label>
-                                                    <textarea class="form-control form-control-sm" id="input-quote-<?= $tag['id'] ?>" rows="2" placeholder="Citação (trecho do texto)..."><?= h($tag['tag_quote'] ?? '') ?></textarea>
+                                                    <textarea class="form-control form-control-sm markdown-input markdown-input-sm" id="input-quote-<?= $tag['id'] ?>" rows="3" placeholder="Citação (trecho do texto)..."><?= h($tag['tag_quote'] ?? '') ?></textarea>
                                                 </div>
                                                 <div class="mb-2">
                                                     <label class="form-label text-secondary mb-1">Observações / Análise</label>
-                                                    <textarea class="form-control form-control-sm" id="input-comment-<?= $tag['id'] ?>" rows="2" placeholder="Observações..."><?= h($tag['tag_comment'] ?? '') ?></textarea>
+                                                    <textarea class="form-control form-control-sm markdown-input markdown-input-sm" id="input-comment-<?= $tag['id'] ?>" rows="3" placeholder="Observações..."><?= h($tag['tag_comment'] ?? '') ?></textarea>
                                                 </div>
                                                 <div class="d-flex justify-content-end gap-2">
-                                                    <button class="btn btn-sm btn-outline-secondary text-body rounded-pill px-3" onclick="toggleEditComment(<?= $tag['id'] ?>)">Cancelar</button>
-                                                    <button class="btn btn-sm btn-primary rounded-pill px-3" onclick="saveTagComment(<?= $tag['id'] ?>)">Salvar</button>
+                                                    <button class="btn btn-sm btn-outline-secondary text-body" onclick="toggleEditComment(<?= $tag['id'] ?>)">Cancelar</button>
+                                                    <button class="btn btn-sm btn-primary" onclick="saveTagComment(<?= $tag['id'] ?>)">Salvar</button>
                                                 </div>
                                             </div>
                                         <?php endif; ?>
@@ -504,7 +504,7 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                     <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                                         <div class="d-flex flex-wrap gap-1">
                                             <?php if ($isIncompleteMarking): ?>
-                                                <span class="badge rounded-pill text-bg-warning" title="Nota sem citação ou observação">!</span>
+                                                <span class="badge text-bg-warning" title="Nota sem citação ou observação">!</span>
                                             <?php endif; ?>
                                             <?php if (($quote['tags'] ?? []) !== []): ?>
                                                 <?php foreach ($quote['tags'] as $quoteTag): ?>
@@ -514,7 +514,7 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                                     </a>
                                                 <?php endforeach; ?>
                                             <?php else: ?>
-                                                <span class="badge rounded-pill border border-warning text-warning bg-warning bg-opacity-10" title="A tag vinculada a esta nota foi excluída do vocabulário.">Sem tag</span>
+                                                <span class="badge border border-warning text-warning bg-warning bg-opacity-10" title="A tag vinculada a esta nota foi excluída do vocabulário.">Sem tag</span>
                                             <?php endif; ?>
                                         </div>
                                         <div class="d-flex gap-2 flex-shrink-0">
@@ -541,13 +541,13 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                             <?php if ($quoteText !== ''): ?>
                                                 <div class="marking-preview marking-preview-quote mb-2">
                                                     <span class="note-teaser-label">Citação</span>
-                                                    <div class="quote-box expandable-text collapsed" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= h($quoteText) ?></div>
+                                                    <div class="quote-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= fichario_render_markdown($quoteText) ?></div>
                                                 </div>
                                             <?php endif; ?>
                                             <?php if ($quoteComment !== ''): ?>
                                                 <div class="marking-preview marking-preview-comment">
                                                     <span class="note-teaser-label">Observação</span>
-                                                    <div class="observation-box expandable-text collapsed" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= h($quoteComment) ?></div>
+                                                    <div class="observation-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= fichario_render_markdown($quoteComment) ?></div>
                                                 </div>
                                             <?php endif; ?>
                                         <?php endif; ?>
@@ -621,9 +621,9 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
 
             <div class="d-flex justify-content-end gap-2">
                 <?php if ($canEditArticle): ?>
-                    <button class="btn btn-sm btn-primary rounded-pill px-3" onclick="toggleLinkPanel()">+ Vincular Tag</button>
+                    <button class="btn btn-sm btn-primary" onclick="toggleLinkPanel()">+ Vincular Tag</button>
                 <?php else: ?>
-                    <button class="btn btn-sm btn-primary rounded-pill px-3 locked-action" type="button" onclick="showAuthRequired()">+ Vincular Tag</button>
+                    <button class="btn btn-sm btn-primary locked-action" type="button" onclick="showAuthRequired()">+ Vincular Tag</button>
                 <?php endif; ?>
             </div>
         </div>
@@ -643,15 +643,16 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                     </div>
                     <div class="mb-2">
                         <label class="form-label small" for="link-quote">Citação da Tag (Opcional)</label>
-                        <textarea class="form-control" id="link-quote" rows="2" placeholder="Citação (trecho do texto)..."></textarea>
+                        <textarea class="form-control markdown-input markdown-input-sm" id="link-quote" rows="3" placeholder="Citação (trecho do texto)..."></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small" for="link-comment">Observações / Análise (Opcional)</label>
-                        <textarea class="form-control" id="link-comment" rows="2" placeholder="Observações sobre o vínculo desta tag..."></textarea>
+                        <textarea class="form-control markdown-input markdown-input-sm" id="link-comment" rows="3" placeholder="Observações sobre o vínculo desta tag..."></textarea>
+                        <div class="form-text markdown-help">Aceita Markdown simples: **negrito**, *itálico*, listas, citações, links e código.</div>
                     </div>
                     <div class="d-flex justify-content-end gap-2">
-                        <button class="btn btn-sm btn-outline-secondary text-body rounded-pill" onclick="toggleLinkPanel()">Cancelar</button>
-                        <button class="btn btn-sm btn-primary rounded-pill px-3" onclick="submitLinkTag()">Confirmar</button>
+                        <button class="btn btn-sm btn-outline-secondary text-body" onclick="toggleLinkPanel()">Cancelar</button>
+                        <button class="btn btn-sm btn-primary" onclick="submitLinkTag()">Confirmar</button>
                     </div>
                 <?php endif; ?>
             </div>
@@ -1281,6 +1282,12 @@ if (is_logged_in()) {
 
 $hasFullText = trim((string) ($article['full_text'] ?? '')) !== '';
 $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
+$articleReferenceAbnt = trim((string) ($article['reference_abnt'] ?? ''));
+if ($articleReferenceAbnt === '') {
+    $articleReferenceAbnt = build_article_abnt_reference($article);
+}
+$articleReferenceLocked = truthy_value($article['reference_abnt_locked'] ?? false);
+$articleReferenceMissing = article_abnt_missing_fields($article);
 ?>
 <!doctype html>
 <html lang="pt-br" data-module="fichario">
@@ -1293,15 +1300,12 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
     <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
-    <!-- Background Animated Blobs -->
-
-
     <?php render_navbar('articles'); ?>
 
-    <main class="container py-4 main-container">
+    <main class="main-container py-4">
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
@@ -1310,11 +1314,10 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             </ol>
         </nav>
 
-        <!-- Top bar/Header -->
-        <header class="card p-4 mb-4">
+        <header class="page-header mb-4">
             <div class="d-flex flex-column gap-3">
                 <div>
-                    <h1 class="h3 mb-2 text-body fw-bold"><?= h($article['title']) ?></h1>
+                    <h1 class="h2 mb-2"><?= h($article['title']) ?></h1>
                     <p class="text-secondary mb-3">
                         <strong><?= h($article['authors']) ?></strong>
                         <?php if ((string) ($article['year'] ?? '') !== ''): ?>
@@ -1329,9 +1332,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                         ?>
                         <?php if ($hasStart || $hasEnd): ?>
                             <span class="mx-2">|</span>
-                            <span class="text-body-secondary" title="Período dos dados de coleta">
-                                📅 Dados: 
-                                <?php if ($hasStart && $hasEnd): ?>
+                            <span class="text-body-secondary" title="Período dos dados de coleta">Dados: <?php if ($hasStart && $hasEnd): ?>
                                     <?= h((string) $article['data_year_start']) ?> a <?= h((string) $article['data_year_end']) ?>
                                 <?php elseif ($hasStart): ?>
                                     a partir de <?= h((string) $article['data_year_start']) ?>
@@ -1347,43 +1348,45 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                     <?= render_article_header_tags($headerTagsByCategory) ?>
                 </div>
                 <div class="d-flex flex-wrap gap-2 justify-content-end align-items-center mt-2">
-                    <a class="btn btn-outline-secondary text-body rounded-pill px-3" href="articles.php">Voltar</a>
+                    <a class="btn btn-outline-secondary" href="articles.php">
+                        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Voltar
+                    </a>
                     <?php if (is_logged_in()): ?>
-                        <button class="btn btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center gap-1"
+                        <button class="btn btn-outline-primary d-inline-flex align-items-center gap-1"
                                 id="btn-reading-modal"
                                 onclick="toggleFocusedReading()"
                                 <?= $hasFullText ? '' : 'disabled title="Nenhum texto completo cadastrado para este artigo"' ?>>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3-3h7z"></path></svg>
+                            <i class="bi bi-book me-1" aria-hidden="true"></i>
                             Leitura Focada
                         </button>
                     <?php endif; ?>
                     <?php if (trim((string) ($article['pdf_url'] ?? '')) !== ''): ?>
-                        <a class="btn btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center gap-1"
+                        <a class="btn btn-outline-primary d-inline-flex align-items-center gap-1"
                            href="<?= h($article['pdf_url']) ?>"
                            target="_blank"
                            rel="noopener noreferrer"
                            title="Abrir PDF original em nova aba">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                            <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>
                             Abrir PDF
                         </a>
                     <?php endif; ?>
                     <?php if (trim((string) ($article['url'] ?? '')) !== ''): ?>
-                        <a class="btn btn-outline-primary rounded-pill px-3 d-inline-flex align-items-center gap-1"
+                        <a class="btn btn-outline-primary d-inline-flex align-items-center gap-1"
                            href="<?= h($article['url']) ?>"
                            target="_blank"
                            rel="noopener noreferrer"
                            title="Abrir URL original em nova aba">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                            <i class="bi bi-box-arrow-up-right me-1" aria-hidden="true"></i>
                             Abrir URL
                         </a>
                     <?php endif; ?>
                     <?php if ($canEditArticle): ?>
-                        <a class="btn btn-outline-primary rounded-pill px-3" href="editor.php?edit=<?= h((string) $article['id']) ?>">Editar Metadados</a>
+                        <a class="btn btn-outline-primary" href="editor.php?edit=<?= h((string) $article['id']) ?>">Editar Metadados</a>
                     <?php else: ?>
-                        <button class="btn btn-outline-primary rounded-pill px-3 locked-action" type="button" onclick="showAuthRequired()">Editar Metadados</button>
+                        <button class="btn btn-outline-primary locked-action" type="button" onclick="showAuthRequired()">Editar Metadados</button>
                     <?php endif; ?>
                     <?php if ($canDeleteArticle): ?>
-                        <button class="btn btn-outline-danger rounded-pill px-3"
+                        <button class="btn btn-outline-danger"
                                 type="button"
                                 data-article-notes-count="<?= $articleNotesCount ?>"
                                 onclick="confirmDelete(this)">
@@ -1437,6 +1440,23 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                                 <?php endforeach; ?>
                             </dl>
 
+                            <?php if ($articleReferenceAbnt !== ''): ?>
+                                <div class="mb-4">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                        <h3 class="h6 text-body fw-bold mb-0">Referência ABNT</h3>
+                                        <span class="badge <?= $articleReferenceLocked ? 'text-bg-success' : 'text-bg-secondary' ?>">
+                                            <?= $articleReferenceLocked ? 'Travada' : 'Gerada pelo sistema' ?>
+                                        </span>
+                                    </div>
+                                    <div class="text-block small bg-body-tertiary bg-opacity-20 p-3 rounded-3 border"><?= h($articleReferenceAbnt) ?></div>
+                                    <?php if ($articleReferenceMissing !== []): ?>
+                                        <div class="alert alert-warning mt-2 mb-0 py-2 small">
+                                            Faltam informacoes para uma ABNT completa: <?= h(implode('; ', $articleReferenceMissing)) ?>.
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+
                             <?php if (trim((string) ($article['abstract'] ?? '')) !== ''): ?>
                                 <div class="mb-4">
                                     <h3 class="h6 text-body fw-bold mb-2">Resumo / Abstract</h3>
@@ -1465,7 +1485,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                                         <?php endif; ?>
                                     </h2>
                                     <?php if ($hasFullText): ?>
-                                        <button class="btn btn-sm btn-outline-info rounded-pill px-3 d-inline-flex align-items-center gap-1" onclick="openReadingModal()">
+                                        <button class="btn btn-sm btn-outline-info d-inline-flex align-items-center gap-1" onclick="openReadingModal()">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3-3h7z"></path></svg>
                                             Modo Leitura Focada
                                         </button>
@@ -1477,9 +1497,9 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                                     <div class="text-center py-5 text-secondary">
                                         <p class="mb-0">Nenhum texto completo cadastrado para este artigo.</p>
                                         <?php if ($canEditArticle): ?>
-                                            <a href="editor.php?edit=<?= $article['id'] ?>" class="btn btn-sm btn-outline-primary mt-3 rounded-pill">Adicionar texto</a>
+                                            <a href="editor.php?edit=<?= $article['id'] ?>" class="btn btn-sm btn-outline-primary mt-3">Adicionar texto</a>
                                         <?php else: ?>
-                                            <button class="btn btn-sm btn-outline-primary mt-3 rounded-pill locked-action" type="button" onclick="showAuthRequired()">Adicionar texto</button>
+                                            <button class="btn btn-sm btn-outline-primary mt-3 locked-action" type="button" onclick="showAuthRequired()">Adicionar texto</button>
                                         <?php endif; ?>
                                     </div>
                                 <?php endif; ?>
@@ -1505,15 +1525,15 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                             <h5 class="fw-bold mb-0 text-body">Leitura Focada</h5>
                             <div class="d-flex align-items-center gap-2">
                                 <?php if ($canEditArticle): ?>
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" id="btn-toggle-edit" onclick="toggleReadingEditMode()">
+                                    <button class="btn btn-sm btn-outline-primary" id="btn-toggle-edit" onclick="toggleReadingEditMode()">
                                         Editar Texto
                                     </button>
                                 <?php else: ?>
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3 locked-action" id="btn-toggle-edit-locked" type="button" onclick="showAuthRequired()">
+                                    <button class="btn btn-sm btn-outline-primary locked-action" id="btn-toggle-edit-locked" type="button" onclick="showAuthRequired()">
                                         Editar Texto
                                     </button>
                                 <?php endif; ?>
-                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 text-body" onclick="exitFocusedReading()">
+                                <button class="btn btn-sm btn-outline-secondary text-body" onclick="exitFocusedReading()">
                                     Voltar
                                 </button>
                             </div>
@@ -1530,8 +1550,8 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                                     <textarea class="form-control reading-textarea flex-grow-1" id="reading-full-text-textarea" placeholder="Digite ou cole o texto completo do artigo científico..."></textarea>
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 mt-3">
-                                    <button class="btn btn-outline-secondary text-body rounded-pill px-4" onclick="cancelReadingEdit()">Cancelar</button>
-                                    <button class="btn btn-primary rounded-pill px-4" id="btn-save-full-text" onclick="saveFullTextFromModal()">Salvar Alterações</button>
+                                    <button class="btn btn-outline-secondary text-body" onclick="cancelReadingEdit()">Cancelar</button>
+                                    <button class="btn btn-primary" id="btn-save-full-text" onclick="saveFullTextFromModal()">Salvar Alterações</button>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -1559,9 +1579,9 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                                 <span>Salvo</span>
                             </div>
                             <?php if ($canEditArticle): ?>
-                                <button class="btn btn-sm btn-primary rounded-pill px-4" id="btn-save-analysis" onclick="triggerSave()">Salvar Análise</button>
+                                <button class="btn btn-sm btn-primary" id="btn-save-analysis" onclick="triggerSave()">Salvar Análise</button>
                             <?php else: ?>
-                                <button class="btn btn-sm btn-primary rounded-pill px-4 locked-action" type="button" onclick="showAuthRequired()">Salvar Análise</button>
+                                <button class="btn btn-sm btn-primary locked-action" type="button" onclick="showAuthRequired()">Salvar Análise</button>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1583,7 +1603,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="quoteModalLabel">Criar nota</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
@@ -1597,17 +1617,18 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="quote-modal-text">Citação (opcional)</label>
-                            <textarea class="form-control note-edit-textarea" id="quote-modal-text"></textarea>
+                            <textarea class="form-control note-edit-textarea markdown-input" id="quote-modal-text" rows="8"></textarea>
+                            <div class="form-text markdown-help">Aceita Markdown simples. Use &gt; para citações longas e listas para decompor ideias.</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="quote-modal-comment">Observação (opcional)</label>
-                            <textarea class="form-control" id="quote-modal-comment" rows="7" placeholder="Observação sobre o trecho"></textarea>
+                            <textarea class="form-control markdown-input" id="quote-modal-comment" rows="8" placeholder="Observação sobre o trecho"></textarea>
                         </div>
                         <div class="alert alert-danger d-none mt-3 mb-0" id="quote-modal-error"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary text-body rounded-pill" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary rounded-pill" id="btn-save-tag-quote">Salvar nota</button>
+                        <button type="button" class="btn btn-outline-secondary text-body" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="btn-save-tag-quote">Salvar nota</button>
                     </div>
                 </div>
             </div>
@@ -1619,24 +1640,24 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="markingReadModalLabel">Leitura da nota</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex flex-wrap gap-2 mb-3" id="marking-read-tags"></div>
                     <section class="mb-3 d-none" id="marking-read-quote-section">
                         <h6 class="text-secondary text-uppercase small mb-2">Citação</h6>
-                        <div class="marking-modal-text text-body p-3 rounded-3 bg-body-tertiary bg-opacity-25" id="marking-read-quote"></div>
+                        <div class="marking-modal-text text-body p-3 rounded-3 bg-body-tertiary bg-opacity-25 markdown-body fichario-markdown" id="marking-read-quote"></div>
                     </section>
                     <section class="mb-0 d-none" id="marking-read-comment-section">
                         <h6 class="text-secondary text-uppercase small mb-2">Observação</h6>
-                        <div class="marking-modal-text text-body-secondary p-3 rounded-3 bg-body-tertiary bg-opacity-25" id="marking-read-comment"></div>
+                        <div class="marking-modal-text text-body-secondary p-3 rounded-3 bg-body-tertiary bg-opacity-25 markdown-body fichario-markdown" id="marking-read-comment"></div>
                     </section>
                     <div class="text-warning d-none" id="marking-read-empty">! Marcação sem citação ou observação.</div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary text-body rounded-pill" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-outline-secondary text-body" data-bs-dismiss="modal">Fechar</button>
                     <?php if ($canEditArticle): ?>
-                        <button type="button" class="btn btn-primary rounded-pill" id="btn-edit-marking-from-read">Editar</button>
+                        <button type="button" class="btn btn-primary" id="btn-edit-marking-from-read">Editar</button>
                     <?php endif; ?>
                 </div>
             </div>
@@ -1648,7 +1669,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="authRequiredModalLabel">Acesso necessário</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <?php if ($isLoggedIn): ?>
@@ -1658,9 +1679,9 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary text-body rounded-pill" data-bs-dismiss="modal">Agora não</button>
+                    <button type="button" class="btn btn-outline-secondary text-body" data-bs-dismiss="modal">Agora não</button>
                     <?php if (!$isLoggedIn): ?>
-                        <a class="btn btn-primary rounded-pill" href="<?= h($loginUrl) ?>">Entrar</a>
+                        <a class="btn btn-primary" href="<?= h($loginUrl) ?>">Entrar</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -2782,7 +2803,11 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
 
             const value = String(text || '').trim();
             section.classList.toggle('d-none', value === '');
-            content.textContent = value;
+            if (window.FicharioUI && typeof FicharioUI.renderMarkdown === 'function') {
+                content.innerHTML = FicharioUI.renderMarkdown(value);
+            } else {
+                content.textContent = value;
+            }
             return value !== '';
         }
 
@@ -2793,7 +2818,7 @@ $isAnalysisEmpty = trim((string) ($article['analysis'] ?? '')) === '';
             container.innerHTML = '';
             tags.forEach(tag => {
                 const badge = document.createElement('span');
-                badge.className = 'badge rounded-pill border tag-badge';
+                badge.className = 'badge border tag-badge';
                 badge.textContent = tag.name;
                 badge.title = tag.definition || 'Sem definição cadastrada.';
                 badge.dataset.bsToggle = 'tooltip';

@@ -25,6 +25,9 @@ $article = [
     'keywords' => '',
     'bibtex_key' => '',
     'bibtex_raw' => '',
+    'reference_abnt' => '',
+    'reference_abnt_locked' => '0',
+    'reference_abnt_missing' => '',
     'analysis' => '',
     'data_year_start' => '',
     'data_year_end' => '',
@@ -57,6 +60,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $article[$field] = trim((string) ($_POST[$field] ?? ''));
     }
 
+    if ($article['bibtex_raw'] === '') {
+        $article['bibtex_key'] = '';
+    } else {
+        $article['bibtex_key'] = '';
+        if (strlen($article['bibtex_raw']) > 100000) {
+            $errors[] = 'A referencia BibTeX esta muito grande para armazenamento.';
+        } else {
+            $bibtexParser = new \App\Parsers\BibtexParser();
+            $parsedBibtex = $bibtexParser->parse_raw($article['bibtex_raw']);
+            if (($parsedBibtex['bibtex_key'] ?? '') !== '') {
+                $article['bibtex_key'] = (string) $parsedBibtex['bibtex_key'];
+            }
+        }
+    }
+
     if ($article['title'] === '') {
         $errors[] = 'Informe o titulo do artigo.';
     }
@@ -75,6 +93,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($article['data_year_start'] !== '' && $article['data_year_end'] !== '' && (int)$article['data_year_start'] > (int)$article['data_year_end']) {
         $errors[] = 'O ano inicial do período dos dados não pode ser maior que o ano final.';
+    }
+
+    $article['reference_abnt_locked'] = ((string) ($_POST['reference_abnt_locked'] ?? '0')) === '1' ? '1' : '0';
+    $generatedReferenceAbnt = build_article_abnt_reference($article);
+    $referenceMissing = article_abnt_missing_fields($article);
+    $article['reference_abnt_missing'] = implode('; ', $referenceMissing);
+    if ($article['reference_abnt_locked'] === '1') {
+        if ($article['reference_abnt'] === '') {
+            $errors[] = 'Informe a referencia ABNT antes de travar.';
+        }
+    } else {
+        $article['reference_abnt'] = $generatedReferenceAbnt;
     }
 
     if ($errors === []) {
@@ -96,6 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':keywords' => $article['keywords'],
             ':bibtex_key' => $article['bibtex_key'],
             ':bibtex_raw' => $article['bibtex_raw'],
+            ':reference_abnt' => $article['reference_abnt'],
+            ':reference_abnt_locked' => $article['reference_abnt_locked'] === '1',
+            ':reference_abnt_missing' => $article['reference_abnt_missing'],
             ':analysis' => $article['analysis'],
             ':data_year_start' => $article['data_year_start'] === '' ? null : (int) $article['data_year_start'],
             ':data_year_end' => $article['data_year_end'] === '' ? null : (int) $article['data_year_end'],
@@ -123,6 +156,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         keywords = :keywords,
                         bibtex_key = :bibtex_key,
                         bibtex_raw = :bibtex_raw,
+                        reference_abnt = :reference_abnt,
+                        reference_abnt_locked = :reference_abnt_locked,
+                        reference_abnt_missing = :reference_abnt_missing,
                         analysis = :analysis,
                         data_year_start = :data_year_start,
                         data_year_end = :data_year_end,
@@ -137,10 +173,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     "INSERT INTO articles (
                         title, authors, year, journal, volume, issue, pages, publisher,
                         doi, url, pdf_url, abstract, full_text, references_text, keywords, bibtex_key, bibtex_raw,
+                        reference_abnt, reference_abnt_locked, reference_abnt_missing,
                         analysis, data_year_start, data_year_end
                     ) VALUES (
                         :title, :authors, :year, :journal, :volume, :issue, :pages, :publisher,
                         :doi, :url, :pdf_url, :abstract, :full_text, :references_text, :keywords, :bibtex_key, :bibtex_raw,
+                        :reference_abnt, :reference_abnt_locked, :reference_abnt_missing,
                         :analysis, :data_year_start, :data_year_end
                     )"
                 );
@@ -159,6 +197,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$referenceAbntGenerated = build_article_abnt_reference($article);
+$referenceAbntMissingList = article_abnt_missing_fields($article);
+$referenceAbntLocked = truthy_value($article['reference_abnt_locked'] ?? false);
+if (!$referenceAbntLocked && trim((string) ($article['reference_abnt'] ?? '')) === '') {
+    $article['reference_abnt'] = $referenceAbntGenerated;
+}
+
 ?>
 <!doctype html>
 <html lang="pt-br" data-module="fichario">
@@ -171,27 +216,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
-    <!-- Background Animated Blobs -->
-
-
     <?php render_navbar('editor'); ?>
-    <main class="container py-4 main-container">
-        <div class="d-flex flex-column gap-2 mb-4">
+    <main class="main-container py-4">
+        <header class="page-header mb-4">
             <div>
-                <h1 class="h3 mb-1 text-body fw-bold"><?= $isEditing ? 'Editar Artigo' : 'Novo Artigo' ?></h1>
+                <h1 class="h2 mb-2"><?= $isEditing ? 'Editar Artigo' : 'Novo Artigo' ?></h1>
                 <p class="text-secondary mb-0"><?= $isEditing ? 'Revise os campos e salve as alterações.' : 'Cadastro de artigo com extrator automático.' ?></p>
             </div>
             <?php if (!$isEditing): ?>
-                <div class="d-flex justify-content-end mt-2">
-                    <button class="btn btn-outline-primary rounded-pill px-4 text-body border-primary" type="button" data-bs-toggle="modal" data-bs-target="#bibtexModal">
-                        Importar BibTeX
+                <div>
+                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#bibtexModal">
+                        <i class="bi bi-filetype-bib me-1"></i>Importar BibTeX
                     </button>
                 </div>
             <?php endif; ?>
-        </div>
+        </header>
 
         <?php if ($notice !== ''): ?>
             <div class="alert alert-success bg-success-subtle border-success text-success-emphasis rounded-3" role="alert"><?= h($notice) ?></div>
@@ -212,7 +254,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?= csrf_field() ?>
             <input type="hidden" name="id" value="<?= h((string) $editId) ?>">
             <input type="hidden" name="bibtex_key" id="bibtex_key" value="<?= h($article['bibtex_key']) ?>">
-            <input type="hidden" name="bibtex_raw" id="bibtex_raw" value="<?= h($article['bibtex_raw']) ?>">
 
             <div class="row g-3">
                 <div class="col-12">
@@ -302,6 +343,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="col-12">
+                    <label class="form-label" for="bibtex_raw">BibTeX original</label>
+                    <textarea class="form-control font-monospace" name="bibtex_raw" id="bibtex_raw" rows="8" spellcheck="false"><?= h($article['bibtex_raw']) ?></textarea>
+                    <div class="form-text text-secondary">Opcional. Se informado, o BibTeX sera armazenado com o artigo e usado nas exportacoes para agentes.</div>
+                </div>
+
+                <div class="col-12">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                        <label class="form-label mb-0" for="reference_abnt">Referencia ABNT</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-sm btn-outline-secondary<?= $referenceAbntLocked ? '' : ' d-none' ?>" type="button" id="unlockReferenceButton">
+                                Destravar e recalcular
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary<?= $referenceAbntLocked ? ' d-none' : '' ?>" type="button" id="lockReferenceButton">
+                                Travar versão validada
+                            </button>
+                        </div>
+                    </div>
+                    <input type="hidden" name="reference_abnt_locked" id="reference_abnt_locked" value="<?= $referenceAbntLocked ? '1' : '0' ?>">
+                    <textarea class="form-control font-monospace" name="reference_abnt" id="reference_abnt" rows="4" spellcheck="false"<?= $referenceAbntLocked ? ' readonly' : '' ?>><?= h($article['reference_abnt']) ?></textarea>
+                    <div class="form-text text-secondary" id="referenceAbntHelp">
+                        <?= $referenceAbntLocked ? 'Referencia travada: o sistema preservara este texto ao salvar.' : 'Referencia gerada pelo sistema. Para colar uma ABNT completa do Google Academico, edite o texto e trave antes de salvar.' ?>
+                    </div>
+                    <?php if ($referenceAbntMissingList !== []): ?>
+                        <div class="alert alert-warning mt-2 mb-0 py-2 small">
+                            Faltam informacoes para uma ABNT completa: <?= h(implode('; ', $referenceAbntMissingList)) ?>.
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-success mt-2 mb-0 py-2 small">
+                            Dados essenciais presentes para gerar a referencia ABNT.
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="col-12">
                     <label class="form-label" for="keywords">Palavras-chave</label>
                     <input class="form-control" type="text" name="keywords" id="keywords" value="<?= h($article['keywords']) ?>">
                 </div>
@@ -315,8 +390,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="alert d-none mt-3 mb-0" id="urlExtractMessage" role="alert"></div>
 
             <div class="d-flex justify-content-end gap-2 mt-4">
-                <a class="btn btn-outline-secondary text-body rounded-pill px-4" href="<?= $isEditing ? 'view.php?id=' . $editId : 'articles.php' ?>">Cancelar</a>
-                <button class="btn btn-primary rounded-pill px-4" type="submit"><?= $isEditing ? 'Salvar alterações' : 'Salvar artigo' ?></button>
+                <a class="btn btn-outline-secondary text-body" href="<?= $isEditing ? 'view.php?id=' . $editId : 'articles.php' ?>">Cancelar</a>
+                <button class="btn btn-primary" type="submit"><?= $isEditing ? 'Salvar alterações' : 'Salvar artigo' ?></button>
             </div>
         </form>
     </main>
@@ -357,6 +432,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const extractUrlButton = document.getElementById('extractUrlButton');
         const urlExtractMessage = document.getElementById('urlExtractMessage');
         const urlInput = document.getElementById('url');
+        const referenceAbntInput = document.getElementById('reference_abnt');
+        const referenceAbntLockedInput = document.getElementById('reference_abnt_locked');
+        const lockReferenceButton = document.getElementById('lockReferenceButton');
+        const unlockReferenceButton = document.getElementById('unlockReferenceButton');
+        const referenceAbntHelp = document.getElementById('referenceAbntHelp');
         const ajaxFormHeaders = {
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
             'X-Requested-With': 'XMLHttpRequest'
@@ -409,7 +489,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
         }
 
-        extractUrlButton.addEventListener('click', async () => {
+        function setReferenceLocked(locked) {
+            if (!referenceAbntInput || !referenceAbntLockedInput) {
+                return;
+            }
+
+            referenceAbntLockedInput.value = locked ? '1' : '0';
+            referenceAbntInput.toggleAttribute('readonly', locked);
+            lockReferenceButton?.classList.toggle('d-none', locked);
+            unlockReferenceButton?.classList.toggle('d-none', !locked);
+            if (referenceAbntHelp) {
+                referenceAbntHelp.textContent = locked
+                    ? 'Referencia travada: o sistema preservara este texto ao salvar.'
+                    : 'Referencia destravada: ao salvar, o sistema recalculara a ABNT com os metadados atuais.';
+            }
+            if (!locked) {
+                referenceAbntInput.focus();
+            }
+        }
+
+        lockReferenceButton?.addEventListener('click', () => setReferenceLocked(true));
+        unlockReferenceButton?.addEventListener('click', () => setReferenceLocked(false));
+
+        extractUrlButton?.addEventListener('click', async () => {
             urlExtractMessage.className = 'alert d-none mt-3 mb-0';
             urlExtractMessage.textContent = '';
             const releaseExtractBusy = window.FicharioUI
