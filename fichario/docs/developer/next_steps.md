@@ -36,3 +36,11 @@ Data: 2026-07-01
 3. Criar suite minima de testes de exportacao/Markdown/BibTeX.
 4. Perfilar `articles.php` com dados reais e corrigir gargalos restantes.
 5. Revisar autorizacao em consultas de tags/notas/projetos.
+
+## Execucao em 2026-07-01
+
+- Criada suite CLI minima em `fichario/tests/run.php` cobrindo Markdown, escape de HTML, ABNT e parse BibTeX.
+- Criado checklist de smoke tests manuais em `fichario/docs/developer/smoke_tests.md` para cadastro, BibTeX, notas, tags, projetos e exportacao.
+- Extraida camada inicial `App\Projects\ProjectService` para operacoes de projeto, secao e notas usadas por `public_html/fichario/project.php`.
+- Padronizadas respostas Ajax principais da pagina de projeto com `project_json_response()` e `request_is_ajax()`.
+- Proximo bloco recomendado: mover criacao/edicao/exclusao de secoes e tags de projeto para o mesmo servico, ou criar controller/handler dedicado para POST.

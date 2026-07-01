@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use App\Projects\ProjectService;
+
 require __DIR__ . '/../../fichario/bootstrap.php';
 require_login();
 
@@ -8,6 +10,7 @@ $pdo = db();
 $projectId = (int) ($_GET['id'] ?? 0);
 $currentUser = current_user();
 $userId = (int) ($currentUser['id'] ?? 0);
+$projectService = new ProjectService($pdo, is_admin());
 
 if ($projectId <= 0) {
     http_response_code(404);
@@ -32,133 +35,15 @@ function redirect_to_project(int $projectId): void
     exit;
 }
 
-function fetch_project(PDO $pdo, int $projectId, int $userId): ?array
+function project_json_response(array $payload, int $statusCode = 200): void
 {
-    $sql = 'SELECT * FROM projects WHERE id = :id';
-    $params = [':id' => $projectId];
-
-    if (!is_admin()) {
-        $sql .= ' AND owner_user_id = :owner_user_id';
-        $params[':owner_user_id'] = $userId;
-    }
-
-    $stmt = $pdo->prepare($sql . ' LIMIT 1');
-    $stmt->execute($params);
-    $project = $stmt->fetch();
-
-    return $project ?: null;
+    http_response_code($statusCode);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
 }
 
-function fetch_project_section(PDO $pdo, int $projectId, int $sectionId): ?array
-{
-    $stmt = $pdo->prepare('SELECT * FROM project_sections WHERE id = :id AND project_id = :project_id LIMIT 1');
-    $stmt->execute([':id' => $sectionId, ':project_id' => $projectId]);
-    $section = $stmt->fetch();
-
-    return $section ?: null;
-}
-
-function touch_project(PDO $pdo, int $projectId): void
-{
-    $stmt = $pdo->prepare('UPDATE projects SET updated_at = CURRENT_TIMESTAMP WHERE id = :id');
-    $stmt->execute([':id' => $projectId]);
-}
-
-function next_section_position(PDO $pdo, int $projectId): int
-{
-    $stmt = $pdo->prepare('SELECT COALESCE(MAX(position), 0) + 1 FROM project_sections WHERE project_id = :project_id');
-    $stmt->execute([':project_id' => $projectId]);
-
-    return (int) $stmt->fetchColumn();
-}
-
-function next_note_position(PDO $pdo, int $sectionId): int
-{
-    $stmt = $pdo->prepare('SELECT COALESCE(MAX(position), 0) + 1 FROM project_section_notes WHERE section_id = :section_id');
-    $stmt->execute([':section_id' => $sectionId]);
-
-    return (int) $stmt->fetchColumn();
-}
-
-function move_project_section(PDO $pdo, int $projectId, int $sectionId, string $direction): void
-{
-    $current = fetch_project_section($pdo, $projectId, $sectionId);
-    if ($current === null) {
-        throw new RuntimeException('Seção não encontrada.');
-    }
-
-    $operator = $direction === 'up' ? '<' : '>';
-    $order = $direction === 'up' ? 'DESC' : 'ASC';
-    $stmt = $pdo->prepare("
-        SELECT * FROM project_sections
-        WHERE project_id = :project_id AND position $operator :position
-        ORDER BY position $order, id $order
-        LIMIT 1
-    ");
-    $stmt->execute([':project_id' => $projectId, ':position' => (int) $current['position']]);
-    $target = $stmt->fetch();
-
-    if (!$target) {
-        return;
-    }
-
-    $swap = $pdo->prepare('UPDATE project_sections SET position = :position, updated_at = CURRENT_TIMESTAMP WHERE id = :id');
-    $swap->execute([':position' => (int) $target['position'], ':id' => $sectionId]);
-    $swap->execute([':position' => (int) $current['position'], ':id' => (int) $target['id']]);
-}
-
-function move_section_note(PDO $pdo, int $sectionId, int $noteId, string $direction): void
-{
-    $stmt = $pdo->prepare('SELECT * FROM project_section_notes WHERE section_id = :section_id AND note_id = :note_id LIMIT 1');
-    $stmt->execute([':section_id' => $sectionId, ':note_id' => $noteId]);
-    $current = $stmt->fetch();
-
-    if (!$current) {
-        throw new RuntimeException('Nota não vinculada a esta seção.');
-    }
-
-    $operator = $direction === 'up' ? '<' : '>';
-    $order = $direction === 'up' ? 'DESC' : 'ASC';
-    $targetStmt = $pdo->prepare("
-        SELECT * FROM project_section_notes
-        WHERE section_id = :section_id AND position $operator :position
-        ORDER BY position $order, note_id $order
-        LIMIT 1
-    ");
-    $targetStmt->execute([':section_id' => $sectionId, ':position' => (int) $current['position']]);
-    $target = $targetStmt->fetch();
-
-    if (!$target) {
-        return;
-    }
-
-    $swap = $pdo->prepare('UPDATE project_section_notes SET position = :position WHERE section_id = :section_id AND note_id = :note_id');
-    $swap->execute([
-        ':position' => (int) $target['position'],
-        ':section_id' => $sectionId,
-        ':note_id' => $noteId,
-    ]);
-    $swap->execute([
-        ':position' => (int) $current['position'],
-        ':section_id' => $sectionId,
-        ':note_id' => (int) $target['note_id'],
-    ]);
-}
-
-function note_option_label(array $note): string
-{
-    $article = trim((string) ($note['article_title'] ?? 'Artigo sem titulo'));
-    $year = trim((string) ($note['year'] ?? ''));
-    $teaserSource = trim((string) ($note['comment'] ?? '')) !== ''
-        ? (string) $note['comment']
-        : (string) ($note['quote_text'] ?? '');
-    $teaser = text_teaser($teaserSource, 90);
-    $prefix = '#' . (int) $note['id'] . ' - ' . $article . ($year !== '' ? ' (' . $year . ')' : '');
-
-    return $teaser !== '' ? $prefix . ' - ' . $teaser : $prefix;
-}
-
-$project = fetch_project($pdo, $projectId, $userId);
+$project = $projectService->fetchProject($projectId, $userId);
 if ($project === null) {
     http_response_code(404);
     exit('Projeto nao encontrado.');
@@ -224,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ON CONFLICT (project_id, tag_id) DO NOTHING
             ');
             $stmt->execute([':project_id' => $projectId, ':tag_id' => $tagId]);
-            touch_project($pdo, $projectId);
+            $projectService->touchProject($projectId);
             set_project_flash('Tag vinculada ao projeto.');
             redirect_to_project($projectId);
         }
@@ -237,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $stmt = $pdo->prepare('DELETE FROM project_tags WHERE project_id = :project_id AND tag_id = :tag_id');
             $stmt->execute([':project_id' => $projectId, ':tag_id' => $tagId]);
-            touch_project($pdo, $projectId);
+            $projectService->touchProject($projectId);
             set_project_flash('Tag removida do projeto.');
             redirect_to_project($projectId);
         }
@@ -257,16 +142,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':project_id' => $projectId,
                 ':title' => $title,
                 ':context' => $context,
-                ':position' => next_section_position($pdo, $projectId),
+                ':position' => $projectService->nextSectionPosition($projectId),
             ]);
-            touch_project($pdo, $projectId);
+            $projectService->touchProject($projectId);
             set_project_flash('Seção criada.');
             redirect_to_project($projectId);
         }
 
         if ($action === 'update_section') {
             $sectionId = (int) ($_POST['section_id'] ?? 0);
-            $section = fetch_project_section($pdo, $projectId, $sectionId);
+            $section = $projectService->fetchSection($projectId, $sectionId);
             if ($section === null) {
                 throw new RuntimeException('Seção não encontrada.');
             }
@@ -288,11 +173,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':id' => $sectionId,
                 ':project_id' => $projectId,
             ]);
-            touch_project($pdo, $projectId);
+            $projectService->touchProject($projectId);
 
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json; charset=utf-8');
-                echo json_encode([
+            if (request_is_ajax()) {
+                project_json_response([
                     'success' => true,
                     'section' => [
                         'id' => $sectionId,
@@ -300,8 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'context' => $context,
                         'context_html' => fichario_render_markdown($context),
                     ],
-                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                exit;
+                ]);
             }
 
             set_project_flash('Seção atualizada.');
@@ -310,13 +193,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'delete_section') {
             $sectionId = (int) ($_POST['section_id'] ?? 0);
-            if (fetch_project_section($pdo, $projectId, $sectionId) === null) {
+            if ($projectService->fetchSection($projectId, $sectionId) === null) {
                 throw new RuntimeException('Seção não encontrada.');
             }
 
             $stmt = $pdo->prepare('DELETE FROM project_sections WHERE id = :id AND project_id = :project_id');
             $stmt->execute([':id' => $sectionId, ':project_id' => $projectId]);
-            touch_project($pdo, $projectId);
+            $projectService->touchProject($projectId);
             set_project_flash('Seção excluída.');
             redirect_to_project($projectId);
         }
@@ -328,13 +211,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new RuntimeException('Direcao invalida.');
             }
 
-            move_project_section($pdo, $projectId, $sectionId, $direction);
-            touch_project($pdo, $projectId);
+            $projectService->moveSection($projectId, $sectionId, $direction);
+            $projectService->touchProject($projectId);
 
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json; charset=utf-8');
-                echo json_encode(['success' => true]);
-                exit;
+            if (request_is_ajax()) {
+                project_json_response(['success' => true]);
             }
 
             redirect_to_project($projectId);
@@ -343,27 +224,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'link_note') {
             $sectionId = (int) ($_POST['section_id'] ?? 0);
             $noteId = (int) ($_POST['note_id'] ?? 0);
-            if (fetch_project_section($pdo, $projectId, $sectionId) === null) {
+            if ($projectService->fetchSection($projectId, $sectionId) === null) {
                 throw new RuntimeException('Seção não encontrada.');
             }
 
-            $noteStmt = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id LIMIT 1');
-            $noteStmt->execute([':id' => $noteId]);
-            if (!$noteStmt->fetchColumn()) {
-                throw new RuntimeException('Nota nao encontrada.');
-            }
-
-            $stmt = $pdo->prepare('
-                INSERT INTO project_section_notes (section_id, note_id, position)
-                VALUES (:section_id, :note_id, :position)
-                ON CONFLICT (section_id, note_id) DO NOTHING
-            ');
-            $stmt->execute([
-                ':section_id' => $sectionId,
-                ':note_id' => $noteId,
-                ':position' => next_note_position($pdo, $sectionId),
-            ]);
-            touch_project($pdo, $projectId);
+            $projectService->linkNoteToSection($sectionId, $noteId);
+            $projectService->touchProject($projectId);
             set_project_flash('Nota vinculada.');
             redirect_to_project($projectId);
         }
@@ -371,66 +237,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'unlink_note') {
             $sectionId = (int) ($_POST['section_id'] ?? 0);
             $noteId = (int) ($_POST['note_id'] ?? 0);
-            if (fetch_project_section($pdo, $projectId, $sectionId) === null) {
+            if ($projectService->fetchSection($projectId, $sectionId) === null) {
                 throw new RuntimeException('Seção não encontrada.');
             }
 
-            $stmt = $pdo->prepare('DELETE FROM project_section_notes WHERE section_id = :section_id AND note_id = :note_id');
-            $stmt->execute([':section_id' => $sectionId, ':note_id' => $noteId]);
-            touch_project($pdo, $projectId);
+            $projectService->unlinkNoteFromSection($sectionId, $noteId);
+            $projectService->touchProject($projectId);
             set_project_flash('Nota removida da seção.');
             redirect_to_project($projectId);
         }
 
         if ($action === 'link_direct_note') {
             $noteId = (int) ($_POST['note_id'] ?? 0);
-
-            // Find or create Geral section
-            $sectStmt = $pdo->prepare("SELECT id FROM project_sections WHERE project_id = :project_id AND lower(title) = 'geral' LIMIT 1");
-            $sectStmt->execute([':project_id' => $projectId]);
-            $sectId = $sectStmt->fetchColumn();
-
-            if ($sectId) {
-                $sectionId = (int) $sectId;
-            } else {
-                $insSect = $pdo->prepare('INSERT INTO project_sections (project_id, title, context, position) VALUES (:project_id, :title, :context, :position)');
-                $stmtPos = $pdo->prepare('SELECT COALESCE(MAX(position), 0) + 1 FROM project_sections WHERE project_id = :project_id');
-                $stmtPos->execute([':project_id' => $projectId]);
-                $pos = (int) $stmtPos->fetchColumn();
-
-                $insSect->execute([
-                    ':project_id' => $projectId,
-                    ':title' => 'Geral',
-                    ':context' => 'Notas vinculadas diretamente ao projeto.',
-                    ':position' => $pos
-                ]);
-                $sectionId = (int) $pdo->lastInsertId();
-            }
-
-            // Verify note exists
-            $noteStmt = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id LIMIT 1');
-            $noteStmt->execute([':id' => $noteId]);
-            if (!$noteStmt->fetchColumn()) {
-                throw new RuntimeException('Nota nao encontrada.');
-            }
-
-            // Link note to section
-            $stmtNotePos = $pdo->prepare('SELECT COALESCE(MAX(position), 0) + 1 FROM project_section_notes WHERE section_id = :section_id');
-            $stmtNotePos->execute([':section_id' => $sectionId]);
-            $notePos = (int) $stmtNotePos->fetchColumn();
-
-            $stmt = $pdo->prepare('
-                INSERT INTO project_section_notes (section_id, note_id, position)
-                VALUES (:section_id, :note_id, :position)
-                ON CONFLICT (section_id, note_id) DO NOTHING
-            ');
-            $stmt->execute([
-                ':section_id' => $sectionId,
-                ':note_id' => $noteId,
-                ':position' => $notePos,
-            ]);
-
-            touch_project($pdo, $projectId);
+            $sectionId = $projectService->ensureGeneralSection($projectId);
+            $projectService->linkNoteToSection($sectionId, $noteId);
+            $projectService->touchProject($projectId);
             set_project_flash('Nota vinculada diretamente ao projeto.');
             redirect_to_project($projectId);
         }
@@ -442,17 +263,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!in_array($direction, ['up', 'down'], true)) {
                 throw new RuntimeException('Direção inválida.');
             }
-            if (fetch_project_section($pdo, $projectId, $sectionId) === null) {
+            if ($projectService->fetchSection($projectId, $sectionId) === null) {
                 throw new RuntimeException('Seção não encontrada.');
             }
 
-            move_section_note($pdo, $sectionId, $noteId, $direction);
-            touch_project($pdo, $projectId);
+            $projectService->moveNoteWithinSection($sectionId, $noteId, $direction);
+            $projectService->touchProject($projectId);
 
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json; charset=utf-8');
-                echo json_encode(['success' => true]);
-                exit;
+            if (request_is_ajax()) {
+                project_json_response(['success' => true]);
             }
 
             redirect_to_project($projectId);
@@ -471,24 +290,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new RuntimeException('Nota invalida.');
             }
 
-            $exists = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id');
-            $exists->execute([':id' => $noteId]);
-            if (!$exists->fetchColumn()) {
-                throw new RuntimeException('Nota nao encontrada.');
-            }
+            $projectService->updateNote($noteId, $quoteText, $comment);
+            $projectService->touchProject($projectId);
 
-            $update = $pdo->prepare('UPDATE article_tag_quotes SET quote_text = :quote_text, comment = :comment, updated_at = CURRENT_TIMESTAMP WHERE id = :id');
-            $update->execute([
-                ':quote_text' => $quoteText,
-                ':comment' => $comment,
-                ':id' => $noteId,
-            ]);
-
-            touch_project($pdo, $projectId);
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json; charset=utf-8');
-                echo json_encode([
+            if (request_is_ajax()) {
+                project_json_response([
                     'success' => true,
                     'note' => [
                         'id' => $noteId,
@@ -496,7 +302,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'comment' => $comment,
                     ]
                 ]);
-                exit;
             }
 
             set_project_flash('Nota atualizada.');
@@ -512,69 +317,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new RuntimeException('As seções de origem e destino são iguais.');
             }
 
-            if (fetch_project_section($pdo, $projectId, $fromSectionId) === null) {
+            if ($projectService->fetchSection($projectId, $fromSectionId) === null) {
                 throw new RuntimeException('Seção de origem não encontrada.');
             }
 
-            if (fetch_project_section($pdo, $projectId, $toSectionId) === null) {
+            if ($projectService->fetchSection($projectId, $toSectionId) === null) {
                 throw new RuntimeException('Seção de destino não encontrada.');
             }
 
-            // Check if note is linked to the from section
-            $checkStmt = $pdo->prepare('SELECT 1 FROM project_section_notes WHERE section_id = :section_id AND note_id = :note_id');
-            $checkStmt->execute([':section_id' => $fromSectionId, ':note_id' => $noteId]);
-            if (!$checkStmt->fetchColumn()) {
-                throw new RuntimeException('Nota não encontrada na seção de origem.');
-            }
+            $projectService->moveNoteToSection($fromSectionId, $toSectionId, $noteId);
+            $projectService->touchProject($projectId);
 
-            $pdo->beginTransaction();
-            try {
-                // Remove from old section
-                $delStmt = $pdo->prepare('DELETE FROM project_section_notes WHERE section_id = :section_id AND note_id = :note_id');
-                $delStmt->execute([':section_id' => $fromSectionId, ':note_id' => $noteId]);
-
-                // Insert into new section
-                $insStmt = $pdo->prepare('
-                    INSERT INTO project_section_notes (section_id, note_id, position)
-                    VALUES (:section_id, :note_id, :position)
-                    ON CONFLICT (section_id, note_id) DO NOTHING
-                ');
-                $insStmt->execute([
-                    ':section_id' => $toSectionId,
-                    ':note_id' => $noteId,
-                    ':position' => next_note_position($pdo, $toSectionId),
-                ]);
-
-                $pdo->commit();
-            } catch (Throwable $e) {
-                $pdo->rollBack();
-                throw $e;
-            }
-
-            touch_project($pdo, $projectId);
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json; charset=utf-8');
-                echo json_encode(['success' => true]);
-                exit;
+            if (request_is_ajax()) {
+                project_json_response(['success' => true]);
             }
 
             set_project_flash('Nota movida de seção.');
             redirect_to_project($projectId);
         }
     } catch (Throwable $e) {
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            header('Content-Type: application/json; charset=utf-8');
-            http_response_code(400);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-            exit;
+        if (request_is_ajax()) {
+            project_json_response(['success' => false, 'error' => $e->getMessage()], 400);
         }
         set_project_flash($e->getMessage(), 'danger');
         redirect_to_project($projectId);
     }
 }
 
-$project = fetch_project($pdo, $projectId, $userId);
+$project = $projectService->fetchProject($projectId, $userId);
 $flash = take_project_flash();
 $effectiveAgentInstructions = effective_project_agent_instructions($project);
 $defaultAgentInstructions = default_project_agent_instructions();
