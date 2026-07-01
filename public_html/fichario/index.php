@@ -29,7 +29,7 @@ require __DIR__ . '/../../fichario/bootstrap.php';
                     </div>
                     <h1 class="display-5 fw-semibold mb-3">Fichario Academico</h1>
                     <p class="lead text-body-secondary mb-4">
-                        Organize artigos, documentos, citacoes, notas de leitura e tags tematicas em um ambiente unico para pesquisa em Saude do Trabalhador.
+                        Organize artigos, documentos, citacoes, marcações de leitura e tags tematicas em um ambiente unico para pesquisa em Saude do Trabalhador.
                     </p>
                     <div class="d-flex flex-wrap justify-content-center gap-2">
                         <a href="articles.php" class="btn btn-primary btn-lg">

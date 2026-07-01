@@ -45,7 +45,7 @@ A versão consolidada atual usa PostgreSQL. As configurações de conexão ficam
 secrets/.env
 ```
 
-A estrutura é migrada automaticamente por `bootstrap.php` na primeira execução caso não existam os arquivos `.lock` correspondentes nas pastas `secrets/`, `private/` ou `data/`.
+A estrutura é migrada automaticamente por `bootstrap.php` apenas quando `FICHARIO_ALLOW_AUTO_MIGRATIONS=true` ou quando o ambiente nao for `production` e a variavel estiver ausente. Em publicacao FTP contra banco de producao, mantenha `FICHARIO_ALLOW_AUTO_MIGRATIONS=false` e nao apague arquivos `.lock` remotos sem backup e janela operacional.
 
 ## Cadastro bibliografico e referencias
 
@@ -67,7 +67,7 @@ Fluxo recomendado:
 
 ## Projetos e exportacao para agente de IA
 
-Cada projeto organiza notas vinculadas em secoes com contexto proprio. A pagina do projeto possui o botao **Exportar para agente**, que gera um pacote `.zip` para uso em ChatGPT, Claude, agentes RAG ou fluxos de redacao assistida.
+Cada projeto organiza marcações vinculadas em secoes com contexto proprio. A pagina do projeto possui o botao **Exportar**, que gera um pacote `.zip` para uso em ChatGPT, Claude, agentes RAG ou fluxos de redacao assistida.
 
 A especificacao do pacote fica em `docs/admin/project_agent_export.md`, editavel pelo painel administrativo de documentacao.
 

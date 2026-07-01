@@ -63,6 +63,19 @@ render_header('Administração');
     </div>
 </div>
 
+<div class="card mb-4">
+    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+            <h2 class="h5 mb-1">Documentacao tecnica</h2>
+            <p class="text-body-secondary mb-0">Markdowns de UX, desenvolvimento e metodologia disponiveis para inspecao e edicao por administradores.</p>
+        </div>
+        <a href="documentacao.php" class="btn btn-outline-primary">
+            <i class="bi bi-journal-code me-1" aria-hidden="true"></i>
+            Gerenciar documentos
+        </a>
+    </div>
+</div>
+
 <div class="row g-4 mb-4">
     <!-- 1. Acesso & Usuarios -->
     <div class="col-md-6 col-lg-4">

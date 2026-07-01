@@ -33,8 +33,7 @@ JS:
 
 ## Arquivos CSS movidos para quarentena
 
-- `_archive/css-theme-legacy/carex-system-md-tokens.css`: antiga referencia documental de tokens CAREX.
-- `_archive/css-theme-legacy/fichario-system-md-tokens.css`: antiga referencia documental de tokens Fichario.
+- Arquivos legados de `_archive/css-theme-legacy/`: removidos da raiz durante saneamento posterior. A regra vigente fica nos documentos centrais desta pasta `docs/`.
 
 Esses arquivos nao devem ser usados como tema ativo. O padrao valido deve estar documentado e aplicado em `public_html/assets/css/style.css`.
 

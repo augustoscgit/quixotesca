@@ -1,14 +1,14 @@
 # Administracao da Plataforma
 
-Esta pasta contem as telas administrativas compartilhadas da Plataforma RENAST.
+Esta documentacao descreve as telas administrativas compartilhadas da Plataforma RENAST.
 
 ## Documentacao visual e tema
 
 As regras de tema, CSS, Bootstrap, navbar, botoes, formularios, tabelas e contraste da Administracao ficam centralizadas em:
 
-- `../../docs/identidade-visual-ux.md`
-- `../../docs/tema-css-bootstrap-modulos.md`
-- `../../acesso/README.md`
+- `identidade-visual-ux.md`
+- `tema-css-bootstrap-modulos.md`
+- `../acesso/README.md`
 
 As telas administrativas usam o bootstrap comum do modulo Acesso (`acesso/src/bootstrap.php`) e devem renderizar com `data-module="admin"`.
 

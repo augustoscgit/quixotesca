@@ -7,6 +7,7 @@ use Carex\Http\Response;
 use Carex\Http\Security;
 
 $config = require dirname(__DIR__, 4) . '/carex' . '/src/bootstrap.php';
+require dirname(__DIR__, 4) . '/acesso/src/documentation.php';
 
 Auth::requireApiAdmin();
 
@@ -14,55 +15,58 @@ Security::applyHeaders();
 Security::allowReadOnlyRequest();
 
 try {
-    $file = trim((string) ($_GET['file'] ?? ''));
-
-    if ($file === '') {
-        Response::error('Informe o documento.', 422);
-        return;
-    }
-
     $projectRoot = dirname(__DIR__, 4);
-
-    // Allowlist of existing markdown files to prevent LFI (Local File Inclusion)
-    $allowlist = [
-        'platform/docs/bootstrap-first-planejamento.md' => $projectRoot . '/docs/bootstrap-first-planejamento.md',
-        'platform/docs/bootstrap-first-exemplos.md' => $projectRoot . '/docs/bootstrap-first-exemplos.md',
-        'platform/docs/diretrizes-visuais-renast.md' => $projectRoot . '/docs/diretrizes-visuais-renast.md',
-        'platform/docs/documentacao-visual-centralizada.md' => $projectRoot . '/docs/documentacao-visual-centralizada.md',
-        'platform/docs/tema-css-bootstrap-modulos.md' => $projectRoot . '/docs/tema-css-bootstrap-modulos.md',
-        'README.md' => $projectRoot . '/carex/README.md',
-        'landing.md' => $projectRoot . '/carex/landing.md',
-        'sobre.md' => $projectRoot . '/carex/sobre.md',
-        'criterios-conciliacao.md' => $projectRoot . '/carex/criterios-conciliacao.md',
-        'docs/api.md' => $projectRoot . '/carex/docs/api.md',
-        'docs/banco-dados.md' => $projectRoot . '/carex/docs/banco-dados.md',
-        'docs/decisoes-e-pendencias.md' => $projectRoot . '/carex/docs/decisoes-e-pendencias.md',
-        'docs/modulo-desenvolvimento.md' => $projectRoot . '/carex/docs/modulo-desenvolvimento.md',
-        'docs/modulo-trabalho.md' => $projectRoot . '/carex/docs/modulo-trabalho.md',
-        'docs/visao-geral.md' => $projectRoot . '/carex/docs/visao-geral.md',
-        'docs/migracao_producao.md' => $projectRoot . '/carex/docs/migracao_producao.md',
-    ];
-
-    if (!isset($allowlist[$file])) {
-        Response::error('Documento não autorizado ou inexistente.', 403);
-        return;
-    }
-
-    $filePath = $allowlist[$file];
-
-    if (!file_exists($filePath)) {
-        Response::error('Documento não encontrado no servidor.', 404);
-        return;
-    }
-
-    $content = file_get_contents($filePath);
-
-    Response::json([
-        'file' => $file,
-        'title' => basename($file),
-        'content' => $content
+    $docs = platform_docs_scan($projectRoot, [
+        [
+            'path' => $projectRoot . '/docs',
+            'module' => 'Plataforma',
+            'prefix' => 'platform/docs',
+        ],
+        [
+            'path' => $projectRoot . '/carex',
+            'module' => 'CAREX',
+            'prefix' => '',
+        ],
     ]);
 
+    $file = trim((string) ($_GET['file'] ?? ''));
+
+    if (($_GET['list'] ?? '') === '1' || $file === '') {
+        Response::json([
+            'documents' => array_map(static fn (array $doc): array => [
+                'name' => $doc['title'],
+                'path' => $doc['relative'],
+                'desc' => $doc['description'],
+                'category' => $doc['category'],
+                'module' => $doc['module'],
+            ], array_values($docs)),
+        ]);
+        return;
+    }
+
+    $selected = null;
+    foreach ($docs as $doc) {
+        if ($doc['relative'] === $file) {
+            $selected = $doc;
+            break;
+        }
+    }
+
+    if ($selected === null) {
+        Response::error('Documento nao autorizado ou inexistente.', 403);
+        return;
+    }
+
+    if (!is_file($selected['path'])) {
+        Response::error('Documento nao encontrado no servidor.', 404);
+        return;
+    }
+
+    Response::json([
+        'file' => $selected['relative'],
+        'title' => $selected['title'],
+        'content' => (string) file_get_contents($selected['path']),
+    ]);
 } catch (Throwable $error) {
     Response::error($config['app']['debug'] ? $error->getMessage() : 'Erro ao carregar documento.', 500);
 }

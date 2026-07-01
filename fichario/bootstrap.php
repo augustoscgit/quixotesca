@@ -164,7 +164,7 @@ function inject_default_html_metadata(string $html): string
         $title = trim(html_entity_decode(strip_tags($matches[1]), ENT_QUOTES, 'UTF-8')) ?: $title;
     }
 
-    $description = 'Fichario Academico para organizar artigos, notas, citacoes, tags tematicas e fichamentos de pesquisa.';
+    $description = 'Fichario Academico para organizar artigos, marcações, citacoes, tags tematicas e fichamentos de pesquisa.';
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
     $page = strtolower(basename($path));
     $privatePages = [
@@ -256,7 +256,9 @@ function db(): PDO
     $lockFile2 = __DIR__ . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'migration.lock';
     $lockFile3 = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'migration.lock';
 
-    if (!file_exists($lockFile1) && !file_exists($lockFile2) && !file_exists($lockFile3)) {
+    $autoMigrationsEnabled = fichario_auto_migrations_enabled();
+
+    if ($autoMigrationsEnabled && !file_exists($lockFile1) && !file_exists($lockFile2) && !file_exists($lockFile3)) {
         migrate($pdo);
         @file_put_contents($lockFile1, date('Y-m-d H:i:s'));
         @file_put_contents($lockFile2, date('Y-m-d H:i:s'));
@@ -267,7 +269,7 @@ function db(): PDO
     $projLockFile2 = __DIR__ . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'project_migration.lock';
     $projLockFile3 = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'project_migration.lock';
 
-    if (!file_exists($projLockFile1) && !file_exists($projLockFile2) && !file_exists($projLockFile3)) {
+    if ($autoMigrationsEnabled && !file_exists($projLockFile1) && !file_exists($projLockFile2) && !file_exists($projLockFile3)) {
         migrate_project_tables($pdo);
         @file_put_contents($projLockFile1, date('Y-m-d H:i:s'));
         @file_put_contents($projLockFile2, date('Y-m-d H:i:s'));
@@ -278,7 +280,7 @@ function db(): PDO
     $refLockFile2 = __DIR__ . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'article_reference_migration.lock';
     $refLockFile3 = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'article_reference_migration.lock';
 
-    if (!file_exists($refLockFile1) && !file_exists($refLockFile2) && !file_exists($refLockFile3)) {
+    if ($autoMigrationsEnabled && !file_exists($refLockFile1) && !file_exists($refLockFile2) && !file_exists($refLockFile3)) {
         ensure_article_reference_columns($pdo);
         @file_put_contents($refLockFile1, date('Y-m-d H:i:s'));
         @file_put_contents($refLockFile2, date('Y-m-d H:i:s'));
@@ -289,7 +291,7 @@ function db(): PDO
     $agentLockFile2 = __DIR__ . DIRECTORY_SEPARATOR . 'private' . DIRECTORY_SEPARATOR . 'project_agent_instructions_migration.lock';
     $agentLockFile3 = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'project_agent_instructions_migration.lock';
 
-    if (!file_exists($agentLockFile1) && !file_exists($agentLockFile2) && !file_exists($agentLockFile3)) {
+    if ($autoMigrationsEnabled && !file_exists($agentLockFile1) && !file_exists($agentLockFile2) && !file_exists($agentLockFile3)) {
         ensure_project_agent_instructions_column($pdo);
         @file_put_contents($agentLockFile1, date('Y-m-d H:i:s'));
         @file_put_contents($agentLockFile2, date('Y-m-d H:i:s'));
@@ -406,6 +408,26 @@ function migrate(PDO $pdo): void
         JOIN article_quote_tags qt ON qt.quote_id = q.id
     ");
 
+    $pdo->exec("
+        CREATE OR REPLACE VIEW article_markings AS
+        SELECT
+            id,
+            article_id,
+            quote_text,
+            comment,
+            created_at,
+            updated_at
+        FROM article_tag_quotes
+    ");
+
+    $pdo->exec("
+        CREATE OR REPLACE VIEW article_marking_tags AS
+        SELECT
+            quote_id AS marking_id,
+            tag_id
+        FROM article_quote_tags
+    ");
+
     // Create GIN indexes
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_articles_title_trgm ON articles USING gin (search_norm(title) gin_trgm_ops)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_articles_authors_trgm ON articles USING gin (search_norm(authors) gin_trgm_ops)");
@@ -479,6 +501,16 @@ function migrate_project_tables(PDO $pdo): void
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_project_sections_project_position ON project_sections(project_id, position, id)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_project_section_notes_note_id ON project_section_notes(note_id)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_project_section_notes_section_position ON project_section_notes(section_id, position, note_id)");
+
+    $pdo->exec("
+        CREATE OR REPLACE VIEW project_section_markings AS
+        SELECT
+            section_id,
+            note_id AS marking_id,
+            position,
+            created_at
+        FROM project_section_notes
+    ");
 }
 
 function ensure_article_reference_columns(PDO $pdo): void
@@ -550,6 +582,16 @@ function env_bool(string $key, bool $default = false): bool
     return in_array(strtolower(trim($value)), ['1', 'true', 'yes', 'on'], true);
 }
 
+function fichario_auto_migrations_enabled(): bool
+{
+    $explicit = env_value('FICHARIO_ALLOW_AUTO_MIGRATIONS');
+    if ($explicit !== null) {
+        return env_bool('FICHARIO_ALLOW_AUTO_MIGRATIONS', false);
+    }
+
+    return strtolower(trim((string) env_value('APP_ENV', 'production'))) !== 'production';
+}
+
 function truthy_value(mixed $value): bool
 {
     if (is_bool($value)) {
@@ -572,8 +614,8 @@ function default_project_agent_instructions(): string
         '- Use apenas fontes legais e verificaveis: DOI/editora, periodico, SciELO, PubMed/PMC, repositorios institucionais, paginas oficiais e bases academicas abertas.',
         '- Nao invente dados bibliograficos ausentes. Se algo faltar, mantenha a pendencia explicitamente.',
         '- Preserve a estrutura das secoes do projeto como eixo analitico principal.',
-        '- Use apenas as notas vinculadas ao projeto/secoes; outras notas do fichario nao foram exportadas.',
-        '- Cite os artigos usando a citacao curta indicada em cada nota e monte a lista final com as referencias ABNT fornecidas.',
+        '- Use apenas as marcações vinculadas ao projeto/secoes; outras marcações do fichario nao foram exportadas.',
+        '- Cite os artigos usando a citacao curta indicada em cada marcação e monte a lista final com as referencias ABNT fornecidas.',
         '- Diferencie citacao literal, observacao/fichamento e metadados bibliograficos.',
         '- Quando uma conclusao depender de inferencia, sinalize a inferencia.',
     ]);
@@ -1179,7 +1221,7 @@ function build_article_abnt_reference(array $article): string
     return trim((string) preg_replace('/\s+/u', ' ', implode(' ', $parts)));
 }
 
-function article_has_notes_sql(string $tableAlias = 'articles'): string
+function article_has_markings_sql(string $tableAlias = 'articles'): string
 {
     return "(
         EXISTS (
@@ -1192,4 +1234,9 @@ function article_has_notes_sql(string $tableAlias = 'articles'): string
               AND (trim(coalesce(q.quote_text, '')) <> '' OR trim(coalesce(q.comment, '')) <> '')
         )
     )";
+}
+
+function article_has_notes_sql(string $tableAlias = 'articles'): string
+{
+    return article_has_markings_sql($tableAlias);
 }

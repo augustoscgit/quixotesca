@@ -2,9 +2,15 @@
 /**
  * Diagnostic Script for CAT Module
  */
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+require_once __DIR__ . '/../../acesso/src/bootstrap.php';
+
+require_platform_admin();
+
+if (app_debug_enabled()) {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+}
 
 header('Content-Type: text/plain; charset=utf-8');
 
@@ -119,7 +125,7 @@ if (extension_loaded('curl')) {
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYPEER => true,
         CURLOPT_TIMEOUT        => 10,
         CURLOPT_USERAGENT      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     ]);

@@ -64,126 +64,116 @@ try {
     <link href="assets/tag-visualizations.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body class="module-page">
     <?php render_navbar('painel'); ?>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg legacy-hidden-navbar py-3 d-none" hidden aria-hidden="true">
-        <div class="container">
-            <div class="d-flex align-items-center gap-3 ms-auto">
-                <!-- User / Login Menu -->
-                <?php
-                $user = current_user();
-                if ($user !== null):
-                    $displayName = !empty($user['first_name']) ? $user['first_name'] : $user['name'];
-                    $adminItem = '';
-                    if (is_admin()) {
-                        $adminItem = '<li><a class="dropdown-item" href="admin.php">Painel Admin</a></li>';
-                    }
-                ?>
-                    <div class="dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1 text-decoration-none" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle fs-5 me-1"></i>
-                            Olá, <?= h($displayName) ?>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="navbarUserDropdown">
-                            <li><a class="dropdown-item" href="<?= h(access_url('index.php')) ?>">Minha conta</a></li>
-                            <?= $adminItem ?>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="<?= h(access_url('logout.php')) ?>">Sair</a></li>
-                        </ul>
-                    </div>
-                <?php else: ?>
-                    <?php $next = $_SERVER['REQUEST_URI'] ?? app_url('index.php'); ?>
-                    <a class="btn btn-outline-primary btn-sm px-3 rounded-pill text-decoration-none" href="<?= h(access_url('login.php?next=' . rawurlencode($next))) ?>">Entrar</a>
-                <?php endif; ?>
 
+    <main class="main-container py-4">
+        <header class="page-header mb-4">
+            <div>
+                <p class="text-body-secondary small text-uppercase fw-semibold mb-1">Fichario</p>
+                <h1 class="h2 mb-2">Painel</h1>
+                <p class="text-body-secondary mb-0">Acompanhe artigos, marcações e tags do acervo academico.</p>
             </div>
-        </div>
-    </nav>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="articles.php" class="btn btn-primary">
+                    <i class="bi bi-file-earmark-plus me-1"></i>Artigos
+                </a>
+                <a href="tags.php" class="btn btn-outline-secondary">
+                    <i class="bi bi-tags me-1"></i>Tags
+                </a>
+            </div>
+        </header>
 
-    <div class="main-container mt-4">
-        <!-- Dashboard Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <header class="landing-hero mb-0">
-                    <div class="mb-4 text-center">
-                        <img src="../assets/img/logo-fundo-escuro-horizontal.png" alt="RENAST" class="platform-logo-img landing-hero-logo mb-4">
-                        <h1 class="fw-bold mb-3">Fichário Acadêmico</h1>
-                    </div>
-                    <p class="subtitle">Sua biblioteca de estudos e pesquisas sobre Saúde do Trabalhador. Salve artigos colando apenas o link da internet, destaque trechos importantes e organize tudo por temas de forma simples e visual.</p>
-                    <?php if ($dbError !== ''): ?>
-                        <div class="alert alert-warning mt-4 mb-0 text-start" role="alert">
-                            <?= h($dbError) ?>
+        <?php if ($dbError !== ''): ?>
+            <div class="alert alert-warning mb-4" role="alert">
+                <?= h($dbError) ?>
+            </div>
+        <?php endif; ?>
+
+        <section class="row g-3 mb-4" aria-label="Resumo do fichario">
+            <div class="col-12 col-md-4">
+                <a href="articles.php" class="card h-100 text-decoration-none">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between gap-3">
+                            <div>
+                                <p class="text-body-secondary small mb-1">Acervo</p>
+                                <h2 class="h5 text-body mb-2">Artigos e documentos</h2>
+                                <p class="text-body-secondary small mb-0">Lista completa de estudos cadastrados.</p>
+                            </div>
+                            <span class="badge text-bg-primary fs-6 counter-val" data-target="<?= $articleCount ?>">0</span>
                         </div>
-                    <?php endif; ?>
-                </header>
-            </div>
-        </div>
-
-        <!-- Big Buttons Grid -->
-        <div class="row g-4 justify-content-center">
-            <!-- Articles Navigation -->
-            <div class="col-md-4 col-sm-6">
-                <a href="articles.php" class="action-card action-card-articles landing-nav-card">
-                    <div class="card-counter">
-                        <span class="counter-val" data-target="<?= $articleCount ?>">0</span>
                     </div>
-                    <h2 class="card-label">Artigos e documentos</h2>
-                    <p class="card-desc">Acesse a lista completa de estudos e pesquisas cadastrados, adicione novos materiais e pesquise informações importantes.</p>
                 </a>
             </div>
-
-            <!-- Citations Navigation -->
-            <div class="col-md-4 col-sm-6">
-                <a href="articles.php" class="action-card action-card-citations landing-nav-card">
-                    <div class="card-counter">
-                        <span class="counter-val" data-target="<?= $notesCount ?>">0</span>
+            <div class="col-12 col-md-4">
+                <a href="articles.php?status=fichado" class="card h-100 text-decoration-none">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between gap-3">
+                            <div>
+                                <p class="text-body-secondary small mb-1">Leitura</p>
+                                <h2 class="h5 text-body mb-2">Citações e marcações</h2>
+                                <p class="text-body-secondary small mb-0">Trechos destacados e comentarios de leitura.</p>
+                            </div>
+                            <span class="badge text-bg-primary fs-6 counter-val" data-target="<?= $notesCount ?>">0</span>
+                        </div>
                     </div>
-                    <h2 class="card-label">Citações e notas</h2>
-                    <p class="card-desc">Veja todos os trechos destacados dos textos, acompanhados de comentários e anotações de leitura.</p>
                 </a>
             </div>
-
-            <!-- Tags Navigation -->
-            <div class="col-md-4 col-sm-6">
-                <a href="tags.php" class="action-card action-card-tags landing-nav-card">
-                    <div class="card-counter">
-                        <span class="counter-val" data-target="<?= $tagCount ?>">0</span>
+            <div class="col-12 col-md-4">
+                <a href="tags.php" class="card h-100 text-decoration-none">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between gap-3">
+                            <div>
+                                <p class="text-body-secondary small mb-1">Indexacao</p>
+                                <h2 class="h5 text-body mb-2">Tags indexadas</h2>
+                                <p class="text-body-secondary small mb-0">Assuntos e palavras-chave do acervo.</p>
+                            </div>
+                            <span class="badge text-bg-primary fs-6 counter-val" data-target="<?= $tagCount ?>">0</span>
+                        </div>
                     </div>
-                    <h2 class="card-label">Tags indexadas</h2>
-                    <p class="card-desc">Explore a lista de assuntos e palavras-chave para encontrar rapidamente todos os estudos que tratam de um mesmo tema.</p>
                 </a>
             </div>
-        </div>
+        </section>
 
         <!-- Nuvem de Palavras -->
         <?php if ($tagCount > 0): ?>
-            <div class="row mt-5">
+            <div class="row g-4">
                 <div class="col-12">
-                    <div class="card p-4">
-                        <div class="d-flex justify-content-center align-items-center py-2">
-                            <canvas id="word-cloud-canvas"></canvas>
+                    <div class="card">
+                        <div class="card-header bg-body d-flex align-items-center justify-content-between">
+                            <h2 class="h5 mb-0">Nuvem de tags</h2>
+                            <a href="tags.php" class="btn btn-sm btn-outline-secondary">Ver tags</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center align-items-center py-2">
+                                <canvas id="word-cloud-canvas"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Gráfico de Relacionamento das Tags -->
+            <!-- Grafico de relacionamento das tags -->
             <?php if (count($nodes) > 0): ?>
-                <div class="row mt-5">
+                <div class="row g-4 mt-1">
                     <div class="col-12">
-                        <div id="tag-network-container" class="card tag-network-container">
-                            <div id="tag-network-viewport" class="tag-network-viewport"></div>
-                            <div id="tag-network-controls" class="tag-network-controls" aria-label="Filtros do grafo de tags"></div>
+                        <div class="card">
+                            <div class="card-header bg-body">
+                                <h2 class="h5 mb-0">Relacionamento entre tags</h2>
+                            </div>
+                            <div id="tag-network-container" class="tag-network-container">
+                                <div id="tag-network-viewport" class="tag-network-viewport"></div>
+                                <div id="tag-network-controls" class="tag-network-controls" aria-label="Filtros do grafo de tags"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             <?php endif; ?>
         <?php endif; ?>
 
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="assets/app.js?v=20260603c"></script>

@@ -11,16 +11,47 @@
 
 declare(strict_types=1);
 
-// Segurança: Se executado via Web, exige uma chave de acesso para evitar abuso.
+function load_cleanup_env_file(string $path): void
+{
+    if (!is_file($path) || !is_readable($path)) {
+        return;
+    }
+
+    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if ($lines === false) {
+        return;
+    }
+
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
+            continue;
+        }
+
+        [$key, $value] = explode('=', $line, 2);
+        $key = trim($key);
+        $value = trim(trim($value), "\"'");
+
+        if ($key !== '' && getenv($key) === false) {
+            putenv($key . '=' . $value);
+            $_ENV[$key] = $value;
+        }
+    }
+}
+
+load_cleanup_env_file(__DIR__ . '/../secrets/.env');
+load_cleanup_env_file(__DIR__ . '/../acesso/secrets/.env');
+
+// Segurança: se executado via Web, exige token configurado fora do código.
 if (PHP_SAPI !== 'cli') {
     $tokenHeader = $_SERVER['HTTP_X_CLEANUP_TOKEN'] ?? '';
     $tokenQuery = $_GET['token'] ?? '';
-    $expectedToken = 'renast_clean_2026'; // Token de segurança padrão
+    $expectedToken = (string) (getenv('SESSION_CLEANUP_TOKEN') ?: '');
 
-    if ($tokenHeader !== $expectedToken && $tokenQuery !== $expectedToken) {
+    if ($expectedToken === '' || (!hash_equals($expectedToken, (string) $tokenHeader) && !hash_equals($expectedToken, (string) $tokenQuery))) {
         http_response_code(403);
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['success' => false, 'error' => 'Acesso negado. Chave de acesso inválida ou ausente.']);
+        echo json_encode(['success' => false, 'error' => 'Acesso negado. Chave de acesso invalida, ausente ou nao configurada.']);
         exit;
     }
 }

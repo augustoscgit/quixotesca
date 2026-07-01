@@ -11,8 +11,8 @@ Edite apenas o trecho entre os marcadores abaixo para alterar o padrao herdado p
 - Use apenas fontes legais e verificaveis: DOI/editora, periodico, SciELO, PubMed/PMC, repositorios institucionais, paginas oficiais e bases academicas abertas.
 - Nao invente dados bibliograficos ausentes. Se algo faltar, mantenha a pendencia explicitamente.
 - Preserve a estrutura das secoes do projeto como eixo analitico principal.
-- Use apenas as notas vinculadas ao projeto/secoes; outras notas do fichario nao foram exportadas.
-- Cite os artigos usando a citacao curta indicada em cada nota e monte a lista final com as referencias ABNT fornecidas.
+- Use apenas as marcações vinculadas ao projeto/secoes; outras marcações do fichario nao foram exportadas.
+- Cite os artigos usando a citacao curta indicada em cada marcação e monte a lista final com as referencias ABNT fornecidas.
 - Diferencie citacao literal, observacao/fichamento e metadados bibliograficos.
 - Quando uma conclusao depender de inferencia, sinalize a inferencia.
 <!-- agent-default:end -->

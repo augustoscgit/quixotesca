@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../includes/markdown.php';
+
 spl_autoload_register(static function (string $class): void {
     $prefix = 'Carex\\';
     $baseDir = __DIR__ . DIRECTORY_SEPARATOR;

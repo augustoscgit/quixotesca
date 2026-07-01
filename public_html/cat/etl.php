@@ -338,7 +338,7 @@ try {
             <div class="modal-content card border border text-body">
                 <div class="modal-header border pb-3">
                     <h5 class="modal-title" id="logHistoryModalLabel"><i class="bi bi-receipt text-info me-2"></i>Histórico de Logs de Execução</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body py-4">
                     <h6 class="mb-3 text-body" id="log-history-target-name">Arquivo...</h6>
@@ -358,7 +358,7 @@ try {
             <div class="modal-content card border border text-body">
                 <div class="modal-header border pb-3">
                     <h5 class="modal-title" id="fileInfoModalLabel"><i class="bi bi-info-circle text-primary me-2"></i>Documentação do Arquivo</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body py-4">
                     <h6 id="file-info-target-name" class="text-primary mb-3">-</h6>

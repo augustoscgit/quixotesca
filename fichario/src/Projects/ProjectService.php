@@ -65,12 +65,17 @@ class ProjectService
         return (int) $stmt->fetchColumn();
     }
 
-    public function nextNotePosition(int $sectionId): int
+    public function nextMarkingPosition(int $sectionId): int
     {
         $stmt = $this->pdo->prepare('SELECT COALESCE(MAX(position), 0) + 1 FROM project_section_notes WHERE section_id = :section_id');
         $stmt->execute([':section_id' => $sectionId]);
 
         return (int) $stmt->fetchColumn();
+    }
+
+    public function nextNotePosition(int $sectionId): int
+    {
+        return $this->nextMarkingPosition($sectionId);
     }
 
     public function moveSection(int $projectId, int $sectionId, string $direction): void
@@ -97,14 +102,14 @@ class ProjectService
         $swap->execute([':position' => (int) $current['position'], ':id' => (int) $target['id']]);
     }
 
-    public function moveNoteWithinSection(int $sectionId, int $noteId, string $direction): void
+    public function moveMarkingWithinSection(int $sectionId, int $noteId, string $direction): void
     {
         $stmt = $this->pdo->prepare('SELECT * FROM project_section_notes WHERE section_id = :section_id AND note_id = :note_id LIMIT 1');
         $stmt->execute([':section_id' => $sectionId, ':note_id' => $noteId]);
         $current = $stmt->fetch();
 
         if (!$current) {
-            throw new RuntimeException('Nota nao vinculada a esta secao.');
+            throw new RuntimeException('Marcação nao vinculada a esta secao.');
         }
 
         $operator = $direction === 'up' ? '<' : '>';
@@ -135,6 +140,11 @@ class ProjectService
         ]);
     }
 
+    public function moveNoteWithinSection(int $sectionId, int $noteId, string $direction): void
+    {
+        $this->moveMarkingWithinSection($sectionId, $noteId, $direction);
+    }
+
     public function ensureGeneralSection(int $projectId): int
     {
         $stmt = $this->pdo->prepare("SELECT id FROM project_sections WHERE project_id = :project_id AND lower(title) = 'geral' LIMIT 1");
@@ -151,25 +161,30 @@ class ProjectService
         $insert->execute([
             ':project_id' => $projectId,
             ':title' => 'Geral',
-            ':context' => 'Notas vinculadas diretamente ao projeto.',
+            ':context' => 'Marcações vinculadas diretamente ao projeto.',
             ':position' => $this->nextSectionPosition($projectId),
         ]);
 
         return (int) $this->pdo->lastInsertId();
     }
 
-    public function assertNoteExists(int $noteId): void
+    public function assertMarkingExists(int $noteId): void
     {
         $stmt = $this->pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id LIMIT 1');
         $stmt->execute([':id' => $noteId]);
         if (!$stmt->fetchColumn()) {
-            throw new RuntimeException('Nota nao encontrada.');
+            throw new RuntimeException('Marcação nao encontrada.');
         }
     }
 
-    public function linkNoteToSection(int $sectionId, int $noteId): void
+    public function assertNoteExists(int $noteId): void
     {
-        $this->assertNoteExists($noteId);
+        $this->assertMarkingExists($noteId);
+    }
+
+    public function linkMarkingToSection(int $sectionId, int $noteId): void
+    {
+        $this->assertMarkingExists($noteId);
 
         $stmt = $this->pdo->prepare('
             INSERT INTO project_section_notes (section_id, note_id, position)
@@ -179,17 +194,27 @@ class ProjectService
         $stmt->execute([
             ':section_id' => $sectionId,
             ':note_id' => $noteId,
-            ':position' => $this->nextNotePosition($sectionId),
+            ':position' => $this->nextMarkingPosition($sectionId),
         ]);
     }
 
-    public function unlinkNoteFromSection(int $sectionId, int $noteId): void
+    public function linkNoteToSection(int $sectionId, int $noteId): void
+    {
+        $this->linkMarkingToSection($sectionId, $noteId);
+    }
+
+    public function unlinkMarkingFromSection(int $sectionId, int $noteId): void
     {
         $stmt = $this->pdo->prepare('DELETE FROM project_section_notes WHERE section_id = :section_id AND note_id = :note_id');
         $stmt->execute([':section_id' => $sectionId, ':note_id' => $noteId]);
     }
 
-    public function moveNoteToSection(int $fromSectionId, int $toSectionId, int $noteId): void
+    public function unlinkNoteFromSection(int $sectionId, int $noteId): void
+    {
+        $this->unlinkMarkingFromSection($sectionId, $noteId);
+    }
+
+    public function moveMarkingToSection(int $fromSectionId, int $toSectionId, int $noteId): void
     {
         if ($fromSectionId === $toSectionId) {
             throw new RuntimeException('As secoes de origem e destino sao iguais.');
@@ -198,13 +223,13 @@ class ProjectService
         $checkStmt = $this->pdo->prepare('SELECT 1 FROM project_section_notes WHERE section_id = :section_id AND note_id = :note_id');
         $checkStmt->execute([':section_id' => $fromSectionId, ':note_id' => $noteId]);
         if (!$checkStmt->fetchColumn()) {
-            throw new RuntimeException('Nota nao encontrada na secao de origem.');
+            throw new RuntimeException('Marcação nao encontrada na secao de origem.');
         }
 
         $this->pdo->beginTransaction();
         try {
-            $this->unlinkNoteFromSection($fromSectionId, $noteId);
-            $this->linkNoteToSection($toSectionId, $noteId);
+            $this->unlinkMarkingFromSection($fromSectionId, $noteId);
+            $this->linkMarkingToSection($toSectionId, $noteId);
             $this->pdo->commit();
         } catch (Throwable $e) {
             $this->pdo->rollBack();
@@ -212,9 +237,14 @@ class ProjectService
         }
     }
 
-    public function updateNote(int $noteId, string $quoteText, string $comment): void
+    public function moveNoteToSection(int $fromSectionId, int $toSectionId, int $noteId): void
     {
-        $this->assertNoteExists($noteId);
+        $this->moveMarkingToSection($fromSectionId, $toSectionId, $noteId);
+    }
+
+    public function updateMarking(int $noteId, string $quoteText, string $comment): void
+    {
+        $this->assertMarkingExists($noteId);
 
         $update = $this->pdo->prepare('
             UPDATE article_tag_quotes
@@ -228,7 +258,12 @@ class ProjectService
         ]);
     }
 
-    public static function noteOptionLabel(array $note): string
+    public function updateNote(int $noteId, string $quoteText, string $comment): void
+    {
+        $this->updateMarking($noteId, $quoteText, $comment);
+    }
+
+    public static function markingOptionLabel(array $note): string
     {
         $article = trim((string) ($note['article_title'] ?? 'Artigo sem titulo'));
         $year = trim((string) ($note['year'] ?? ''));
@@ -239,5 +274,10 @@ class ProjectService
         $prefix = '#' . (int) $note['id'] . ' - ' . $article . ($year !== '' ? ' (' . $year . ')' : '');
 
         return $teaser !== '' ? $prefix . ' - ' . $teaser : $prefix;
+    }
+
+    public static function noteOptionLabel(array $note): string
+    {
+        return self::markingOptionLabel($note);
     }
 }

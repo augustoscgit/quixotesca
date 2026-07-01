@@ -68,14 +68,14 @@ $projects = $stmt->fetchAll() ?: [];
     <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
 
     <?php render_navbar('projects'); ?>
 
-    <main class="container py-4 main-container">
+    <main class="main-container py-4">
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
@@ -83,12 +83,12 @@ $projects = $stmt->fetchAll() ?: [];
             </ol>
         </nav>
 
-        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <header class="page-header mb-4">
             <div>
-                <h1 class="h3 mb-1 text-body fw-bold">Projetos</h1>
-                <p class="text-secondary mb-0">Organize notas de fichamento em seções com contexto próprio.</p>
+                <h1 class="h2 mb-2">Projetos</h1>
+                <p class="text-secondary mb-0">Organize marcações de fichamento em seções com contexto próprio.</p>
             </div>
-        </div>
+        </header>
 
         <?php if ($errors !== []): ?>
             <div class="alert alert-danger" role="alert">
@@ -116,7 +116,7 @@ $projects = $stmt->fetchAll() ?: [];
                     <input class="form-control" id="description" name="description" maxlength="500" placeholder="Opcional">
                 </div>
                 <div class="col-12 d-flex justify-content-end">
-                    <button class="btn btn-primary rounded-pill px-4" type="submit">Criar projeto</button>
+                    <button class="btn btn-primary" type="submit">Criar projeto</button>
                 </div>
             </form>
         </section>
@@ -148,7 +148,7 @@ $projects = $stmt->fetchAll() ?: [];
                                     <div class="d-flex flex-wrap gap-2">
                                         <span class="project-metric"><?= (int) $project['section_count'] ?> seções</span>
                                         <span class="project-metric"><?= (int) $project['article_count'] ?> artigos</span>
-                                        <span class="project-metric"><?= (int) $project['note_count'] ?> notas</span>
+                                        <span class="project-metric"><?= (int) $project['note_count'] ?> marcações</span>
                                     </div>
                                 </div>
                             </article>

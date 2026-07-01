@@ -8,7 +8,7 @@ Este documento avalia a viabilidade de migrar a base SQLite atual do Fichario Ac
 
 A migracao e viavel, mas MySQL 5.7 deve ser tratado como alvo de compatibilidade limitada. Ele resolve melhor hospedagem compartilhada, concorrencia e operacao remota, mas perde simplicidade local do SQLite e nao oferece recursos modernos como `WITH RECURSIVE`, window functions e alguns recursos robustos de JSON/DDL presentes em versoes mais novas.
 
-Para a aplicacao atual, o ponto mais sensivel nao e armazenar artigos ou notas. O ponto sensivel e a navegacao hierarquica de tags, pois hoje algumas consultas usam CTE recursiva no SQLite. Em MySQL 5.7, sera necessario substituir esse padrao por uma estrategia propria.
+Para a aplicacao atual, o ponto mais sensivel nao e armazenar artigos ou marcações. O ponto sensivel e a navegacao hierarquica de tags, pois hoje algumas consultas usam CTE recursiva no SQLite. Em MySQL 5.7, sera necessario substituir esse padrao por uma estrategia propria.
 
 ## Escopo da base atual
 
@@ -17,10 +17,10 @@ Tabelas centrais:
 - `articles`: metadados, resumo, texto completo, referencias e campos bibliograficos.
 - `tags`: vocabulario controlado de temas, fontes e metodos.
 - `tag_hierarchy`: relacao pai/filho entre tags.
-- `article_tag_quotes`: notas; conceitualmente uma nota tem artigo, citacao opcional e observacao opcional.
-- `article_quote_tags`: relacao N:N entre notas e tags.
+- `article_tag_quotes`: marcações; conceitualmente uma marcação tem artigo, citacao opcional e observacao opcional.
+- `article_quote_tags`: relacao N:N entre marcações e tags.
 - `users`: usuarios, perfis e confirmacao/autenticacao.
-- `article_tags`: atualmente e uma view de compatibilidade sobre notas e tags.
+- `article_tags`: atualmente e uma view de compatibilidade sobre marcações e tags.
 
 ## Compatibilidade por versao
 
@@ -238,7 +238,7 @@ Indices recomendados:
 MySQL 5.7 suporta `FULLTEXT` em InnoDB. Pode ser avaliado para:
 
 - `articles(title, authors, journal, keywords, abstract, full_text, references_text)`;
-- talvez notas em `article_tag_quotes(quote_text, comment)`.
+- talvez marcações em `article_tag_quotes(quote_text, comment)`.
 
 Fragilidades:
 
@@ -291,7 +291,7 @@ Nao e necessario criar um framework pesado. Basta uma camada fina para:
 - Documentar schema conceitual atual.
 - Remover dependencia de `article_tags` como fonte principal, mantendo-a apenas como view de compatibilidade.
 - Isolar consultas com `WITH RECURSIVE`.
-- Criar testes de integridade para notas, tags e exclusao em cascata.
+- Criar testes de integridade para marcações, tags e exclusao em cascata.
 - Criar exportador neutro em JSON/NDJSON ou CSV com ordem consistente.
 
 ### Fase 2: schema MySQL
@@ -311,8 +311,8 @@ Nao e necessario criar um framework pesado. Basta uma camada fina para:
   - artigos;
   - tags;
   - hierarquia;
-  - notas;
-  - vinculos nota-tag.
+  - marcações;
+  - vinculos marcação-tag.
 - Preservar IDs sempre que possivel para manter URLs internas.
 - Recriar `AUTO_INCREMENT` apos importacao.
 - Rodar validacoes de contagem e integridade.
@@ -326,7 +326,7 @@ Nao e necessario criar um framework pesado. Basta uma camada fina para:
   - lista de artigos;
   - filtro por tag pai e filhos;
   - visualizacao de artigo;
-  - criacao/edicao/exclusao de notas;
+  - criacao/edicao/exclusao de marcações;
   - administracao de tags;
   - login e usuarios.
 
@@ -336,8 +336,8 @@ Nao e necessario criar um framework pesado. Basta uma camada fina para:
 - Comparar contagens:
   - total de artigos;
   - total de tags;
-  - total de notas;
-  - total de vinculos nota-tag;
+  - total de marcações;
+  - total de vinculos marcação-tag;
   - total de relacoes hierarquicas;
   - artigos retornados por filtros de tags importantes.
 - Fazer backup antes de qualquer deploy.
@@ -388,7 +388,7 @@ Cuidados:
 - `FULLTEXT` pode nao funcionar bem para portugues sem ajustes de servidor.
 - Hospedagem compartilhada pode limitar tamanho de conexao, tempo de execucao, importacao e privilegios de view.
 - Textos longos podem exceder `TEXT`; usar `MEDIUMTEXT` nos campos certos.
-- `GROUP_CONCAT` tem limite configuravel; notas agregadas podem truncar se o limite for baixo.
+- `GROUP_CONCAT` tem limite configuravel; marcações agregadas podem truncar se o limite for baixo.
 - Transacoes dependem de InnoDB.
 - Backups e restores por phpMyAdmin podem falhar em bases grandes.
 - O ambiente local MariaDB pode aceitar SQL que o Percona 5.7 de producao nao aceita.
@@ -399,7 +399,7 @@ Cuidados:
 
 - Melhor concorrencia para multiplos usuarios.
 - Melhor administracao remota por painel da hospedagem.
-- Indices mais previsiveis para lista de artigos, tags e notas.
+- Indices mais previsiveis para lista de artigos, tags e marcações.
 - Possibilidade de `FULLTEXT` para busca textual, se os testes forem bons.
 - Closure table de tags melhora desempenho em filtros, navegacao e futuros grafos.
 - Separacao clara entre modelo conceitual e nomes legados do banco.

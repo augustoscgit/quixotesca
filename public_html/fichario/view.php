@@ -171,7 +171,7 @@ function render_article_alerts_button(array $headerTagsByCategory): string
 
 function get_article_tags_state(PDO $pdo, int $articleId): array
 {
-    // A coluna lateral exibe notas como objetos; tags entram como atributos delas.
+    // A coluna lateral exibe marcações como objetos; tags entram como atributos delas.
     $tags = [];
     $headerTagsById = [];
 
@@ -504,7 +504,7 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                     <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                                         <div class="d-flex flex-wrap gap-1">
                                             <?php if ($isIncompleteMarking): ?>
-                                                <span class="badge text-bg-warning" title="Nota sem citação ou observação">!</span>
+                                                <span class="badge text-bg-warning" title="Marcação sem citação ou observação">!</span>
                                             <?php endif; ?>
                                             <?php if (($quote['tags'] ?? []) !== []): ?>
                                                 <?php foreach ($quote['tags'] as $quoteTag): ?>
@@ -514,29 +514,29 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                                     </a>
                                                 <?php endforeach; ?>
                                             <?php else: ?>
-                                                <span class="badge border border-warning text-warning bg-warning bg-opacity-10" title="A tag vinculada a esta nota foi excluída do vocabulário.">Sem tag</span>
+                                                <span class="badge border border-warning text-warning bg-warning bg-opacity-10" title="A tag vinculada a esta marcação foi excluída do vocabulário.">Sem tag</span>
                                             <?php endif; ?>
                                         </div>
                                         <div class="d-flex gap-2 flex-shrink-0">
-                                            <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="openMarkingReadFromButton(this)" title="Ler nota">
+                                            <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="openMarkingReadFromButton(this)" title="Ler marcação">
                                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
                                             </button>
                                             <?php if ($canEditArticle): ?>
-                                                <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="editQuoteFromButton(this)" title="Editar nota">
+                                                <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="editQuoteFromButton(this)" title="Editar marcação">
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                                                 </button>
-                                                <button class="btn btn-sm btn-link p-0 text-danger" type="button" onclick="deleteQuoteFromButton(this)" title="Excluir nota">&times;</button>
+                                                <button class="btn btn-sm btn-link p-0 text-danger" type="button" onclick="deleteQuoteFromButton(this)" title="Excluir marcação">&times;</button>
                                             <?php else: ?>
-                                                <button class="btn btn-sm btn-link p-0 text-body-secondary locked-action" type="button" onclick="showAuthRequired()" title="Editar nota">
+                                                <button class="btn btn-sm btn-link p-0 text-body-secondary locked-action" type="button" onclick="showAuthRequired()" title="Editar marcação">
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                                                 </button>
-                                                <button class="btn btn-sm btn-link p-0 text-danger locked-action" type="button" onclick="showAuthRequired()" title="Excluir nota">&times;</button>
+                                                <button class="btn btn-sm btn-link p-0 text-danger locked-action" type="button" onclick="showAuthRequired()" title="Excluir marcação">&times;</button>
                                             <?php endif; ?>
                                         </div>
                                     </div>
                                     <div class="note-content">
                                         <?php if ($isIncompleteMarking): ?>
-                                            <em class="text-secondary">Nota sem citação ou observação.</em>
+                                            <em class="text-secondary">Marcação sem citação ou observação.</em>
                                         <?php else: ?>
                                             <?php if ($quoteText !== ''): ?>
                                                 <div class="marking-preview marking-preview-quote mb-2">
@@ -584,7 +584,7 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
 
                                             <?php if ($canEditArticle): ?>
                                                 <div class="d-flex flex-column gap-1">
-                                                    <label class="form-label small text-body-secondary mb-0" for="note-link-select-<?= $noteId ?>">Vincular esta nota a uma seção</label>
+                                                    <label class="form-label small text-body-secondary mb-0" for="note-link-select-<?= $noteId ?>">Vincular esta marcação a uma seção</label>
                                                     <select class="form-select form-select-sm py-0 px-2" id="note-link-select-<?= $noteId ?>" onchange="handleNoteLinkAction(<?= $noteId ?>, this)">
                                                         <option value="">+ Vincular a uma seção...</option>
                                                         <option value="0">Vincular diretamente (Geral)</option>
@@ -1063,7 +1063,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
         if ($noteId <= 0) {
-            echo json_encode(['success' => false, 'error' => 'Nota inválida.']);
+            echo json_encode(['success' => false, 'error' => 'Marcação inválida.']);
             exit;
         }
 
@@ -1074,7 +1074,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $noteStmt = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id AND article_id = :article_id LIMIT 1');
             $noteStmt->execute([':id' => $noteId, ':article_id' => $id]);
             if (!$noteStmt->fetchColumn()) {
-                throw new RuntimeException('Nota não encontrada para este artigo.');
+                throw new RuntimeException('Marcação não encontrada para este artigo.');
             }
 
             // If sectionId is 0, find/create "Geral" section
@@ -1093,7 +1093,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $insSect->execute([
                         ':project_id' => $activeProjectId,
                         ':title' => 'Geral',
-                        ':context' => 'Notas vinculadas diretamente ao projeto.',
+                        ':context' => 'Marcações vinculadas diretamente ao projeto.',
                         ':position' => $pos
                     ]);
                     $sectionId = (int) $pdo->lastInsertId();
@@ -1144,7 +1144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
         if ($noteId <= 0) {
-            echo json_encode(['success' => false, 'error' => 'Nota inválida.']);
+            echo json_encode(['success' => false, 'error' => 'Marcação inválida.']);
             exit;
         }
         if ($sectionTitle === '') {
@@ -1159,7 +1159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $noteStmt = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id AND article_id = :article_id LIMIT 1');
             $noteStmt->execute([':id' => $noteId, ':article_id' => $id]);
             if (!$noteStmt->fetchColumn()) {
-                throw new RuntimeException('Nota não encontrada para este artigo.');
+                throw new RuntimeException('Marcação não encontrada para este artigo.');
             }
 
             // Create new section
@@ -1605,7 +1605,7 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
             <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="quoteModalLabel">Criar nota</h5>
+                        <h5 class="modal-title" id="quoteModalLabel">Criar marcação</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
                     <div class="modal-body">
@@ -1631,7 +1631,7 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary text-body" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="btn-save-tag-quote">Salvar nota</button>
+                        <button type="button" class="btn btn-primary" id="btn-save-tag-quote">Salvar marcação</button>
                     </div>
                 </div>
             </div>
@@ -1642,7 +1642,7 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="markingReadModalLabel">Leitura da nota</h5>
+                    <h5 class="modal-title" id="markingReadModalLabel">Leitura da marcação</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
@@ -2486,8 +2486,8 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
         async function confirmDelete(button) {
             const notesCount = Number(button?.dataset.articleNotesCount || 0);
             const notesMessage = notesCount > 0
-                ? ` Este artigo possui ${notesCount} nota(s); elas e seus vínculos com tags também serão excluídos.`
-                : ' Este artigo não possui notas vinculadas.';
+                ? ` Este artigo possui ${notesCount} marcação(ões); elas e seus vínculos com tags também serão excluídos.`
+                : ' Este artigo não possui marcações vinculadas.';
             const ok = await FicharioUI.confirm({
                 title: 'Excluir artigo',
                 message: `Excluir definitivamente este artigo do acervo?${notesMessage} Esta ação não pode ser desfeita.`,
@@ -2728,10 +2728,10 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
             const title = document.getElementById('quoteModalLabel');
             const saveButton = document.getElementById('btn-save-tag-quote');
             if (title) {
-                title.textContent = mode === 'edit' ? 'Editar nota' : 'Criar nota';
+                title.textContent = mode === 'edit' ? 'Editar marcação' : 'Criar marcação';
             }
             if (saveButton) {
-                saveButton.textContent = mode === 'edit' ? 'Salvar alterações' : 'Salvar nota';
+                saveButton.textContent = mode === 'edit' ? 'Salvar alterações' : 'Salvar marcação';
             }
         }
 
@@ -2871,9 +2871,9 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
             const quoteId = card ? Number(card.dataset.quoteId || 0) : 0;
             if (!quoteId) return;
             const ok = await FicharioUI.confirm({
-                title: 'Excluir nota',
-                message: 'Excluir esta nota? Os vínculos com tags também serão removidos.',
-                confirmText: 'Excluir nota',
+                title: 'Excluir marcação',
+                message: 'Excluir esta marcação? Os vínculos com tags também serão removidos.',
+                confirmText: 'Excluir marcação',
                 variant: 'danger'
             });
             if (!ok) return;
@@ -2896,10 +2896,10 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
                 if (data.success) {
                     updateTagsPanel(data);
                 } else {
-                    alert(data.error || 'Não foi possível excluir a nota.');
+                    alert(data.error || 'Não foi possível excluir a marcação.');
                 }
             })
-            .catch(() => alert('Falha de rede ao excluir a nota.'))
+            .catch(() => alert('Falha de rede ao excluir a marcação.'))
             .finally(releaseDeleteBusy);
         }
 
@@ -2946,12 +2946,12 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
                         quoteModal.hide();
                         editingQuoteId = 0;
                     } else {
-                        errorEl.textContent = data.error || 'Não foi possível salvar a nota.';
+                        errorEl.textContent = data.error || 'Não foi possível salvar a marcação.';
                         errorEl.classList.remove('d-none');
                     }
                 })
                 .catch(() => {
-                    errorEl.textContent = 'Falha de rede ao salvar a nota.';
+                    errorEl.textContent = 'Falha de rede ao salvar a marcação.';
                     errorEl.classList.remove('d-none');
                 })
                 .finally(() => {
@@ -3063,20 +3063,20 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
                 if (data.success) {
                     updateTagsPanel(data);
                 } else {
-                    alert('Erro ao vincular nota: ' + (data.error || 'Erro desconhecido'));
+                    alert('Erro ao vincular marcação: ' + (data.error || 'Erro desconhecido'));
                     selectEl.value = '';
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert('Erro de rede ao vincular nota.');
+                alert('Erro de rede ao vincular marcação.');
                 selectEl.value = '';
             })
             .finally(releaseBusy);
         }
 
         function unlinkNoteFromSection(noteId, sectionId) {
-            if (!confirm('Deseja realmente desvincular esta nota desta seção do projeto?')) {
+            if (!confirm('Deseja realmente desvincular esta marcação desta seção do projeto?')) {
                 return;
             }
 
@@ -3101,12 +3101,12 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
                 if (data.success) {
                     updateTagsPanel(data);
                 } else {
-                    alert('Erro ao desvincular nota: ' + (data.error || 'Erro desconhecido'));
+                    alert('Erro ao desvincular marcação: ' + (data.error || 'Erro desconhecido'));
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert('Erro de rede ao desvincular nota.');
+                alert('Erro de rede ao desvincular marcação.');
             })
             .finally(releaseBusy);
         }
@@ -3140,7 +3140,7 @@ $articleReferenceMissing = article_abnt_missing_fields($article);
                 if (data.success) {
                     updateTagsPanel(data);
                 } else {
-                    alert('Erro ao criar seção e vincular nota: ' + (data.error || 'Erro desconhecido'));
+                    alert('Erro ao criar seção e vincular marcação: ' + (data.error || 'Erro desconhecido'));
                 }
             })
             .catch(err => {

@@ -3,9 +3,15 @@
  * Diagnostic Script for LDRT Deployment
  * Upload this to the server to debug why index.php is not loading.
  */
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+require_once __DIR__ . '/../../acesso/src/bootstrap.php';
+
+require_platform_admin();
+
+if (app_debug_enabled()) {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+}
 
 header('Content-Type: text/plain; charset=utf-8');
 

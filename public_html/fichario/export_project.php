@@ -341,26 +341,26 @@ function export_article_access_urls(array $article): array
     return $deduped;
 }
 
-function export_note_text(array $note): string
+function export_marking_text(array $marking): string
 {
     $lines = [];
-    $lines[] = '- Nota #' . (int) $note['id'] . ' | Artigo ' . $note['article_key'] . ' | Citacao curta: ' . $note['citation_label'];
-    if (($note['tags'] ?? []) !== []) {
-        $tagNames = array_map(static fn (array $tag): string => (string) ($tag['name'] ?? ''), $note['tags']);
+    $lines[] = '- Marcação #' . (int) $marking['id'] . ' | Artigo ' . $marking['article_key'] . ' | Citacao curta: ' . $marking['citation_label'];
+    if (($marking['tags'] ?? []) !== []) {
+        $tagNames = array_map(static fn (array $tag): string => (string) ($tag['name'] ?? ''), $marking['tags']);
         $tagNames = array_values(array_filter($tagNames, static fn (string $name): bool => $name !== ''));
         if ($tagNames !== []) {
-            $lines[] = '  Tags da nota: ' . implode('; ', $tagNames);
+            $lines[] = '  Tags da marcação: ' . implode('; ', $tagNames);
         }
     }
-    if (export_text($note['quote_text'] ?? '') !== '') {
+    if (export_text($marking['quote_text'] ?? '') !== '') {
         $lines[] = '  Citacao literal:';
-        foreach (explode("\n", export_text($note['quote_text'])) as $line) {
+        foreach (explode("\n", export_text($marking['quote_text'])) as $line) {
             $lines[] = '  > ' . $line;
         }
     }
-    if (export_text($note['comment'] ?? '') !== '') {
+    if (export_text($marking['comment'] ?? '') !== '') {
         $lines[] = '  Observacao/fichamento:';
-        foreach (explode("\n", export_text($note['comment'])) as $line) {
+        foreach (explode("\n", export_text($marking['comment'])) as $line) {
             $lines[] = '  ' . $line;
         }
     }
@@ -374,7 +374,7 @@ function export_agent_context(array $payload): string
     $lines = [];
     $lines[] = '# Pacote de contexto para agente de IA';
     $lines[] = '';
-    $lines[] = 'Finalidade: apoiar a redacao de relatorio, nota tecnica, artigo ou sintese com base no projeto exportado do Fichario.';
+    $lines[] = 'Finalidade: apoiar a redacao de relatorio, documento tecnico, artigo ou sintese com base no projeto exportado do Fichario.';
     $lines[] = '';
     $lines[] = '## Regras para o agente';
     foreach (explode("\n", export_text($payload['agent_instructions'] ?? '')) as $instructionLine) {
@@ -390,7 +390,7 @@ function export_agent_context(array $payload): string
     $lines[] = 'ID: ' . (int) $project['id'];
     $lines[] = 'Titulo: ' . export_single_line($project['title'] ?? '');
     $lines[] = 'Exportado em: ' . $payload['generated_at'];
-    $lines[] = 'Escopo das notas: somente notas vinculadas ao projeto.';
+    $lines[] = 'Escopo das marcações: somente marcações vinculadas ao projeto.';
     $lines[] = 'Texto completo dos artigos: nao incluido nesta exportacao; use as URLs, DOI, PDF URL e consultas sugeridas para buscar os textos completos quando necessario.';
     $lines[] = '';
     if (export_text($project['description'] ?? '') !== '') {
@@ -416,7 +416,7 @@ function export_agent_context(array $payload): string
         $lines[] = '';
     }
 
-    $lines[] = '## Estrutura, contextos e notas';
+    $lines[] = '## Estrutura, contextos e marcações';
     foreach ($payload['sections'] as $section) {
         $lines[] = '';
         $lines[] = '### Secao ' . (int) $section['order'] . ': ' . export_single_line($section['title'] ?? '');
@@ -427,13 +427,14 @@ function export_agent_context(array $payload): string
         } else {
             $lines[] = 'Contexto da secao: nao informado.';
         }
-        $lines[] = 'Notas vinculadas nesta secao: ' . count($section['notes']);
-        if ($section['notes'] === []) {
-            $lines[] = '- Nenhuma nota vinculada.';
+        $sectionMarkings = $section['markings'] ?? [];
+        $lines[] = 'Marcações vinculadas nesta secao: ' . count($sectionMarkings);
+        if ($sectionMarkings === []) {
+            $lines[] = '- Nenhuma marcação vinculada.';
             continue;
         }
-        foreach ($section['notes'] as $note) {
-            $lines[] = export_note_text($note);
+        foreach ($sectionMarkings as $marking) {
+            $lines[] = export_marking_text($marking);
         }
     }
 
@@ -673,17 +674,17 @@ $sectionStmt = $pdo->prepare('
 $sectionStmt->execute([':project_id' => $projectId]);
 $sections = $sectionStmt->fetchAll() ?: [];
 
-$notesStmt = $pdo->prepare("
+$markingsStmt = $pdo->prepare("
     SELECT
         psn.section_id,
-        psn.note_id,
-        psn.position AS note_position,
+        psn.note_id AS marking_id,
+        psn.position AS marking_position,
         psn.created_at AS linked_at,
         q.id,
         q.quote_text,
         q.comment,
-        q.created_at AS note_created_at,
-        q.updated_at AS note_updated_at,
+        q.created_at AS marking_created_at,
+        q.updated_at AS marking_updated_at,
         COALESCE((
             SELECT json_agg(json_build_object(
                 'id', t.id,
@@ -728,10 +729,10 @@ $notesStmt = $pdo->prepare("
     WHERE s.project_id = :project_id
     ORDER BY s.position ASC, s.id ASC, psn.position ASC, psn.note_id ASC
 ");
-$notesStmt->execute([':project_id' => $projectId]);
-$linkedRows = $notesStmt->fetchAll() ?: [];
+$markingsStmt->execute([':project_id' => $projectId]);
+$linkedRows = $markingsStmt->fetchAll() ?: [];
 
-$notesBySection = [];
+$markingsBySection = [];
 $articlesById = [];
 foreach ($linkedRows as $row) {
     $articleId = (int) $row['article_id'];
@@ -763,19 +764,19 @@ foreach ($linkedRows as $row) {
             'data_year_end' => $row['data_year_end'],
             'created_at' => $row['article_created_at'],
             'updated_at' => $row['article_updated_at'],
-            'note_ids' => [],
+            'marking_ids' => [],
         ];
     }
-    $articlesById[$articleId]['note_ids'][] = (int) $row['note_id'];
+    $articlesById[$articleId]['marking_ids'][] = (int) $row['marking_id'];
 
-    $notesBySection[(int) $row['section_id']][] = [
-        'id' => (int) $row['note_id'],
-        'position' => (int) $row['note_position'],
+    $markingsBySection[(int) $row['section_id']][] = [
+        'id' => (int) $row['marking_id'],
+        'position' => (int) $row['marking_position'],
         'linked_at' => $row['linked_at'],
         'quote_text' => $row['quote_text'],
         'comment' => $row['comment'],
-        'created_at' => $row['note_created_at'],
-        'updated_at' => $row['note_updated_at'],
+        'created_at' => $row['marking_created_at'],
+        'updated_at' => $row['marking_updated_at'],
         'tags' => export_decode_json_array($row['tags_json']),
         'article_id' => $articleId,
     ];
@@ -796,7 +797,7 @@ foreach ($articles as $index => &$article) {
     $article['doi_url'] = export_doi_url($article['doi'] ?? '');
     $article['access_urls'] = export_article_access_urls($article);
     $article['search_queries'] = export_article_search_queries($article);
-    $article['note_ids'] = array_values(array_unique(array_map('intval', $article['note_ids'] ?? [])));
+    $article['marking_ids'] = array_values(array_unique(array_map('intval', $article['marking_ids'] ?? [])));
     $articleKeysById[(int) $article['id']] = $article['article_key'];
 }
 unset($article);
@@ -809,13 +810,13 @@ foreach ($articles as $article) {
 $payloadSections = [];
 foreach ($sections as $index => $section) {
     $sectionId = (int) $section['id'];
-    $sectionNotes = $notesBySection[$sectionId] ?? [];
-    foreach ($sectionNotes as &$note) {
-        $article = $articlesById[(int) $note['article_id']] ?? [];
-        $note['article_key'] = $article['article_key'] ?? ('artigo-' . (int) $note['article_id']);
-        $note['citation_label'] = $article['citation_label'] ?? 'AUTOR, s.d.';
+    $sectionMarkings = $markingsBySection[$sectionId] ?? [];
+    foreach ($sectionMarkings as &$marking) {
+        $article = $articlesById[(int) $marking['article_id']] ?? [];
+        $marking['article_key'] = $article['article_key'] ?? ('artigo-' . (int) $marking['article_id']);
+        $marking['citation_label'] = $article['citation_label'] ?? 'AUTOR, s.d.';
     }
-    unset($note);
+    unset($marking);
 
     $payloadSections[] = [
         'id' => $sectionId,
@@ -825,7 +826,7 @@ foreach ($sections as $index => $section) {
         'position' => (int) $section['position'],
         'created_at' => $section['created_at'],
         'updated_at' => $section['updated_at'],
-        'notes' => $sectionNotes,
+        'markings' => $sectionMarkings,
     ];
 }
 
@@ -844,7 +845,7 @@ $payload = [
     'agent_instructions_source' => $agentInstructionsSource,
     'scope' => [
         'project_id' => $projectId,
-        'notes' => 'only notes linked to this project sections',
+        'markings' => 'only markings linked to this project sections',
         'article_full_text' => 'excluded; retrieval metadata and direct URLs are included',
         'anonymization' => 'none',
     ],
@@ -864,10 +865,10 @@ $manifest = [
     'files' => [
         'AGENT_CONTEXT.md' => 'Primary context file for the AI agent.',
         'SOURCE_RETRIEVAL_GUIDE.md' => 'Step-by-step guide for finding full texts and PDFs.',
-        'project_export.json' => 'Structured export preserving sections, contexts, notes, articles and ABNT references.',
+        'project_export.json' => 'Structured export preserving sections, contexts, markings, articles and ABNT references.',
         'articles_index.csv' => 'Flat article index with DOI, URLs, PDF URLs, ABNT status and search queries.',
         'source_retrieval.json' => 'Machine-readable retrieval checklist for cited articles.',
-        'references_abnt.txt' => 'ABNT references for articles cited by linked notes.',
+        'references_abnt.txt' => 'ABNT references for articles cited by linked markings.',
         'references.bib' => 'BibTeX records from stored metadata, when available.',
         'articles/*.md' => 'One support file per cited article, without full_text.',
     ],

@@ -683,7 +683,7 @@
                     const match = badge.textContent.match(/(\d+)/);
                     if (match) {
                         const count = parseInt(match[1]) + change;
-                        badge.textContent = `${count} nota(s)`;
+                        badge.textContent = `${count} marcação(ões)`;
                     }
                 };
 
@@ -710,9 +710,9 @@
                 if (sourceStack && sourceStack.querySelector('.note-card') === null) {
                     let placeholderHtml = '';
                     if (sourceContainerId === 'section-general') {
-                        placeholderHtml = '<div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">Nenhuma nota vinculada diretamente ao projeto.</div>';
+                        placeholderHtml = '<div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">Nenhuma marcação vinculada diretamente ao projeto.</div>';
                     } else {
-                        placeholderHtml = '<div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">Nenhuma nota vinculada a esta seção.</div>';
+                        placeholderHtml = '<div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">Nenhuma marcação vinculada a esta seção.</div>';
                     }
                     sourceStack.remove();
                     sourceBody.innerHTML = placeholderHtml;
@@ -769,7 +769,7 @@
                     });
 
                     if (!response.ok) {
-                        let errorMessage = 'Erro ao mover a nota de seção.';
+                        let errorMessage = 'Erro ao mover a marcação de seção.';
                         try {
                             const errResult = await response.json();
                             if (errResult && errResult.error) {
@@ -781,7 +781,7 @@
 
                     const result = await response.json();
                     if (!result.success) {
-                        throw new Error(result.error || 'Erro ao mover a nota de seção.');
+                        throw new Error(result.error || 'Erro ao mover a marcação de seção.');
                     }
 
                     // Success glow
@@ -860,7 +860,7 @@
                 });
 
                 if (!response.ok) {
-                    let errorMessage = isNote ? 'Erro ao mover a nota.' : 'Erro ao mover a seção.';
+                    let errorMessage = isNote ? 'Erro ao mover a marcação.' : 'Erro ao mover a seção.';
                     try {
                         const errResult = await response.json();
                         if (errResult && errResult.error) {
@@ -872,7 +872,7 @@
 
                 const result = await response.json();
                 if (!result.success) {
-                    throw new Error(result.error || (isNote ? 'Erro ao mover a nota.' : 'Erro ao mover a seção.'));
+                    throw new Error(result.error || (isNote ? 'Erro ao mover a marcação.' : 'Erro ao mover a seção.'));
                 }
 
                 // Success! Apply highlight to the card
@@ -926,7 +926,7 @@
                 });
 
                 if (!response.ok) {
-                    let errorMessage = 'Erro ao atualizar a nota.';
+                    let errorMessage = 'Erro ao atualizar a marcação.';
                     try {
                         const errResult = await response.json();
                         if (errResult && errResult.error) {
@@ -938,7 +938,7 @@
 
                 const result = await response.json();
                 if (!result.success) {
-                    throw new Error(result.error || 'Erro ao atualizar a nota.');
+                    throw new Error(result.error || 'Erro ao atualizar a marcação.');
                 }
 
                 // Close the modal
@@ -984,7 +984,7 @@
                     noteCard.classList.add('note-card-highlight');
                 });
 
-                showToast('Nota atualizada com sucesso!');
+                showToast('Marcação atualizada com sucesso!');
 
             } catch (error) {
                 showToast(error.message || 'Erro ao salvar alterações.', 'danger');

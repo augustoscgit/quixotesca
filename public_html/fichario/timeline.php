@@ -91,7 +91,7 @@ try {
     // Fetch articles with a valid year, ordered by year desc and title asc, and select their fichamento status
     $stmt = $pdo->prepare("
         SELECT id, title, authors, year, journal,
-               (" . article_has_notes_sql('articles') . ") AS is_fichado
+               (" . article_has_markings_sql('articles') . ") AS is_fichado
         FROM articles
         WHERE $whereSql
         ORDER BY year DESC, lower(title) ASC
@@ -183,15 +183,12 @@ try {
     <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
-    <!-- Background Animated Blobs -->
-
-
     <?php render_navbar('timeline'); ?>
 
-    <main class="container py-4 main-container">
+    <main class="main-container py-4">
         <!-- Breadcrumbs -->
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
@@ -200,11 +197,12 @@ try {
             </ol>
         </nav>
 
-        <!-- Top heading -->
-        <div class="mb-4">
-            <h1 class="h3 mb-1 text-body fw-bold">Linha do Tempo de Artigos</h1>
-            <p class="text-secondary mb-0">Explore a produção acadêmica fichada em ordem cronológica de publicação. Clique nos anos para expandir.</p>
-        </div>
+        <header class="page-header mb-4">
+            <div>
+                <h1 class="h2 mb-2">Linha do Tempo de Artigos</h1>
+                <p class="text-secondary mb-0">Explore a produção acadêmica fichada em ordem cronológica de publicação. Clique nos anos para expandir.</p>
+            </div>
+        </header>
 
         <!-- Filter Form -->
         <form class="card p-4 mb-4" method="get">
@@ -288,7 +286,7 @@ try {
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary w-100 rounded-pill"><i class="bi bi-funnel me-1"></i> Filtrar</button>
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel me-1"></i> Filtrar</button>
                 </div>
             </div>
 
@@ -325,20 +323,11 @@ try {
                 <p class="text-secondary mb-0">Nenhum artigo encontrado para o filtro selecionado.</p>
             </div>
         <?php else: ?>
-            <div class="timeline-container" id="timelineAccordion">
-                <div class="timeline-line"></div>
+            <div class="timeline-container" aria-label="Linha do tempo vertical de artigos">
+                <?php
+                krsort($articlesByYear, SORT_NUMERIC);
 
-                <?php 
-                $maxYear = max(array_keys($articlesByYear));
-                $minYear = min(array_keys($articlesByYear));
-                
-                for ($year = $maxYear; $year >= $minYear; $year--):
-                    $hasArticles = isset($articlesByYear[$year]);
-                    
-                    if ($hasArticles):
-                        $yearArticles = $articlesByYear[$year];
-                        $collapseId = 'collapse-' . $year;
-                        $headerId = 'heading-' . $year;
+                foreach ($articlesByYear as $year => $yearArticles):
                         $count = count($yearArticles);
 
                         // Calculate fichados in this year
@@ -349,13 +338,6 @@ try {
                             }
                         }
                         
-                        $titleText = $count === 1 ? '1 artigo' : $count . ' artigos';
-                        $titleText .= ' (' . $fichadosInYear . '/' . $count . ')';
-
-                        $tooltipText = $fichadosInYear === 1 ? '1 fichado' : $fichadosInYear . ' fichados';
-                        $tooltipText .= ' de ';
-                        $tooltipText .= $count === 1 ? '1 cadastrado' : $count . ' cadastrados';
-
                         // Collect and deduplicate tags for this year
                         $yearTags = [];
                         foreach ($yearArticles as $article) {
@@ -375,98 +357,80 @@ try {
                             return ($a['name'] ?? '') <=> ($b['name'] ?? '');
                         });
                 ?>
-                    <div class="timeline-item">
-                        <div class="timeline-point"></div>
-                        <div class="timeline-year-label"><?= $year ?></div>
-                        <div class="timeline-connector"></div>
-
-                        <div class="timeline-card card">
-                            <!-- Clickable Card Header -->
-                            <div class="timeline-card-header" 
-                                 id="<?= $headerId ?>"
-                                 data-bs-toggle="collapse" 
-                                 data-bs-target="#<?= $collapseId ?>" 
-                                 aria-expanded="false" 
-                                 aria-controls="<?= $collapseId ?>"
-                                 title="<?= h($tooltipText) ?>">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-folder2-open text-primary fs-5"></i>
-                                        <span class="fw-semibold">
-                                            <?= h($titleText) ?>
-                                        </span>
+                    <section class="timeline-item" aria-labelledby="timeline-year-<?= (int) $year ?>">
+                        <div class="timeline-year" id="timeline-year-<?= (int) $year ?>"><?= (int) $year ?></div>
+                        <div class="timeline-marker" aria-hidden="true">
+                            <span class="timeline-dot"></span>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="card timeline-year-summary mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+                                        <div>
+                                            <p class="text-body-secondary small mb-1">Resumo do ano</p>
+                                            <h2 class="h5 mb-1"><?= $count === 1 ? '1 artigo' : $count . ' artigos' ?></h2>
+                                            <p class="text-body-secondary mb-0"><?= $fichadosInYear ?> fichado(s) de <?= $count ?> cadastrado(s)</p>
+                                        </div>
+                                        <span class="badge text-bg-primary"><?= $fichadosInYear ?>/<?= $count ?></span>
                                     </div>
-                                    <i class="bi bi-chevron-down text-secondary transition-transform"></i>
+
+                                    <?php if (!empty($yearTags)): ?>
+                                        <div class="d-flex flex-wrap gap-1 mt-3">
+                                            <?php foreach (array_slice($yearTags, 0, 18) as $tag): ?>
+                                                <span class="badge border tag-badge" title="<?= h($tag['category'] ?? '') ?>">
+                                                    <?= h($tag['name']) ?>
+                                                </span>
+                                            <?php endforeach; ?>
+                                            <?php if (count($yearTags) > 18): ?>
+                                                <span class="badge text-bg-secondary">+<?= count($yearTags) - 18 ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
-
-                                <!-- Unique Tags for the Year (Visible even when collapsed) -->
-                                <?php if (!empty($yearTags)): ?>
-                                    <div class="d-flex flex-wrap gap-1 mt-2 timeline-year-tags">
-                                        <?php foreach ($yearTags as $tag): 
-                                            $colors = get_tag_colors($tag['category'] ?? '');
-                                        ?>
-                                            <span class="tag-badge border" 
-                                                 
-                                                  title="<?= h($tag['category'] ?? '') ?>">
-                                                <?= h($tag['name']) ?>
-                                            </span>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php endif; ?>
                             </div>
 
-                            <!-- Collapsible Content -->
-                            <div id="<?= $collapseId ?>" 
-                                 class="collapse" 
-                                 aria-labelledby="<?= $headerId ?>" 
-                                 data-bs-parent="#timelineAccordion">
-                                <div class="pt-3 mt-3 border-top">
-                                    <div class="timeline-stack">
-                                        <?php foreach ($yearArticles as $index => $article): ?>
-                                            <div class="timeline-stack-item <?= $index > 0 ? 'border-top pt-3 mt-1' : '' ?>">
-                                                <h3 class="timeline-article-title">
-                                                    <a href="view.php?id=<?= h((string)$article['id']) ?>">
+                            <div class="timeline-article-list">
+                                <?php foreach ($yearArticles as $article): ?>
+                                    <article class="card timeline-article">
+                                        <div class="card-body">
+                                            <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
+                                                <h3 class="timeline-article-title mb-0">
+                                                    <a href="view.php?id=<?= h((string) $article['id']) ?>" class="stretched-link text-decoration-none">
                                                         <?= h($article['title']) ?>
                                                     </a>
                                                 </h3>
-                                                <div class="timeline-article-meta text-secondary">
-                                                    <?php if (!empty($article['authors'])): ?>
-                                                        <span><i class="bi bi-person me-1"></i><?= h($article['authors']) ?></span>
-                                                    <?php endif; ?>
-                                                    <?php if (!empty($article['journal'])): ?>
-                                                        <span class="ms-2"><i class="bi bi-journal-text me-1"></i><?= h($article['journal']) ?></span>
-                                                    <?php endif; ?>
-                                                </div>
-                                                
-                                                <!-- Tags specific to this article -->
-                                                <?php if (!empty($tagsByArticleId[(int)$article['id']])): ?>
-                                                    <div class="d-flex flex-wrap gap-1 mt-2">
-                                                        <?php foreach ($tagsByArticleId[(int)$article['id']] as $tag): 
-                                                            $colors = get_tag_colors($tag['category'] ?? '');
-                                                        ?>
-                                                            <span class="tag-badge border" 
-                                                                 
-                                                                  title="<?= h($tag['category'] ?? '') ?>">
-                                                                <?= h($tag['name']) ?>
-                                                            </span>
-                                                        <?php endforeach; ?>
-                                                    </div>
+                                                <span class="badge <?= !empty($article['is_fichado']) ? 'text-bg-success' : 'text-bg-secondary' ?>">
+                                                    <?= !empty($article['is_fichado']) ? 'Fichado' : 'Cadastrado' ?>
+                                                </span>
+                                            </div>
+                                            <div class="timeline-article-meta text-body-secondary small">
+                                                <?php if (!empty($article['authors'])): ?>
+                                                    <span><i class="bi bi-person me-1" aria-hidden="true"></i><?= h($article['authors']) ?></span>
+                                                <?php endif; ?>
+                                                <?php if (!empty($article['journal'])): ?>
+                                                    <span><i class="bi bi-journal-text me-1" aria-hidden="true"></i><?= h($article['journal']) ?></span>
                                                 <?php endif; ?>
                                             </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
+
+                                            <?php if (!empty($tagsByArticleId[(int) $article['id']])): ?>
+                                                <div class="d-flex flex-wrap gap-1 mt-3">
+                                                    <?php foreach (array_slice($tagsByArticleId[(int) $article['id']], 0, 10) as $tag): ?>
+                                                        <span class="badge border tag-badge" title="<?= h($tag['category'] ?? '') ?>">
+                                                            <?= h($tag['name']) ?>
+                                                        </span>
+                                                    <?php endforeach; ?>
+                                                    <?php if (count($tagsByArticleId[(int) $article['id']]) > 10): ?>
+                                                        <span class="badge text-bg-secondary">+<?= count($tagsByArticleId[(int) $article['id']]) - 10 ?></span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </article>
+                                <?php endforeach; ?>
                             </div>
                         </div>
-                    </div>
-                <?php else: ?>
-                    <!-- Empty Year (Maintains vertical scale) -->
-                    <div class="timeline-item-empty">
-                        <div class="timeline-point-empty"></div>
-                        <div class="timeline-year-label-empty"><?= $year ?></div>
-                    </div>
-                <?php endif; ?>
-                <?php endfor; ?>
+                    </section>
+                <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </main>

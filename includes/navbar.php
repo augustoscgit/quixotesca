@@ -290,13 +290,27 @@ if (!function_exists('render_platform_navbar')) {
                 'brand_label' => 'fichário',
                 'brand_url' => $relPath . 'fichario/index.php',
                 'items' => [
-                    'painel' => ['url' => $relPath . 'fichario/painel.php', 'label' => 'Painel', 'icon' => 'bi bi-speedometer2'],
-                    'articles' => ['url' => $relPath . 'fichario/articles.php', 'label' => 'Artigos', 'icon' => 'bi bi-file-earmark-text'],
+                    'painel' => ['url' => $relPath . 'fichario/painel.php', 'label' => 'Visão geral', 'icon' => 'bi bi-speedometer2'],
+                    'acervo' => [
+                        'label' => 'Acervo',
+                        'icon' => 'bi bi-journal-text',
+                        'dropdown' => [
+                            'articles' => ['url' => $relPath . 'fichario/articles.php', 'label' => 'Artigos', 'icon' => 'bi bi-file-earmark-text'],
+                            'editor' => ['url' => $relPath . 'fichario/editor.php', 'label' => 'Novo artigo', 'icon' => 'bi bi-plus-circle', 'role' => ['admin', 'user']],
+                            'tags' => ['url' => $relPath . 'fichario/tags.php', 'label' => 'Tags e conceitos', 'icon' => 'bi bi-tags'],
+                            'timeline' => ['url' => $relPath . 'fichario/timeline.php', 'label' => 'Linha do tempo', 'icon' => 'bi bi-clock-history'],
+                        ],
+                    ],
                     'projects' => ['url' => $relPath . 'fichario/projects.php', 'label' => 'Projetos', 'icon' => 'bi bi-folder2'],
-                    'tags' => ['url' => $relPath . 'fichario/tags.php', 'label' => 'Tags', 'icon' => 'bi bi-tags'],
-                    'timeline' => ['url' => $relPath . 'fichario/timeline.php', 'label' => 'Timeline', 'icon' => 'bi bi-clock-history'],
-                    'admin' => ['url' => $relPath . 'fichario/admin.php', 'label' => 'Admin', 'icon' => 'bi bi-shield-lock', 'role' => 'admin'],
-                    'docs' => ['url' => $relPath . 'fichario/admin_docs.php', 'label' => 'Documentos', 'icon' => 'bi bi-file-earmark-text', 'role' => 'admin'],
+                    'admin' => [
+                        'label' => 'Administração',
+                        'icon' => 'bi bi-shield-lock',
+                        'role' => 'admin',
+                        'dropdown' => [
+                            'admin' => ['url' => $relPath . 'fichario/admin.php', 'label' => 'Painel administrativo', 'icon' => 'bi bi-sliders'],
+                            'docs' => ['url' => $relPath . 'fichario/admin_docs.php', 'label' => 'Documentação interna', 'icon' => 'bi bi-file-earmark-text'],
+                        ],
+                    ],
                 ]
             ],
             'ldrt' => [
@@ -345,6 +359,7 @@ if (!function_exists('render_platform_navbar')) {
                     'inicio' => ['url' => $relPath . 'admin/index.php', 'label' => 'Painel', 'icon' => 'bi bi-grid-fill'],
                     'usuarios' => ['url' => $relPath . 'admin/usuarios.php', 'label' => 'Usuários', 'icon' => 'bi bi-people-fill'],
                     'permissoes' => ['url' => $relPath . 'admin/permissoes.php', 'label' => 'Papéis', 'icon' => 'bi bi-shield-lock-fill'],
+                    'documentacao' => ['url' => $relPath . 'admin/documentacao.php', 'label' => 'Documentacao', 'icon' => 'bi bi-journal-code'],
                 ]
             ]
         ];
@@ -401,14 +416,25 @@ if (!function_exists('render_platform_navbar')) {
                     $isDropdownActive = false;
                     $dropdownHtml = '';
                     foreach ($item['dropdown'] as $subKey => $subItem) {
+                        if (isset($subItem['role'])) {
+                            $allowedRoles = (array) $subItem['role'];
+                            if (!$user || !in_array((string) ($user['role'] ?? 'public'), $allowedRoles, true)) {
+                                continue;
+                            }
+                        }
+
                         $isSubActive = ($activePage === $subKey);
                         if ($isSubActive) {
                             $isDropdownActive = true;
                         }
                         $subActiveAttr = $isSubActive ? 'active' : '';
-                        $dropdownHtml .= '<li><a class="dropdown-item ' . $subActiveAttr . '" href="' . $subItem['url'] . '">' . htmlspecialchars($subItem['label'], ENT_QUOTES, 'UTF-8') . '</a></li>';
+                        $subIcon = isset($subItem['icon']) ? '<i class="' . htmlspecialchars((string) $subItem['icon'], ENT_QUOTES, 'UTF-8') . ' me-2" aria-hidden="true"></i>' : '';
+                        $dropdownHtml .= '<li><a class="dropdown-item ' . $subActiveAttr . '" href="' . $subItem['url'] . '">' . $subIcon . htmlspecialchars($subItem['label'], ENT_QUOTES, 'UTF-8') . '</a></li>';
                     }
-                    $activeClass = $isDropdownActive ? 'active fw-bold' : '';
+                    if ($dropdownHtml === '') {
+                        continue;
+                    }
+                    $activeClass = ($activePage === $key || $isDropdownActive) ? 'active fw-bold' : '';
                     echo '      <li class="nav-item dropdown">';
                     echo '        <a class="nav-link dropdown-toggle ' . $activeClass . '" href="#" id="navbarDrop_' . $key . '" role="button" data-bs-toggle="dropdown" aria-expanded="false">';
                     echo '          ' . htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8');

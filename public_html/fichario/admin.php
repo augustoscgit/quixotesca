@@ -22,15 +22,17 @@ $inactiveUsers = access_inactive_users_count();
     <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
-    <!-- Background Animated Blobs -->
-
-
     <?php render_admin_navbar('admin'); ?>
-    <main class="container py-4 main-container">
-        <h1 class="h3 mb-4 text-body fw-bold">Painel Administrativo</h1>
+    <main class="main-container py-4">
+        <header class="page-header mb-4">
+            <div>
+                <h1 class="h2 mb-2">Painel Administrativo</h1>
+                <p class="text-body-secondary mb-0">Acompanhe o acervo e acesse rotinas de manutencao do Fichario.</p>
+            </div>
+        </header>
         
         <div class="row g-3 mb-5">
             <div class="col-md-3">

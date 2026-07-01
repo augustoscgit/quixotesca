@@ -72,10 +72,10 @@
 
 - A versão consolidada atual da plataforma usa PostgreSQL. As configurações de conexão ficam em `secrets/.env` ou `private/.env`.
 - PostgreSQL 15.6 e extensoes `unaccent`, `pg_trgm` sao utilizados para busca textual e autocomplete robustos.
-- Tabelas para artigos, tags, usuarios, projetos e notas estruturadas com indices GIN e relacionamentos em cascata.
+- Tabelas para artigos, tags, usuarios, projetos e marcações estruturadas com indices GIN e relacionamentos em cascata.
 - Artigos devem armazenar BibTeX original, referencia ABNT curada, indicador de trava da ABNT e pendencias de metadados para revisao bibliografica.
 - Projetos devem armazenar orientacoes opcionais para agente de IA; quando vazias, herdam o padrao central definido em `default_agent_instructions.md`.
-- Tabelas para artigos, tags, usuarios e notas estruturadas com índices GIN e relacionamentos em cascata.
+- Tabelas para artigos, tags, usuarios e marcações estruturadas com índices GIN e relacionamentos em cascata.
 - A estrutura de banco de dados é migrada automaticamente na primeira execução através do `bootstrap.php`.
 
 ### MySQL 5.7 futuro

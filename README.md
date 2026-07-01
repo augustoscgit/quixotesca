@@ -66,6 +66,7 @@ Ao integrar ou atualizar um módulo, certifique-se de:
 
 A organização da documentação de aparência, UX, design e interface está centralizada em:
 
+- `docs/README.md`
 - `docs/documentacao-visual-centralizada.md`
 - `docs/tema-css-bootstrap-modulos.md`
 - `docs/diretrizes-visuais-renast.md`

@@ -1,8 +1,9 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Content-Type');
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: same-origin');
 
 require_once __DIR__ . '/../../ldrt/src/db.php';
 
@@ -74,6 +75,6 @@ try {
     http_response_code(500);
     echo json_encode([
         'status' => 'error',
-        'message' => $e->getMessage()
+        'message' => 'Erro ao consultar dados.'
     ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 }

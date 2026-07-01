@@ -1,7 +1,7 @@
 <?php
 /**
- * Database connection helper using PDO and .env credentials
- * Automatically runs migrations if database tables are missing.
+ * Database connection helper using PDO and .env credentials.
+ * Runtime schema updates require CAT_ALLOW_SCHEMA_UPDATES=true.
  */
 
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
@@ -74,6 +74,7 @@ function getDBConnection(): PDO
     $pass = $env['DB_PASSWORD'] ?? '';
     $schema = $env['DB_SCHEMA'] ?? 'cat';
     $sslmode = $env['DB_SSLMODE'] ?? '';
+    $allowSchemaUpdates = catEnvBool($env, 'CAT_ALLOW_SCHEMA_UPDATES', false);
 
     foreach (['DB_HOST' => $host, 'DB_DATABASE' => $db, 'DB_USERNAME' => $user, 'DB_PASSWORD' => $pass] as $key => $value) {
         if ($value === '') {
@@ -109,16 +110,29 @@ function getDBConnection(): PDO
         $stmt->execute(['schema' => $schema]);
         $baseTableExists = filter_var($stmt->fetchColumn(), FILTER_VALIDATE_BOOLEAN);
 
-        if (!$baseTableExists) {
+        if (!$baseTableExists && $allowSchemaUpdates) {
             runMigration($pdo);
+        } elseif (!$baseTableExists) {
+            throw new Exception('CAT schema is missing and CAT_ALLOW_SCHEMA_UPDATES is not enabled.');
         }
 
-        ensureRuntimeSchema($pdo);
+        if ($allowSchemaUpdates) {
+            ensureRuntimeSchema($pdo);
+        }
 
         return $pdo;
     } catch (PDOException $e) {
         throw new Exception("Database connection failed: " . $e->getMessage());
     }
+}
+
+function catEnvBool(array $env, string $key, bool $default = false): bool
+{
+    if (!array_key_exists($key, $env)) {
+        return $default;
+    }
+
+    return in_array(strtolower(trim((string) $env[$key])), ['1', 'true', 'yes', 'on'], true);
 }
 
 function ensureRuntimeSchema(PDO $pdo): void

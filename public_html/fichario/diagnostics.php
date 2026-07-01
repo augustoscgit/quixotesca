@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+require __DIR__ . '/../../fichario/bootstrap.php';
+
+require_admin();
+
 // Disable output buffering to send output in real-time if needed
 if (function_exists('ob_end_clean')) {
     @ob_end_clean();
@@ -150,7 +154,7 @@ $results['env_keys'] = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
     <div class="card">
@@ -167,7 +171,7 @@ $results['env_keys'] = [
                             <span class="status-dot status-<?= $item['status'] ?>"></span>
                             <?= htmlspecialchars($item['title']) ?>
                         </h2>
-                        <span class="badge bg-<?= $item['status'] === 'success' ? 'success-subtle text-success' : ($item['status'] === 'warning' ? 'warning-subtle text-warning' : 'danger-subtle text-danger') ?> px-2.5 py-1 rounded-pill">
+                        <span class="badge bg-<?= $item['status'] === 'success' ? 'success-subtle text-success' : ($item['status'] === 'warning' ? 'warning-subtle text-warning' : 'danger-subtle text-danger') ?> px-2.5 py-1">
                             <?= htmlspecialchars($item['value']) ?>
                         </span>
                     </div>
@@ -179,7 +183,7 @@ $results['env_keys'] = [
         </div>
 
         <div class="mt-4 pt-3 border-top border border-opacity-20 d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <a href="index.php" class="btn btn-outline-primary rounded-pill px-4 text-body border-primary">
+            <a href="index.php" class="btn btn-outline-primary">
                 Ir para o Início
             </a>
             <span class="text-secondary small">Sugestão: Exclua este arquivo após resolver os problemas para evitar expor o status do servidor.</span>

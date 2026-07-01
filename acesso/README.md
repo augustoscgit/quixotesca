@@ -51,15 +51,15 @@ carex.admin
 
 ## Administrador inicial
 
-Se `acesso.users` estiver vazia, o modulo cria:
+Se `acesso.users` estiver vazia, o modulo cria o administrador inicial apenas quando `ACCESS_ADMIN_PASSWORD` estiver configurada no `.env` de producao.
 
 ```text
-email: augustosc@gmail.com
-usuario: augustosc
-senha: admin
+ACCESS_ADMIN_EMAIL=seu-email@example.org
+ACCESS_ADMIN_USERNAME=admin
+ACCESS_ADMIN_PASSWORD=uma-senha-forte
 ```
 
-Trocar a senha em `Usuarios` depois do primeiro acesso.
+Em ambiente local/debug, se `ACCESS_ADMIN_PASSWORD` estiver vazia, ainda e permitido o fallback `admin` para facilitar desenvolvimento. Nao use esse fallback em producao.
 
 ## Evolucao futura
 

@@ -76,7 +76,7 @@ Landpages sao portas de entrada simples:
 Paginas internas sao ambientes de trabalho:
 
 - devem usar a navbar completa do modulo, sempre pela fonte comum;
-- devem iniciar com titulo objetivo, subtitulo curto quando necessario e acoes principais alinhadas;
+- devem iniciar com `.page-header`: titulo objetivo, subtitulo curto quando necessario e acoes principais alinhadas;
 - breadcrumbs usam `.breadcrumb` sem cor fixa;
 - filtros ficam em `.card` ou faixa de formulario Bootstrap, com labels visiveis;
 - tabelas usam `.table`, `.table-responsive`, `.align-middle` e cabecalho claro;

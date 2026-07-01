@@ -6,3 +6,39 @@
 .status-badge {
     min-width: 6rem;
 }
+
+.admin-doc-preview {
+    border-top: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+    padding-top: 1.5rem;
+}
+
+.admin-doc-preview pre,
+.admin-doc-editor {
+    min-height: 32rem;
+}
+
+.admin-doc-preview pre {
+    background: var(--bs-tertiary-bg);
+    border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    padding: 1rem;
+    white-space: pre-wrap;
+}
+
+.admin-doc-preview blockquote {
+    border-left: .25rem solid var(--bs-primary-border-subtle);
+    color: var(--bs-secondary-color);
+    margin: 1rem 0;
+    padding: .5rem 1rem;
+}
+
+.admin-doc-editor {
+    font-family: var(--bs-font-monospace);
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.doc-list {
+    max-height: 44rem;
+    overflow: auto;
+}

@@ -9,12 +9,12 @@ DirectoryIndex index.php index.html
 Options -Indexes
 
 # Protect sensitive files and generated artifacts.
-<FilesMatch "(^\.|\.env$|\.sql$|\.bak$|\.backup$|\.dump$|\.log$|\.sqlite$|\.sqlite3$|\.db$|\.zip$|\.rar$|\.7z$)">
+<FilesMatch "(^\.|\.md$|\.env$|\.sql$|\.bak$|\.backup$|\.dump$|\.log$|\.sqlite$|\.sqlite3$|\.db$|\.zip$|\.rar$|\.7z$)">
   Require all denied
   Deny from all
 </FilesMatch>
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteRule ^(\.git|\.agents|\.codex|includes|secrets|carex/(config|src|tools|docs|secrets|private)|fichario/(private|secrets|data|docs|system_md|tests)|ldrt/(secrets|database))(/|$) - [R=404,L]
+  RewriteRule ^(\.git|\.agents|\.codex|docs|includes|scratch|_archive|secrets|carex/(config|src|tools|docs|secrets|private)|cat/(database|docs|src)|fichario/(private|secrets|data|docs|system_md|tests)|investigacao/docs|ldrt/(docs|secrets|database))(/|$) - [R=404,L]
 </IfModule>

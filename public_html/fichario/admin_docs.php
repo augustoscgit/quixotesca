@@ -2,165 +2,95 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../../fichario/bootstrap.php';
+require __DIR__ . '/../../acesso/src/documentation.php';
 require_admin();
 
-$docs = [
-    'requirements' => [
-        'title' => 'Requisitos da aplicação',
-        'path' => __DIR__ . '/docs/admin/application_requirements.md',
-        'description' => 'Ambiente, banco de dados, segurança, APIs externas e versionamento.',
+$projectRoot = dirname(__DIR__, 2);
+$moduleRoot = $projectRoot . '/fichario';
+$docs = platform_docs_scan($projectRoot, [
+    [
+        'path' => $moduleRoot,
+        'module' => 'Fichario',
+        'prefix' => '',
     ],
-    'admin_docs' => [
-        'title' => 'Documentação administrativa',
-        'path' => __DIR__ . '/docs/admin/admin_documentation.md',
-        'description' => 'Como manter a documentação interna pela área administrativa.',
-    ],
-    'developer' => [
-        'title' => 'Orientações de desenvolvedor',
-        'path' => __DIR__ . '/docs/developer/developer_guidelines.md',
-        'description' => 'Convenções para manutenção, fluxo de leitura e evolução da aplicação.',
-    ],
-    'mysql_migration' => [
-        'title' => 'Migração para MySQL',
-        'path' => __DIR__ . '/docs/developer/mysql_migration_plan.md',
-        'description' => 'Proposta, riscos e planejamento para MySQL 5.7 ou superior.',
-    ],
-    'ftp_security' => [
-        'title' => 'Seguranca no FTP',
-        'path' => __DIR__ . '/system_md/FTP_SECURITY.md',
-        'description' => 'Tratamento de pastas publicas, privadas e protegidas na hospedagem por FTP.',
-    ],
-];
+]);
 
-$selected = (string) ($_GET['doc'] ?? $_POST['doc'] ?? 'requirements');
+if ($docs === []) {
+    http_response_code(500);
+    exit('Nenhum documento Markdown interno encontrado para o Fichario.');
+}
+
+$selected = (string) ($_GET['doc'] ?? $_POST['doc'] ?? array_key_first($docs));
 if (!isset($docs[$selected])) {
-    $selected = 'requirements';
+    $selected = (string) array_key_first($docs);
+}
+
+$categoryFilter = (string) ($_GET['categoria'] ?? 'Todos');
+$categories = array_values(array_unique(array_map(static fn (array $doc): string => $doc['category'], $docs)));
+if (!in_array($categoryFilter, $categories, true)) {
+    $categoryFilter = 'Todos';
+}
+
+$matchesFilter = static fn (array $item): bool => $categoryFilter === 'Todos' || $item['category'] === $categoryFilter;
+if (!$matchesFilter($docs[$selected])) {
+    foreach ($docs as $key => $item) {
+        if ($matchesFilter($item)) {
+            $selected = $key;
+            break;
+        }
+    }
 }
 
 $notice = '';
 $errors = [];
 $doc = $docs[$selected];
 
-function render_markdown(string $markdown): string
-{
-    $lines = preg_split('/\R/', $markdown) ?: [];
-    $html = '';
-    $inList = false;
-    $paragraph = [];
-
-    $flushParagraph = static function () use (&$html, &$paragraph): void {
-        if ($paragraph === []) {
-            return;
-        }
-        $text = h(implode(' ', $paragraph));
-        $text = preg_replace('/`([^`]+)`/', '<code>$1</code>', $text);
-        $html .= '<p>' . $text . '</p>';
-        $paragraph = [];
-    };
-
-    $closeList = static function () use (&$html, &$inList): void {
-        if ($inList) {
-            $html .= '</ul>';
-            $inList = false;
-        }
-    };
-
-    foreach ($lines as $line) {
-        $trim = trim($line);
-
-        if ($trim === '') {
-            $flushParagraph();
-            $closeList();
-            continue;
-        }
-
-        if (preg_match('/^(#{1,3})\s+(.+)$/', $trim, $m)) {
-            $flushParagraph();
-            $closeList();
-            $level = strlen($m[1]);
-            $class = $level === 1 ? 'h3 text-body fw-bold mt-0' : ($level === 2 ? 'h5 text-body fw-semibold mt-4' : 'h6 text-secondary text-uppercase mt-3');
-            $html .= '<h' . $level . ' class="' . $class . '">' . h($m[2]) . '</h' . $level . '>';
-            continue;
-        }
-
-        if (preg_match('/^[-*]\s+(.+)$/', $trim, $m)) {
-            $flushParagraph();
-            if (!$inList) {
-                $html .= '<ul>';
-                $inList = true;
-            }
-            $item = h($m[1]);
-            $item = preg_replace('/`([^`]+)`/', '<code>$1</code>', $item);
-            $html .= '<li>' . $item . '</li>';
-            continue;
-        }
-
-        $paragraph[] = $trim;
-    }
-
-    $flushParagraph();
-    $closeList();
-
-    return $html;
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_csrf();
-    $content = (string) ($_POST['content'] ?? '');
-    $path = $doc['path'];
-    $allowedRoots = array_filter([
-        realpath(__DIR__ . '/docs'),
-        realpath(__DIR__ . '/system_md'),
-    ]);
-    $targetDir = realpath(dirname($path));
-    $isAllowedTarget = false;
+    $content = str_replace(["\r\n", "\r"], "\n", (string) ($_POST['content'] ?? ''));
+    $target = realpath($doc['path']);
+    $moduleRootReal = realpath($moduleRoot);
 
-    foreach ($allowedRoots as $root) {
-        if ($targetDir !== false && str_starts_with($targetDir, $root)) {
-            $isAllowedTarget = true;
-            break;
-        }
-    }
+    $isInternal = $target !== false
+        && $moduleRootReal !== false
+        && str_starts_with(platform_docs_normalize_path($target), rtrim(platform_docs_normalize_path($moduleRootReal), '/') . '/')
+        && !str_contains(platform_docs_normalize_path($target), '/public_html/');
 
-    if (!$isAllowedTarget) {
-        $errors[] = 'Documento fora da pasta permitida.';
+    if (!$isInternal || !is_file((string) $target) || !is_writable((string) $target)) {
+        $errors[] = 'Documento inexistente, publico ou sem permissao de escrita.';
+    } elseif (file_put_contents((string) $target, $content) === false) {
+        $errors[] = 'Nao foi possivel salvar o documento.';
     } else {
-        $ok = file_put_contents($path, str_replace(["\r\n", "\r"], "\n", $content));
-        if ($ok === false) {
-            $errors[] = 'Não foi possível salvar o documento.';
-        } else {
-            $notice = 'Documento salvo.';
-        }
+        $notice = 'Documento salvo.';
     }
 }
 
 $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : '';
+$filteredDocs = array_filter($docs, $matchesFilter);
 ?>
 <!doctype html>
 <html lang="pt-br" data-module="fichario">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Documentação - Fichário Acadêmico</title>
+    <title>Documentacao - Fichario Academico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
-
-
     <?php render_admin_navbar('docs'); ?>
-    <main class="container py-4 main-container">
-        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-center mb-4">
+    <main class="main-container py-4">
+        <header class="page-header mb-4">
             <div>
-                <h1 class="h3 text-body fw-bold mb-1">Documentação</h1>
-                <p class="text-secondary mb-0">Requisitos, manutenção e orientações internas editáveis em Markdown.</p>
+                <h1 class="h2 mb-2">Documentacao</h1>
+                <p class="text-secondary mb-0">Markdowns internos do Fichario para leitura e edicao controlada.</p>
             </div>
-            <a class="btn btn-outline-secondary text-body rounded-pill px-3" href="admin.php">Voltar ao painel</a>
-        </div>
+            <a class="btn btn-outline-secondary" href="admin.php">Voltar ao painel</a>
+        </header>
 
         <?php if ($notice !== ''): ?>
             <div class="alert alert-success"><?= h($notice) ?></div>
@@ -178,12 +108,20 @@ $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : ''
         <div class="row g-4">
             <aside class="col-lg-3">
                 <div class="card p-3">
+                    <h2 class="h6 text-body fw-bold mb-3">Tipos</h2>
+                    <div class="nav nav-pills flex-column gap-2 mb-4">
+                        <a class="nav-link <?= $categoryFilter === 'Todos' ? 'active' : '' ?>" href="admin_docs.php?doc=<?= h($selected) ?>&categoria=Todos">Todos</a>
+                        <?php foreach ($categories as $category): ?>
+                            <a class="nav-link <?= $categoryFilter === $category ? 'active' : '' ?>" href="admin_docs.php?doc=<?= h($selected) ?>&categoria=<?= h(rawurlencode($category)) ?>"><?= h($category) ?></a>
+                        <?php endforeach; ?>
+                    </div>
+
                     <h2 class="h6 text-body fw-bold mb-3">Arquivos</h2>
                     <div class="vstack gap-2">
-                        <?php foreach ($docs as $key => $item): ?>
-                            <a class="btn text-start rounded-3 <?= $selected === $key ? 'btn-primary' : 'btn-outline-secondary text-body' ?>" href="admin_docs.php?doc=<?= h($key) ?>">
+                        <?php foreach ($filteredDocs as $key => $item): ?>
+                            <a class="btn text-start rounded-3 <?= $selected === $key ? 'btn-primary' : 'btn-outline-secondary text-body' ?>" href="admin_docs.php?doc=<?= h($key) ?>&categoria=<?= h(rawurlencode($categoryFilter)) ?>">
                                 <span class="fw-semibold d-block"><?= h($item['title']) ?></span>
-                                <span class="small opacity-75"><?= h($item['description']) ?></span>
+                                <span class="small opacity-75"><?= h($item['relative']) ?></span>
                             </a>
                         <?php endforeach; ?>
                     </div>
@@ -196,27 +134,25 @@ $content = is_file($doc['path']) ? (string) file_get_contents($doc['path']) : ''
                     <input type="hidden" name="doc" value="<?= h($selected) ?>">
                     <div class="d-flex flex-column flex-md-row justify-content-between gap-3 align-items-md-start mb-3">
                         <div>
+                            <span class="badge text-bg-primary mb-2"><?= h($doc['category']) ?></span>
                             <h2 class="h5 text-body fw-bold mb-1"><?= h($doc['title']) ?></h2>
-                            <p class="text-secondary small mb-0"><?= h(str_replace(__DIR__ . DIRECTORY_SEPARATOR, '', $doc['path'])) ?></p>
+                            <p class="text-secondary small mb-0"><?= h($doc['relative']) ?></p>
                         </div>
                         <div class="d-flex gap-2 doc-actions">
-                            <button type="button" class="btn btn-outline-primary rounded-pill px-3" id="btn-doc-edit" title="Editar Markdown">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-                                <span class="ms-1">Editar</span>
+                            <button type="button" class="btn btn-outline-primary" id="btn-doc-edit" title="Editar Markdown">
+                                <i class="bi bi-pencil me-1" aria-hidden="true"></i>Editar
                             </button>
-                            <button type="submit" class="btn btn-primary rounded-pill px-3 d-none" id="btn-doc-save" title="Salvar Markdown">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
-                                <span class="ms-1">Salvar</span>
+                            <button type="submit" class="btn btn-primary d-none" id="btn-doc-save" title="Salvar Markdown">
+                                <i class="bi bi-save me-1" aria-hidden="true"></i>Salvar
                             </button>
-                            <button type="button" class="btn btn-outline-secondary text-body rounded-pill px-3 d-none" id="btn-doc-cancel" title="Cancelar edição">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                <span class="ms-1">Cancelar</span>
+                            <button type="button" class="btn btn-outline-secondary d-none" id="btn-doc-cancel" title="Cancelar edicao">
+                                <i class="bi bi-x-lg me-1" aria-hidden="true"></i>Cancelar
                             </button>
                         </div>
                     </div>
 
                     <article class="markdown-preview" id="doc-preview">
-                        <?= render_markdown($content) ?>
+                        <?= platform_docs_render_markdown($content) ?>
                     </article>
 
                     <div class="d-none" id="doc-editor-wrap">

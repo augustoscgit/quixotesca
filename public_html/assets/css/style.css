@@ -230,6 +230,34 @@ body::after {
     width: 100%;
 }
 
+.page-header {
+    align-items: flex-start;
+    border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+}
+
+.page-header h1 {
+    color: var(--bs-heading-color);
+}
+
+.card[href],
+a.card {
+    color: inherit;
+    transition: border-color .15s ease, background-color .15s ease;
+}
+
+.card[href]:hover,
+.card[href]:focus-visible,
+a.card:hover,
+a.card:focus-visible {
+    background: var(--bs-tertiary-bg);
+    border-color: var(--bs-primary-border-subtle);
+}
+
 .hero-section,
 .module-hero,
 .page-hero {
@@ -451,6 +479,115 @@ body::after {
     position: relative;
 }
 
+.timeline-container {
+    display: grid;
+    gap: 1.25rem;
+    margin-inline: auto;
+    max-width: 58rem;
+}
+
+.timeline-item {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: minmax(4.5rem, 7rem) 1.5rem minmax(0, 1fr);
+    position: relative;
+}
+
+.timeline-marker {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.timeline-marker::before {
+    background: var(--bs-border-color);
+    bottom: -1.25rem;
+    content: "";
+    position: absolute;
+    top: 1.5rem;
+    width: var(--bs-border-width);
+}
+
+.timeline-item:last-child .timeline-marker::before {
+    content: none;
+}
+
+.timeline-dot {
+    align-items: center;
+    background: var(--bs-body-bg);
+    border: .25rem solid var(--bs-primary);
+    border-radius: 50%;
+    display: inline-flex;
+    height: 1rem;
+    justify-content: center;
+    position: relative;
+    width: 1rem;
+    z-index: 1;
+}
+
+.timeline-year {
+    color: var(--bs-heading-color);
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1;
+    padding-top: .125rem;
+    text-align: right;
+}
+
+.timeline-content {
+    min-width: 0;
+}
+
+.timeline-year-summary {
+    border-left: .25rem solid var(--bs-primary-border-subtle);
+}
+
+.timeline-article-list {
+    display: grid;
+    gap: .75rem;
+}
+
+.timeline-article {
+    background: var(--bs-body-bg);
+}
+
+.timeline-article-title {
+    font-size: 1rem;
+    line-height: 1.35;
+}
+
+.timeline-article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem 1rem;
+}
+
+@media (max-width: 767.98px) {
+    .timeline-container {
+        gap: 1rem;
+    }
+
+    .timeline-item {
+        gap: .75rem;
+        grid-template-columns: 1.25rem minmax(0, 1fr);
+    }
+
+    .timeline-year {
+        grid-column: 2;
+        text-align: left;
+    }
+
+    .timeline-marker {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+    }
+
+    .timeline-content {
+        grid-column: 2;
+    }
+}
+
 .graph-container,
 #tagGraph,
 #relationshipGraph,
@@ -509,6 +646,72 @@ body::after {
 .reader-content,
 .markdown-body {
     overflow-wrap: anywhere;
+}
+
+.fichario-markdown {
+    line-height: 1.65;
+}
+
+.fichario-markdown > :last-child {
+    margin-bottom: 0;
+}
+
+.fichario-markdown h3,
+.fichario-markdown h4,
+.fichario-markdown h5,
+.fichario-markdown h6 {
+    font-weight: 700;
+    margin-bottom: .5rem;
+    margin-top: 1rem;
+}
+
+.fichario-markdown p,
+.fichario-markdown ul,
+.fichario-markdown ol,
+.fichario-markdown blockquote,
+.fichario-markdown pre {
+    margin-bottom: .75rem;
+}
+
+.fichario-markdown blockquote {
+    border-left: .25rem solid var(--bs-border-color);
+    color: var(--bs-secondary-color);
+    padding-left: .875rem;
+}
+
+.fichario-markdown code {
+    background-color: var(--bs-tertiary-bg);
+    border-radius: var(--bs-border-radius-sm);
+    color: var(--bs-body-color);
+    padding: .1rem .3rem;
+}
+
+.fichario-markdown pre {
+    background-color: var(--bs-tertiary-bg);
+    border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    padding: .875rem;
+    white-space: pre-wrap;
+}
+
+.fichario-markdown pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.markdown-input {
+    line-height: 1.55;
+    min-height: 8rem;
+    resize: vertical;
+}
+
+.markdown-input-sm {
+    min-height: 5.75rem;
+}
+
+.markdown-help {
+    color: var(--bs-secondary-color);
+    font-size: .8125rem;
 }
 
 .article-content img,

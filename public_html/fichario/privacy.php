@@ -21,7 +21,7 @@ require __DIR__ . '/../../fichario/bootstrap.php';
 
     <?php render_navbar(''); ?>
 
-    <main class="container py-4 main-container">
+    <main class="main-container py-4">
         <article class="card p-4 p-md-5">
             <h1 class="h3 text-body fw-bold mb-3">Privacidade e Cookies</h1>
             <p class="text-secondary">

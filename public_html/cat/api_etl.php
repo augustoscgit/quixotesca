@@ -38,7 +38,7 @@ set_exception_handler(function (Throwable $e) {
     }
     echo json_encode([
         'success' => false,
-        'error'   => $e->getMessage()
+        'error'   => app_debug_enabled() ? $e->getMessage() : 'Erro ao processar solicitacao.'
     ], JSON_UNESCAPED_UNICODE);
     exit;
 });
@@ -96,7 +96,7 @@ function cnaeDictionaries(): array
     if ($dicts !== null) {
         return $dicts;
     }
-    $dir = __DIR__ . '/src/dicionarios';
+    $dir = __DIR__ . '/../../cat/src/dicionarios';
     $dicts = [
         'seca' => parseSimpleDictionaryFile($dir . '/dict_cnae_seca.txt'),
         'divi' => parseSimpleDictionaryFile($dir . '/dict_cnae_divi.txt'),
@@ -317,7 +317,7 @@ switch ($action) {
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_TIMEOUT        => 30,
             CURLOPT_USERAGENT      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         ]);
@@ -1537,7 +1537,7 @@ function enrichCBO($cboCode) {
     $code = preg_replace('/[^a-zA-Z0-9]/', '', $cboCode);
     if ($code === '') return null;
     
-    $dir = __DIR__ . '/src/dicionarios';
+    $dir = __DIR__ . '/../../cat/src/dicionarios';
     $gg = loadCBODictionary($dir . '/dict_cbo_gg.txt');
     $sp = loadCBODictionary($dir . '/dict_cbo_sp.txt');
     $sg = loadCBODictionary($dir . '/dict_cbo_sg.txt');
@@ -1576,7 +1576,7 @@ function enrichCID($cidCode) {
     $code = strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $cidCode));
     if ($code === '') return null;
     
-    $dir = __DIR__ . '/src/dicionarios';
+    $dir = __DIR__ . '/../../cat/src/dicionarios';
     $cap = loadCBODictionary($dir . '/dict_cid_cap.txt');
     $cat = loadCBODictionary($dir . '/dict_cid_cat.txt');
     $catCap = loadCBODictionary($dir . '/dict_cid_cat_cap.txt');
@@ -1614,7 +1614,7 @@ function enrichTerritory($municipalityValue) {
     $ufCode = substr($municipalityCode, 0, 2);
     $regionCode = substr($municipalityCode, 0, 1);
 
-    $dir = __DIR__ . '/src/dicionarios';
+    $dir = __DIR__ . '/../../cat/src/dicionarios';
     $municipalities = loadCBODictionary($dir . '/dict_municipio.txt');
     $ufs = loadCBODictionary($dir . '/dict_uf.txt');
     $regions = loadCBODictionary($dir . '/dict_regiao.txt');

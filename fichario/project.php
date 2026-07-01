@@ -114,7 +114,7 @@ function move_section_note(PDO $pdo, int $sectionId, int $noteId, string $direct
     $current = $stmt->fetch();
 
     if (!$current) {
-        throw new RuntimeException('Nota não vinculada a esta seção.');
+        throw new RuntimeException('Marcação não vinculada a esta seção.');
     }
 
     $operator = $direction === 'up' ? '<' : '>';
@@ -279,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             touch_project($pdo, $projectId);
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['success' => true]);
                 exit;
             }
@@ -312,7 +312,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             touch_project($pdo, $projectId);
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['success' => true]);
                 exit;
             }
@@ -330,7 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $noteStmt = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id LIMIT 1');
             $noteStmt->execute([':id' => $noteId]);
             if (!$noteStmt->fetchColumn()) {
-                throw new RuntimeException('Nota nao encontrada.');
+                throw new RuntimeException('Marcação nao encontrada.');
             }
 
             $stmt = $pdo->prepare('
@@ -344,7 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':position' => next_note_position($pdo, $sectionId),
             ]);
             touch_project($pdo, $projectId);
-            set_project_flash('Nota vinculada.');
+            set_project_flash('Marcação vinculada.');
             redirect_to_project($projectId);
         }
 
@@ -358,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare('DELETE FROM project_section_notes WHERE section_id = :section_id AND note_id = :note_id');
             $stmt->execute([':section_id' => $sectionId, ':note_id' => $noteId]);
             touch_project($pdo, $projectId);
-            set_project_flash('Nota removida da seção.');
+            set_project_flash('Marcação removida da seção.');
             redirect_to_project($projectId);
         }
 
@@ -381,7 +381,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $insSect->execute([
                     ':project_id' => $projectId,
                     ':title' => 'Geral',
-                    ':context' => 'Notas vinculadas diretamente ao projeto.',
+                    ':context' => 'Marcações vinculadas diretamente ao projeto.',
                     ':position' => $pos
                 ]);
                 $sectionId = (int) $pdo->lastInsertId();
@@ -391,7 +391,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $noteStmt = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id LIMIT 1');
             $noteStmt->execute([':id' => $noteId]);
             if (!$noteStmt->fetchColumn()) {
-                throw new RuntimeException('Nota nao encontrada.');
+                throw new RuntimeException('Marcação nao encontrada.');
             }
 
             // Link note to section
@@ -411,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
 
             touch_project($pdo, $projectId);
-            set_project_flash('Nota vinculada diretamente ao projeto.');
+            set_project_flash('Marcação vinculada diretamente ao projeto.');
             redirect_to_project($projectId);
         }
 
@@ -430,7 +430,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             touch_project($pdo, $projectId);
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['success' => true]);
                 exit;
             }
@@ -440,7 +440,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'update_note') {
             if (!can_edit_content()) {
-                throw new RuntimeException('Sem permissao para editar notas.');
+                throw new RuntimeException('Sem permissao para editar marcações.');
             }
 
             $noteId = (int) ($_POST['note_id'] ?? 0);
@@ -448,13 +448,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $comment = trim((string) ($_POST['comment'] ?? ''));
 
             if ($noteId <= 0) {
-                throw new RuntimeException('Nota invalida.');
+                throw new RuntimeException('Marcação invalida.');
             }
 
             $exists = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id');
             $exists->execute([':id' => $noteId]);
             if (!$exists->fetchColumn()) {
-                throw new RuntimeException('Nota nao encontrada.');
+                throw new RuntimeException('Marcação nao encontrada.');
             }
 
             $update = $pdo->prepare('UPDATE article_tag_quotes SET quote_text = :quote_text, comment = :comment, updated_at = CURRENT_TIMESTAMP WHERE id = :id');
@@ -479,7 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
-            set_project_flash('Nota atualizada.');
+            set_project_flash('Marcação atualizada.');
             redirect_to_project($projectId);
         }
 
@@ -504,7 +504,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $checkStmt = $pdo->prepare('SELECT 1 FROM project_section_notes WHERE section_id = :section_id AND note_id = :note_id');
             $checkStmt->execute([':section_id' => $fromSectionId, ':note_id' => $noteId]);
             if (!$checkStmt->fetchColumn()) {
-                throw new RuntimeException('Nota não encontrada na seção de origem.');
+                throw new RuntimeException('Marcação não encontrada na seção de origem.');
             }
 
             $pdo->beginTransaction();
@@ -534,17 +534,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             touch_project($pdo, $projectId);
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode(['success' => true]);
                 exit;
             }
 
-            set_project_flash('Nota movida de seção.');
+            set_project_flash('Marcação movida de seção.');
             redirect_to_project($projectId);
         }
     } catch (Throwable $e) {
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            header('Content-Type: application/json');
+            header('Content-Type: application/json; charset=utf-8');
             http_response_code(400);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
             exit;
@@ -822,25 +822,25 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                         <i class="bi bi-plus-lg"></i> Nova seção
                     </button>
                 </div>
-                <!-- Notas vinculadas diretamente ao projeto -->
+                <!-- Marcações vinculadas diretamente ao projeto -->
                 <article class="glass-card p-4" id="section-general">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
                         <div>
                             <h2 class="h5 text-white fw-bold mb-1">
                                 <button class="btn btn-link p-0 text-white text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse('general')">
                                     <i class="bi bi-chevron-down section-toggle-icon" id="section-toggle-icon-general"></i>
-                                    Notas vinculadas diretamente ao projeto
-                                    <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2 rounded-pill"><?= count($generalNotes) ?> nota(s)</span>
+                                    Marcações vinculadas diretamente ao projeto
+                                    <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2 rounded-pill"><?= count($generalNotes) ?> marcação(ões)</span>
                                 </button>
                             </h2>
-                            <p class="text-secondary mb-0 small ms-4">Notas associadas ao projeto como um todo, sem seção específica.</p>
+                            <p class="text-secondary mb-0 small ms-4">Marcações associadas ao projeto como um todo, sem seção específica.</p>
                         </div>
                         <?php if ($generalNotes !== []): ?>
                             <div class="d-flex align-items-center gap-3">
                                 <button class="btn btn-sm btn-link p-0 text-secondary text-decoration-none" style="font-size: 0.72rem;" type="button" onclick="toggleAllMarkings(this, '.glass-card')">
                                     Expandir todas
                                 </button>
-                                <span class="text-secondary small"><?= count($generalNotes) ?> nota(s)</span>
+                                <span class="text-secondary small"><?= count($generalNotes) ?> marcação(ões)</span>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -848,7 +848,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                     <div id="section-body-general" class="section-body">
                         <?php if ($generalNotes === []): ?>
                         <div class="p-3 rounded-3 bg-black bg-opacity-25 text-secondary text-center mb-3">
-                            Nenhuma nota vinculada diretamente ao projeto.
+                            Nenhuma marcação vinculada diretamente ao projeto.
                         </div>
                     <?php else: ?>
                         <div class="vstack gap-2 mb-3">
@@ -868,7 +868,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 <span class="text-secondary small ms-1">(<?= h((string) $note['year']) ?>)</span>
                                             <?php endif; ?>
                                             <div class="note-meta d-flex flex-wrap align-items-center gap-2 mt-1">
-                                                <span class="text-secondary">Nota #<?= $noteId ?></span>
+                                                <span class="text-secondary">Marcação #<?= $noteId ?></span>
                                                 <?php
                                                     $noteTags = [];
                                                     if (isset($note['tags_json'])) {
@@ -898,7 +898,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 <input type="hidden" name="section_id" value="<?= $generalSectionId ?>">
                                                 <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                 <input type="hidden" name="direction" value="up">
-                                                <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Subir nota">↑</button>
+                                                <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Subir marcação">↑</button>
                                             </form>
                                             <form method="post" class="m-0" data-busy-ignore="1">
                                                 <?= csrf_field() ?>
@@ -906,7 +906,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 <input type="hidden" name="section_id" value="<?= $generalSectionId ?>">
                                                 <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                 <input type="hidden" name="direction" value="down">
-                                                <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Descer nota">↓</button>
+                                                <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Descer marcação">↓</button>
                                             </form>
                                             <form method="post" class="m-0 d-inline-block">
                                                 <?= csrf_field() ?>
@@ -924,7 +924,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                             </form>
                                             <button class="btn btn-outline-secondary icon-button text-white" 
                                                     type="button" 
-                                                    title="Editar nota" 
+                                                    title="Editar marcação"
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#editNoteModal" 
                                                     data-note-id="<?= $noteId ?>" 
@@ -932,12 +932,12 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                     data-comment="<?= h($comment) ?>">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <form method="post" class="m-0" data-confirm-message="Remover esta nota do projeto? A nota original sera preservada.">
+                                            <form method="post" class="m-0" data-confirm-message="Remover esta marcação do projeto? A marcação original sera preservada.">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="action" value="unlink_note">
                                                 <input type="hidden" name="section_id" value="<?= $generalSectionId ?>">
                                                 <input type="hidden" name="note_id" value="<?= $noteId ?>">
-                                                <button class="btn btn-outline-danger icon-button" type="submit" title="Remover nota">&times;</button>
+                                                <button class="btn btn-outline-danger icon-button" type="submit" title="Remover marcação">&times;</button>
                                             </form>
                                         </div>
                                     </div>
@@ -981,7 +981,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                         <button class="btn btn-link p-0 text-white text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse(<?= $sectionId ?>)">
                                             <i class="bi bi-chevron-down section-toggle-icon" id="section-toggle-icon-<?= $sectionId ?>"></i>
                                             <?= h((string) $section['title']) ?>
-                                            <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2 rounded-pill"><?= count($sectionNotes) ?> nota(s)</span>
+                                            <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2 rounded-pill"><?= count($sectionNotes) ?> marcação(ões)</span>
                                         </button>
                                     </h2>
                                 </div>
@@ -1010,7 +1010,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                             data-section-context="<?= h((string) ($section['context'] ?? '')) ?>">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <form method="post" data-confirm-message="Excluir esta seção? As notas serão apenas desvinculadas do projeto.">
+                                    <form method="post" data-confirm-message="Excluir esta seção? As marcações serão apenas desvinculadas do projeto.">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="action" value="delete_section">
                                         <input type="hidden" name="section_id" value="<?= $sectionId ?>">
@@ -1026,18 +1026,18 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
 
                             <div class="border-top border-secondary border-opacity-25 pt-4">
                                  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
-                                     <h3 class="h5 text-white fw-bold mb-0">Notas vinculadas</h3>
+                                     <h3 class="h5 text-white fw-bold mb-0">Marcações vinculadas</h3>
                                      <div class="d-flex align-items-center gap-3">
                                          <button class="btn btn-sm btn-link p-0 text-secondary text-decoration-none" style="font-size: 0.72rem;" type="button" onclick="toggleAllMarkings(this, '.border-top')">
                                              Expandir todas
                                          </button>
-                                         <span class="text-secondary small"><?= count($sectionNotes) ?> nota(s)</span>
+                                         <span class="text-secondary small"><?= count($sectionNotes) ?> marcação(ões)</span>
                                      </div>
                                  </div>
 
                                 <?php if ($sectionNotes === []): ?>
                                     <div class="p-3 rounded-3 bg-black bg-opacity-25 text-secondary text-center mb-3">
-                                        Nenhuma nota vinculada a esta seção.
+                                        Nenhuma marcação vinculada a esta seção.
                                     </div>
                                 <?php else: ?>
                                     <div class="vstack gap-2 mb-3">
@@ -1057,7 +1057,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                             <span class="text-secondary small ms-1">(<?= h((string) $note['year']) ?>)</span>
                                                         <?php endif; ?>
                                                         <div class="note-meta d-flex flex-wrap align-items-center gap-2 mt-1">
-                                                            <span class="text-secondary">Nota #<?= $noteId ?></span>
+                                                            <span class="text-secondary">Marcação #<?= $noteId ?></span>
                                                             <?php
                                                                 $noteTags = [];
                                                                 if (isset($note['tags_json'])) {
@@ -1087,7 +1087,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                             <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                                             <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                             <input type="hidden" name="direction" value="up">
-                                                            <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Subir nota">↑</button>
+                                                            <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Subir marcação">↑</button>
                                                         </form>
                                                         <form method="post" class="m-0" data-busy-ignore="1">
                                                             <?= csrf_field() ?>
@@ -1095,7 +1095,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                             <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                                             <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                             <input type="hidden" name="direction" value="down">
-                                                            <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Descer nota">↓</button>
+                                                            <button class="btn btn-outline-secondary icon-button text-white" type="submit" title="Descer marcação">↓</button>
                                                         </form>
                                                         <form method="post" class="m-0 d-inline-block">
                                                             <?= csrf_field() ?>
@@ -1113,7 +1113,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                         </form>
                                                         <button class="btn btn-outline-secondary icon-button text-white" 
                                                                 type="button" 
-                                                                title="Editar nota" 
+                                                                title="Editar marcação"
                                                                 data-bs-toggle="modal" 
                                                                 data-bs-target="#editNoteModal" 
                                                                 data-note-id="<?= $noteId ?>" 
@@ -1121,12 +1121,12 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                                 data-comment="<?= h($comment) ?>">
                                                             <i class="bi bi-pencil"></i>
                                                         </button>
-                                                        <form method="post" class="m-0" data-confirm-message="Remover esta nota da seção? A nota original será preservada.">
+                                                        <form method="post" class="m-0" data-confirm-message="Remover esta marcação da seção? A marcação original será preservada.">
                                                             <?= csrf_field() ?>
                                                             <input type="hidden" name="action" value="unlink_note">
                                                             <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                                             <input type="hidden" name="note_id" value="<?= $noteId ?>">
-                                                            <button class="btn btn-outline-danger icon-button" type="submit" title="Remover nota">&times;</button>
+                                                            <button class="btn btn-outline-danger icon-button" type="submit" title="Remover marcação">&times;</button>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -1250,12 +1250,12 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
         </div>
     </div>
 
-    <!-- Modal: Editar Nota -->
+    <!-- Modal: Editar Marcação -->
     <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content glass-card">
                 <div class="modal-header border-secondary border-opacity-25">
-                    <h5 class="modal-title text-white fw-bold" id="editNoteModalLabel">Editar Nota</h5>
+                    <h5 class="modal-title text-white fw-bold" id="editNoteModalLabel">Editar Marcação</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form method="post" id="editNoteForm" data-busy-ignore="1">

@@ -73,7 +73,7 @@ function downloadFile(string $url, string $destPath): void
     curl_setopt_array($ch, [
         CURLOPT_TIMEOUT        => 300,
         CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_SSL_VERIFYPEER => false, // often needed for gov sites in local testing
+        CURLOPT_SSL_VERIFYPEER => true,
     ]);
 
     $success = curl_exec($ch);

@@ -499,7 +499,7 @@ try {
             <div class="modal-content card border border">
                 <div class="modal-header border">
                     <h5 class="modal-title text-primary" id="rawJsonModalLabel"><i class="bi bi-code-slash me-2"></i>JSON bruto da CAT</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" title="Fechar" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <pre id="raw-json-panel" class="raw-json-panel mb-0"></pre>

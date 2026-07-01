@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!can_edit_content()) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Sem permissão para editar notas.']);
+            echo json_encode(['success' => false, 'error' => 'Sem permissão para editar marcações.']);
             exit;
         }
 
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($noteId <= 0) {
             http_response_code(422);
-            echo json_encode(['success' => false, 'error' => 'Nota inválida.']);
+            echo json_encode(['success' => false, 'error' => 'Marcação inválida.']);
             exit;
         }
 
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $exists->execute([':id' => $noteId]);
         if (!$exists->fetchColumn()) {
             http_response_code(404);
-            echo json_encode(['success' => false, 'error' => 'Nota não encontrada.']);
+            echo json_encode(['success' => false, 'error' => 'Marcação não encontrada.']);
             exit;
         }
 
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!can_edit_content()) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Sem permissão para editar notas.']);
+            echo json_encode(['success' => false, 'error' => 'Sem permissão para editar marcações.']);
             exit;
         }
 
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         if ($noteId <= 0) {
             http_response_code(422);
-            echo json_encode(['success' => false, 'error' => 'Nota inválida.']);
+            echo json_encode(['success' => false, 'error' => 'Marcação inválida.']);
             exit;
         }
 
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $noteStmt = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id');
             $noteStmt->execute([':id' => $noteId]);
             if (!$noteStmt->fetchColumn()) {
-                throw new RuntimeException('Nota não encontrada.');
+                throw new RuntimeException('Marcação não encontrada.');
             }
 
             if ($sectionId <= 0) {
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $insSect->execute([
                         ':project_id' => $activeProjectId,
                         ':title' => 'Geral',
-                        ':context' => 'Notas vinculadas diretamente ao projeto.',
+                        ':context' => 'Marcações vinculadas diretamente ao projeto.',
                         ':position' => $pos
                     ]);
                     $sectionId = (int) $pdo->lastInsertId();
@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!can_edit_content()) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Sem permissão para editar notas.']);
+            echo json_encode(['success' => false, 'error' => 'Sem permissão para editar marcações.']);
             exit;
         }
 
@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         if ($noteId <= 0) {
             http_response_code(422);
-            echo json_encode(['success' => false, 'error' => 'Nota inválida.']);
+            echo json_encode(['success' => false, 'error' => 'Marcação inválida.']);
             exit;
         }
         if ($sectionTitle === '') {
@@ -216,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $noteStmt = $pdo->prepare('SELECT id FROM article_tag_quotes WHERE id = :id');
             $noteStmt->execute([':id' => $noteId]);
             if (!$noteStmt->fetchColumn()) {
-                throw new RuntimeException('Nota não encontrada.');
+                throw new RuntimeException('Marcação não encontrada.');
             }
 
             $stmtPos = $pdo->prepare('SELECT COALESCE(MAX(position), 0) + 1 FROM project_sections WHERE project_id = :project_id');
@@ -281,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!can_edit_content()) {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Sem permissão para editar notas.']);
+            echo json_encode(['success' => false, 'error' => 'Sem permissão para editar marcações.']);
             exit;
         }
 
@@ -296,7 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         if ($noteId <= 0 || $sectionId <= 0) {
             http_response_code(422);
-            echo json_encode(['success' => false, 'error' => 'Nota ou seção inválida.']);
+            echo json_encode(['success' => false, 'error' => 'Marcação ou seção inválida.']);
             exit;
         }
 
@@ -356,7 +356,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
         if ($childCount > 0 && !$clearChildren) {
             $errors[] = "Esta tag possui {$childCount} sub-tag(s). Confirme a exclusão para remover esta filiação dos filhos antes de excluir.";
         } elseif ($noteCount > 0 && !$confirmNotes) {
-            $errors[] = "Esta tag esta vinculada a {$noteCount} nota(s). Confirme a exclusao sabendo que as notas serao mantidas, mas perderao esta tag.";
+            $errors[] = "Esta tag esta vinculada a {$noteCount} marcação(ões). Confirme a exclusao sabendo que as marcações serao mantidas, mas perderao esta tag.";
         } else {
             $pdo->beginTransaction();
 
@@ -764,7 +764,7 @@ function render_note_project_linking_html(int $noteId, array $links, bool $isLog
 
         <?php if ($canEditNotes): ?>
             <div class="d-flex flex-column gap-1">
-                <label class="form-label small text-body-secondary mb-0" for="note-link-select-<?= $noteId ?>">Vincular esta nota a uma seção</label>
+                <label class="form-label small text-body-secondary mb-0" for="note-link-select-<?= $noteId ?>">Vincular esta marcação a uma seção</label>
                 <select class="form-select form-select-sm py-0 px-2" id="note-link-select-<?= $noteId ?>" onchange="handleNoteLinkAction(<?= $noteId ?>, this)">
                     <option value="">+ Vincular a uma seção...</option>
                     <option value="0">Vincular diretamente (Geral)</option>
@@ -844,7 +844,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 </span>
                 <h1 class="h2 mb-2"><?= h($selectedTag['name']) ?></h1>
                 <p class="text-body-secondary mb-0">
-                    <?= $stats['recursive'] ?> artigo(s) indexado(s) e <?= $displayNoteCount ?> nota(s) relacionada(s).
+                    <?= $stats['recursive'] ?> artigo(s) indexado(s) e <?= $displayNoteCount ?> marcação(ões) relacionada(s).
                 </p>
             </div>
             <a href="tags.php" class="btn btn-outline-secondary">
@@ -873,7 +873,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                                 Artigos indexados: <strong class="text-body-secondary"><?= $stats['direct'] ?></strong> direto(s) | <strong class="text-body-secondary"><?= $stats['recursive'] ?></strong> total (incluindo sub-tags)
                             </div>
                             <div class="text-secondary small mt-1">
-                                Notas relacionadas: <strong class="text-body-secondary"><?= $displayNoteCount ?></strong>
+                                Marcações relacionadas: <strong class="text-body-secondary"><?= $displayNoteCount ?></strong>
                                 <?php if (!$includeHierarchy && $stats['notes'] > $directNoteCount): ?>
                                     <span class="text-secondary">(<?= $stats['notes'] ?> com sub-tags)</span>
                                 <?php endif; ?>
@@ -910,7 +910,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                     <div class="mb-4 bg-body-tertiary bg-opacity-20 p-3 rounded-3 border border border-opacity-10">
                         <h3 class="h6 text-secondary fw-semibold small mb-2 text-uppercase">Definição Teórica / Critérios</h3>
                         <?php if (trim((string) ($selectedTag['definition'] ?? '')) !== ''): ?>
-                            <p class="text-body-secondary small mb-0 text-block"><?= h($selectedTag['definition']) ?></p>
+                            <div class="text-body-secondary small mb-0 text-block markdown-body fichario-markdown"><?= fichario_render_markdown((string) $selectedTag['definition']) ?></div>
                         <?php else: ?>
                             <p class="text-secondary small mb-0 style-italic">Nenhuma definição teórica cadastrada para este conceito.</p>
                         <?php endif; ?>
@@ -960,8 +960,8 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 <section class="card p-4 h-100">
                     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4 border-bottom border border-opacity-20 pb-3">
                         <div>
-                            <h2 class="h5 text-body fw-bold mb-1">Artigos & Notas Relacionadas</h2>
-                            <span class="text-secondary small fw-medium"><?= count($selectedArticles) ?> artigo(s) | <?= $displayNoteCount ?> nota(s)</span>
+                            <h2 class="h5 text-body fw-bold mb-1">Artigos & Marcações Relacionadas</h2>
+                            <span class="text-secondary small fw-medium"><?= count($selectedArticles) ?> artigo(s) | <?= $displayNoteCount ?> marcação(ões)</span>
                         </div>
                         <div class="ms-auto d-flex align-items-center gap-3 flex-wrap justify-content-end text-end">
                             <form method="get" action="tag_view.php" class="m-0">
@@ -999,7 +999,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                     <?php if ($selectedArticles === []): ?>
                         <div class="text-center py-5 text-secondary">
                             <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" class="mb-3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
-                            <p class="small mb-0">Nenhuma nota indexada sob este conceito ainda.</p>
+                            <p class="small mb-0">Nenhuma marcação indexada sob este conceito ainda.</p>
                         </div>
                     <?php else: ?>
                         <div class="vstack gap-3">
@@ -1069,11 +1069,11 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                                                         </div>
                                                     <?php endif; ?>
                                                     <div class="d-flex gap-2 flex-shrink-0">
-                                                        <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="openTagNoteReadFromButton(this)" title="Ler nota">
+                                                        <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="openTagNoteReadFromButton(this)" title="Ler marcação">
                                                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
                                                         </button>
                                                         <?php if ($canEditNotes): ?>
-                                                            <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="openTagNoteEditFromButton(this)" title="Editar nota">
+                                                            <button class="btn btn-sm btn-link p-0 text-body-secondary" type="button" onclick="openTagNoteEditFromButton(this)" title="Editar marcação">
                                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                                                             </button>
                                                         <?php endif; ?>
@@ -1082,7 +1082,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
 
                                                 <div class="note-content">
                                                  <?php if ($noteEmpty): ?>
-                                                     <em class="text-secondary">Nota sem citação ou observação.</em>
+                                                     <em class="text-secondary">Marcação sem citação ou observação.</em>
                                                  <?php else: ?>
                                                      <?php if ($noteQuote !== ''): ?>
                                                          <div class="marking-preview marking-preview-quote mb-2">
@@ -1152,7 +1152,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
             <div class="modal-content">
                 <div class="modal-header">
                     <div>
-                        <h2 class="modal-title h5 text-body fw-bold mb-1" id="tagNoteModalLabel">Leitura da nota</h2>
+                        <h2 class="modal-title h5 text-body fw-bold mb-1" id="tagNoteModalLabel">Leitura da marcação</h2>
                         <div class="text-secondary small" id="tag-note-article-title"></div>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -1169,7 +1169,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                             <h3 class="h6 text-secondary text-uppercase small mb-2">Observação</h3>
                             <div class="note-modal-text text-body-secondary p-3 rounded-3 bg-body-tertiary bg-opacity-25" id="tag-note-read-comment"></div>
                         </section>
-                        <div class="text-warning d-none" id="tag-note-read-empty">! Nota sem citação ou observação.</div>
+                        <div class="text-warning d-none" id="tag-note-read-empty">! Marcação sem citação ou observação.</div>
                     </div>
 
                     <?php if ($canEditNotes): ?>
@@ -1191,7 +1191,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                     <?php if ($canEditNotes): ?>
                         <button type="button" class="btn btn-outline-primary" id="btn-tag-note-edit">Editar</button>
                         <button type="button" class="btn btn-outline-secondary text-body d-none" id="btn-tag-note-cancel-edit">Cancelar edição</button>
-                        <button type="button" class="btn btn-primary d-none" id="btn-tag-note-save">Salvar nota</button>
+                        <button type="button" class="btn btn-primary d-none" id="btn-tag-note-save">Salvar marcação</button>
                     <?php endif; ?>
                 </div>
             </div>
@@ -1377,7 +1377,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
             const editing = mode === 'edit';
 
             if (title) {
-                title.textContent = editing ? 'Editar nota' : 'Leitura da nota';
+                title.textContent = editing ? 'Editar marcação' : 'Leitura da marcação';
             }
             if (readPanel) readPanel.classList.toggle('d-none', editing);
             if (editPanel) editPanel.classList.toggle('d-none', !editing);
@@ -1437,7 +1437,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
             const commentValue = String(comment || '').trim();
 
             if (!quoteValue && !commentValue) {
-                container.innerHTML = '<em class="text-secondary">Nota sem citação ou observação.</em>';
+                container.innerHTML = '<em class="text-secondary">Marcação sem citação ou observação.</em>';
                 return;
             }
 
@@ -1528,7 +1528,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 .then(res => res.json())
                 .then(data => {
                     if (!data.success) {
-                        throw new Error(data.error || 'Não foi possível salvar a nota.');
+                        throw new Error(data.error || 'Não foi possível salvar a marcação.');
                     }
 
                     currentTagNoteCard.dataset.noteQuote = data.note.quote_text || '';
@@ -1539,7 +1539,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 })
                 .catch(err => {
                     if (error) {
-                        error.textContent = err.message || 'Falha de rede ao salvar a nota.';
+                        error.textContent = err.message || 'Falha de rede ao salvar a marcação.';
                         error.classList.remove('d-none');
                     }
                 })
@@ -1593,7 +1593,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 details.push(`${childCount} sub-tag(s) direta(s) terao a filiacao removida`);
             }
             if (noteCount > 0) {
-                details.push(`${noteCount} nota(s) serao mantidas, mas perderao esta tag`);
+                details.push(`${noteCount} marcação(ões) serao mantidas, mas perderao esta tag`);
             }
             const message = details.length > 0
                 ? `A tag "${tagName}" possui vinculos: ${details.join('; ')}. Confirmar exclusao da tag?`
@@ -1718,20 +1718,20 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                         wrapper.innerHTML = data.html;
                     }
                 } else {
-                    alert('Erro ao vincular nota: ' + (data.error || 'Erro desconhecido'));
+                    alert('Erro ao vincular marcação: ' + (data.error || 'Erro desconhecido'));
                     selectEl.value = '';
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert('Erro de rede ao vincular nota.');
+                alert('Erro de rede ao vincular marcação.');
                 selectEl.value = '';
             })
             .finally(releaseBusy);
         }
 
         function unlinkNoteFromSection(noteId, sectionId) {
-            if (!confirm('Deseja realmente desvincular esta nota desta seção do projeto?')) {
+            if (!confirm('Deseja realmente desvincular esta marcação desta seção do projeto?')) {
                 return;
             }
 
@@ -1762,12 +1762,12 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                         wrapper.innerHTML = data.html;
                     }
                 } else {
-                    alert('Erro ao desvincular nota: ' + (data.error || 'Erro desconhecido'));
+                    alert('Erro ao desvincular marcação: ' + (data.error || 'Erro desconhecido'));
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert('Erro de rede ao desvincular nota.');
+                alert('Erro de rede ao desvincular marcação.');
             })
             .finally(releaseBusy);
         }
@@ -1807,7 +1807,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                         wrapper.innerHTML = data.html;
                     }
                 } else {
-                    alert('Erro ao criar seção e vincular nota: ' + (data.error || 'Erro desconhecido'));
+                    alert('Erro ao criar seção e vincular marcação: ' + (data.error || 'Erro desconhecido'));
                 }
             })
             .catch(err => {

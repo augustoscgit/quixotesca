@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
         if ($childCount > 0 && !$clearChildren) {
             $errors[] = "Esta tag possui {$childCount} sub-tag(s). Confirme a exclusão para remover esta filiação dos filhos antes de excluir.";
         } elseif ($noteCount > 0 && !$confirmNotes) {
-            $errors[] = "Esta tag esta vinculada a {$noteCount} nota(s). Confirme a exclusao sabendo que as notas serao mantidas, mas perderao esta tag.";
+            $errors[] = "Esta tag esta vinculada a {$noteCount} marcação(ões). Confirme a exclusao sabendo que as marcações serao mantidas, mas perderao esta tag.";
         } else {
             $pdo->beginTransaction();
 
@@ -275,7 +275,7 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
         }
         echo '    </div>';
         echo '    <div class="d-flex align-items-center gap-2 ms-2">';
-        echo '      <span class="badge border font-monospace tag-count-badge" title="Notas vinculadas">';
+        echo '      <span class="badge border font-monospace tag-count-badge" title="Marcações vinculadas">';
         echo $stats['notes'];
         echo '      </span>';
         echo '    </div>';
@@ -301,14 +301,14 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
     <link href="assets/tag-visualizations.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
 
     <?php render_navbar('tags'); ?>
 
-    <main class="container py-4 main-container">
+    <main class="main-container py-4">
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
@@ -316,20 +316,19 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
             </ol>
         </nav>
 
-        <!-- Top bar -->
-        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <header class="page-header mb-4">
             <div>
-                <h1 class="h3 mb-1 text-body fw-bold">Navegar por Tags</h1>
+                <h1 class="h2 mb-2">Navegar por Tags</h1>
                 <p class="text-secondary mb-0">Explore e visualize a taxonomia temática de termos em hierarquias e boxes.</p>
             </div>
             <?php if ($canManageTags): ?>
                 <div>
-                    <button class="btn btn-primary rounded-pill px-4" onclick="openNewTagModal()">
-                        + Criar Tag
+                    <button class="btn btn-primary" onclick="openNewTagModal()">
+                        <i class="bi bi-plus-lg me-1"></i>Criar tag
                     </button>
                 </div>
             <?php endif; ?>
-        </div>
+        </header>
 
         <?php if ($errors !== []): ?>
             <div class="alert alert-danger bg-danger-subtle border-danger text-danger-emphasis rounded-3" role="alert">
@@ -435,12 +434,17 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
 
             <section class="tab-pane fade" id="tab-graph" role="tabpanel" aria-labelledby="tab-graph-btn" tabindex="0">
                 <?php if (count($nodes) > 0): ?>
-                    <div id="tag-network-container" class="card tag-network-container">
-                        <div id="tag-network-viewport" class="tag-network-viewport"></div>
-                        <div id="tag-network-controls" class="tag-network-controls" aria-label="Filtros do grafo de tags"></div>
+                    <div class="card">
+                        <div class="card-header bg-body">
+                            <h2 class="h5 mb-0">Relacionamento entre tags</h2>
+                        </div>
+                        <div id="tag-network-container" class="tag-network-container">
+                            <div id="tag-network-viewport" class="tag-network-viewport"></div>
+                            <div id="tag-network-controls" class="tag-network-controls" aria-label="Filtros do grafo de tags"></div>
+                        </div>
                     </div>
                 <?php else: ?>
-                    <div class="card p-5 text-center text-secondary">Ainda nÃ£o hÃ¡ relaÃ§Ãµes suficientes para exibir o grafo.</div>
+                    <div class="card p-5 text-center text-secondary">Ainda não há relações suficientes para exibir o grafo.</div>
                 <?php endif; ?>
             </section>
         </div>
@@ -453,7 +457,7 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title h5 text-body fw-bold" id="tagModalLabel">Criar Nova Tag</h2>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <form method="post" action="tags.php" id="tagForm">
@@ -508,8 +512,8 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border border-opacity-25">
-                            <button type="button" class="btn btn-outline-secondary text-body rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary rounded-pill px-4" id="submitBtn">Criar Tag</button>
+                            <button type="button" class="btn btn-outline-secondary text-body" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Criar Tag</button>
                         </div>
                     </form>
                 </div>
@@ -672,7 +676,7 @@ function render_category_tree(array $tags, array $parentToChildren, array $catTa
                 details.push(`${childCount} sub-tag(s) direta(s) terao a filiacao removida`);
             }
             if (noteCount > 0) {
-                details.push(`${noteCount} nota(s) serao mantidas, mas perderao esta tag`);
+                details.push(`${noteCount} marcação(ões) serao mantidas, mas perderao esta tag`);
             }
             const message = details.length > 0
                 ? `A tag "${tagName}" possui vinculos: ${details.join('; ')}. Confirmar exclusao da tag?`

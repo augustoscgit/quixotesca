@@ -1,0 +1,24 @@
+AddHandler php80-script .php
+AddDefaultCharset UTF-8
+DirectoryIndex index.php index.html
+Options -Indexes
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+</IfModule>
+
+<FilesMatch "(^\.|\.md$|\.env$|\.sql$|\.bak$|\.backup$|\.dump$|\.log$|\.sqlite$|\.sqlite3$|\.db$|\.zip$|\.rar$|\.7z$)">
+    Require all denied
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(\.git|\.agents|\.codex|includes|secrets|scratch|_archive)(/|$) - [R=404,L]
+    RewriteRule ^(acesso|carex|cat|fichario|ldrt)/(src|config|tools|database|docs|private|secrets|data|system_md|tests)(/|$) - [R=404,L]
+    RewriteRule ^(cat|ldrt)/diag\.php$ - [R=404,L]
+    RewriteRule ^fichario/diagnostics\.php$ - [R=404,L]
+</IfModule>

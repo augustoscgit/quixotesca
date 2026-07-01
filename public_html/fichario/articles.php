@@ -165,9 +165,9 @@ if ($content === 'with_text') {
 }
 
 if ($status === 'fichado') {
-    $where[] = article_has_notes_sql('articles');
+    $where[] = article_has_markings_sql('articles');
 } elseif ($status === 'cadastrado') {
-    $where[] = 'NOT ' . article_has_notes_sql('articles');
+    $where[] = 'NOT ' . article_has_markings_sql('articles');
 }
 
 $orderOptions = [
@@ -244,7 +244,7 @@ $sql = "
             ELSE array_length(regexp_split_to_array(trim(references_text), '\s+'), 1)
         END AS references_word_count,
         ($scoreSql) AS relevance,
-        " . article_has_notes_sql('articles') . " AS is_fichado
+        " . article_has_markings_sql('articles') . " AS is_fichado
     FROM articles
     $whereSql
     ORDER BY {$orderOptions[$sort]}

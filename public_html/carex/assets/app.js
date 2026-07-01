@@ -219,24 +219,20 @@ async function fetchJson(url) {
   return payload;
 }
 
-const docFiles = [
-  { name: 'Bootstrap-first: planejamento', path: 'platform/docs/bootstrap-first-planejamento.md', desc: 'Fonte de verdade para a reconstrucao visual com Bootstrap vanilla, sem paleta ou tema paralelo.' },
-  { name: 'Bootstrap-first: exemplos', path: 'platform/docs/bootstrap-first-exemplos.md', desc: 'Exemplos de pagina, card, tabela, filtro, abas, modal, estado vazio e progresso usando Bootstrap.' },
-  { name: 'Diretrizes visuais RENAST', path: 'platform/docs/diretrizes-visuais-renast.md', desc: 'Referencia visual para boxes, botoes, componentes, cores e tema claro.' },
-  { name: 'Documentacao visual centralizada', path: 'platform/docs/documentacao-visual-centralizada.md', desc: 'Indice operacional da documentacao visual e dos documentos substituidos.' },
-  { name: 'Tema e CSS por modulo', path: 'platform/docs/tema-css-bootstrap-modulos.md', desc: 'Contrato por modulo durante a fase Bootstrap-first.' },
-  { name: 'README.md', path: 'README.md', desc: 'Guia de entrada do projeto com instruções de execução local, configuração e segurança.' },
-  { name: 'landing.md', path: 'landing.md', desc: 'Página de apresentação inicial da ferramenta com informações institucionais.' },
-  { name: 'sobre.md', path: 'sobre.md', desc: 'Apresentação do projeto CAREX, contextualização de saúde pública e objetivos da matriz.' },
-  { name: 'criterios-conciliacao.md', path: 'criterios-conciliacao.md', desc: 'Critérios de Consolidação de Vínculos (CNAE x CBO) — 10 lógicas matriciais usadas na view materializada de conciliação.' },
-  { name: 'migracao_producao.md', path: 'docs/migracao_producao.md', desc: 'Guia passo a passo para configurar o Google OAuth real e fazer o deploy em produção.' },
-  { name: 'api.md', path: 'docs/api.md', desc: 'Documentação detalhada dos endpoints HTTP REST expostos pela aplicação.' },
-  { name: 'banco-dados.md', path: 'docs/banco-dados.md', desc: 'Dicionário de dados, configurações do PostgreSQL e inventário completo de objetos.' },
-  { name: 'decisoes-e-pendencias.md', path: 'docs/decisoes-e-pendencias.md', desc: 'Registro histórico de decisões de arquitetura e pendências de desenvolvimento.' },
-  { name: 'modulo-desenvolvimento.md', path: 'docs/modulo-desenvolvimento.md', desc: 'Detalhamento do módulo de Desenvolvimento, incluindo auditoria estrutural.' },
-  { name: 'modulo-trabalho.md', path: 'docs/modulo-trabalho.md', desc: 'Funcionamento operacional da matriz de exposição e das lógicas de classificação.' },
-  { name: 'visao-geral.md', path: 'docs/visao-geral.md', desc: 'Visão conceitual e arquitetônica do ecossistema CAREX e da Plataforma RENAST.' }
-];
+let docFiles = [];
+let docsLoaded = false;
+
+async function loadDocFiles() {
+  if (docsLoaded) {
+    return docFiles;
+  }
+
+  const payload = await fetchJson('api/development/doc_content.php?list=1');
+  docFiles = payload.documents || [];
+  docsLoaded = true;
+
+  return docFiles;
+}
 
 function parseSimpleMarkdown(md) {
   const lines = md.split('\n');
@@ -322,13 +318,27 @@ function parseSimpleMarkdown(md) {
   return parsedLines.join('\n');
 }
 
-function renderDocsList() {
+async function renderDocsList() {
+  nodes.docsList.innerHTML = `
+    <div class="list-group-item py-3 text-body-secondary">
+      <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+      Carregando documentos...
+    </div>
+  `;
+
+  await loadDocFiles();
+
+  if (docFiles.length === 0) {
+    nodes.docsList.innerHTML = '<div class="list-group-item py-3 text-body-secondary">Nenhum Markdown interno encontrado.</div>';
+    return;
+  }
+
   nodes.docsList.innerHTML = docFiles.map((doc) => {
     return `
       <button type="button" class="list-group-item list-group-item-action flex-column align-items-start py-2 px-3" data-doc-path="${escapeHtml(doc.path)}">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1 h6 text-primary fw-bold">${escapeHtml(doc.name)}</h5>
-          <small class="text-body-secondary">${doc.path.includes('/') ? 'Subpasta' : 'Raiz'}</small>
+          <small class="text-body-secondary">${escapeHtml(doc.category || doc.module || 'Markdown')}</small>
         </div>
         <p class="mb-1 text-body-secondary small">${escapeHtml(doc.desc)}</p>
       </button>
@@ -1112,6 +1122,8 @@ async function init() {
 
     if (requestedView === 'docs') {
       setView('docs');
+      await loadDocFiles();
+      await renderDocsList();
       if (docFiles.length > 0) {
         await selectDoc(docFiles[0].path);
       }
@@ -1131,9 +1143,17 @@ nodes.dataTab.addEventListener('click', () => setView('data'));
 nodes.objectsTab.addEventListener('click', () => setView('objects'));
 nodes.docsTab.addEventListener('click', () => {
   setView('docs');
-  if (docFiles.length > 0) {
-    selectDoc(docFiles[0].path);
-  }
+  loadDocFiles()
+    .then(renderDocsList)
+    .then(() => {
+      if (docFiles.length > 0) {
+        selectDoc(docFiles[0].path);
+      }
+    })
+    .catch((error) => {
+      nodes.docViewerTitle.textContent = 'Erro';
+      nodes.docViewerContent.innerHTML = `<div class="alert alert-danger py-2">${escapeHtml(error.message)}</div>`;
+    });
 });
 if (nodes.ambienteTab) {
   nodes.ambienteTab.addEventListener('click', () => setView('ambiente'));
@@ -1253,11 +1273,14 @@ const openMigrationBtn = document.getElementById('openMigrationDoc');
 if (openMigrationBtn) {
   openMigrationBtn.addEventListener('click', () => {
     setView('docs');
-    renderDocsList();
-    const migrationDoc = docFiles.find(d => d.name === 'migracao_producao.md');
-    if (migrationDoc) {
-      selectDoc(migrationDoc.path);
-    }
+    loadDocFiles()
+      .then(renderDocsList)
+      .then(() => {
+        const migrationDoc = docFiles.find(d => d.path.endsWith('migracao_producao.md') || d.name.toLowerCase().includes('migracao'));
+        if (migrationDoc) {
+          selectDoc(migrationDoc.path);
+        }
+      });
   });
 }
 

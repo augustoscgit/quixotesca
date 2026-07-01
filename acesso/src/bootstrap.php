@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../includes/markdown.php';
+
 load_env(__DIR__ . '/../secrets/.env');
 load_env(__DIR__ . '/../.env');
 
@@ -76,6 +78,11 @@ function env_int(string $key, int $default): int
 function app_debug_enabled(): bool
 {
     return env_bool('APP_DEBUG', false);
+}
+
+function app_env(): string
+{
+    return strtolower(trim((string) env_value('APP_ENV', 'production')));
 }
 
 function configure_session(): void
@@ -412,16 +419,25 @@ function seed_admin_user(PDO $pdo): void
         return;
     }
 
+    $adminPassword = (string) env_value('ACCESS_ADMIN_PASSWORD', '');
+    $allowsLocalDefault = app_debug_enabled() || in_array(app_env(), ['local', 'dev', 'development', 'test'], true);
+    if ($adminPassword === '' && !$allowsLocalDefault) {
+        return;
+    }
+    if ($adminPassword === '') {
+        $adminPassword = 'admin';
+    }
+
     $stmt = $pdo->prepare('
         INSERT INTO ' . table_name('users') . " (name, email, username, password_hash, status, email_verified_at, must_change_password)
         VALUES (:name, :email, :username, :password_hash, 'active', (now() at time zone 'utc'), true)
         RETURNING id
     ");
     $stmt->execute([
-        'name' => 'Administrador',
-        'email' => 'augustosc@gmail.com',
-        'username' => 'augustosc',
-        'password_hash' => password_hash('admin', PASSWORD_DEFAULT),
+        'name' => env_value('ACCESS_ADMIN_NAME', 'Administrador') ?: 'Administrador',
+        'email' => env_value('ACCESS_ADMIN_EMAIL', 'admin@example.invalid') ?: 'admin@example.invalid',
+        'username' => env_value('ACCESS_ADMIN_USERNAME', 'admin') ?: 'admin',
+        'password_hash' => password_hash($adminPassword, PASSWORD_DEFAULT),
     ]);
     $userId = (int) $stmt->fetchColumn();
 

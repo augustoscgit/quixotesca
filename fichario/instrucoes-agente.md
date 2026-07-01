@@ -6,7 +6,7 @@ Este documento orienta o desenvolvimento e manutenção do módulo **Fichário A
 
 ## 1. Escopo do Módulo
 O Fichário Acadêmico consiste em uma aplicação de cadastro bibliográfico e tags de referência em Saúde do Trabalhador. O agente deste módulo deve focar no desenvolvimento das seguintes frentes:
-1. **Cadastro de Referências**: Inclusão de novos artigos, referências de texto completo, comentários e anotações dinâmicas.
+1. **Cadastro de Referências**: Inclusão de novos artigos, referências de texto completo, comentários e marcações dinâmicas.
 2. **Nuvem de Tags**: Visualização inteligente de tags temáticas baseadas na quantidade de artigos associados.
 3. **Mecanismo de Parse e Busca**: Autocomplete de termos, processamento de BibTeX (`parse_bibtex.php`) e extratores de URL.
 
@@ -32,7 +32,7 @@ Para garantir uma experiência de navegação integrada e fluida:
   ```html
   <a href="../"><img src="assets/logo-fundo-escuro-vertical.png" alt="Fichário Acadêmico" style="height: 160px; width: auto; transition: transform 0.3s ease;"></a>
   ```
-- **Nota**: Manter o caminho de retorno relativo `../` (ou `../index.html`), garantindo que o redirecionamento funcione tanto no ambiente de homologação quanto em produção, de forma isolada de portas ou domínios locais.
+- **Observação**: Manter o caminho de retorno relativo `../` (ou `../index.html`), garantindo que o redirecionamento funcione tanto no ambiente de homologação quanto em produção, de forma isolada de portas ou domínios locais.
 
 ---
 

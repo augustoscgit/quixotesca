@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: same-origin');
 
 require_once __DIR__ . '/../../ldrt/src/db.php';
 
@@ -74,5 +75,5 @@ try {
 
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(['error' => 'Erro ao consultar dados.']);
 }

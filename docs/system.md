@@ -9,7 +9,7 @@ As diretrizes de design, tema, UX, navbar, tabelas, formularios, fluxos hierarqu
 `docs/tema-css-bootstrap-modulos.md`
 `docs/identidade-visual-ux.md` (ponte legada)
 
-Este arquivo permanece como ponte de compatibilidade para referencias antigas a `system.md`.
+Este arquivo permanece como ponte de compatibilidade para referencias antigas a `system.md`, agora organizado em `docs/system.md`.
 
 Em caso de conflito, prevalece esta ordem:
 
