@@ -565,11 +565,13 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                                 <div class="d-flex flex-wrap gap-1 align-items-center" id="note-links-container-<?= $noteId ?>">
                                                     <?php if ($links !== []): ?>
                                                         <?php foreach ($links as $link): ?>
-                                                            <span class="badge bg-primary bg-opacity-15 text-primary border border-primary border-opacity-25 d-inline-flex align-items-center gap-1 py-1 px-2">
-                                                                <i class="bi bi-folder-check"></i> <?= h($link['section_title']) ?>
+                                                            <span class="border rounded-2 bg-body-tertiary text-body d-inline-flex align-items-center gap-1 py-1 px-2 small text-wrap">
+                                                                <i class="bi bi-folder-check text-primary" aria-hidden="true"></i>
+                                                                <span class="text-body-secondary">Seção:</span>
+                                                                <span class="fw-semibold"><?= h($link['section_title']) ?></span>
                                                                 <?php if ($canEditArticle): ?>
-                                                                    <button type="button" class="btn btn-sm btn-link p-0 text-danger border-0 d-inline-flex align-items-center" onclick="unlinkNoteFromSection(<?= $noteId ?>, <?= $link['section_id'] ?>)" title="Remover vínculo">
-                                                                        <i class="bi bi-x-circle-fill text-danger ms-1"></i>
+                                                                    <button type="button" class="btn btn-sm btn-link p-0 text-danger border-0 d-inline-flex align-items-center ms-1" onclick="unlinkNoteFromSection(<?= $noteId ?>, <?= $link['section_id'] ?>)" title="Remover vínculo" aria-label="Remover vínculo com a seção <?= h($link['section_title']) ?>">
+                                                                        <i class="bi bi-x-circle-fill text-danger" aria-hidden="true"></i>
                                                                     </button>
                                                                 <?php endif; ?>
                                                             </span>
@@ -581,7 +583,8 @@ function render_article_tags_panel(array $state, bool $canEditArticle): string
                                             </div>
 
                                             <?php if ($canEditArticle): ?>
-                                                <div class="d-flex gap-1 align-items-center">
+                                                <div class="d-flex flex-column gap-1">
+                                                    <label class="form-label small text-body-secondary mb-0" for="note-link-select-<?= $noteId ?>">Vincular esta nota a uma seção</label>
                                                     <select class="form-select form-select-sm py-0 px-2" id="note-link-select-<?= $noteId ?>" onchange="handleNoteLinkAction(<?= $noteId ?>, this)">
                                                         <option value="">+ Vincular a uma seção...</option>
                                                         <option value="0">Vincular diretamente (Geral)</option>

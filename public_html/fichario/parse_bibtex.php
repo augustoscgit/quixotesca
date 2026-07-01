@@ -30,6 +30,9 @@ if (strlen($bibtex) > 100000) {
 
 $parser = new \App\Parsers\BibtexParser();
 $article = $parser->parse($bibtex);
+$article['reference_abnt'] = build_article_abnt_reference($article);
+$article['reference_abnt_missing'] = implode('; ', article_abnt_missing_fields($article));
+$article['reference_abnt_locked'] = '0';
 
 if ($article['title'] === '') {
     http_response_code(422);

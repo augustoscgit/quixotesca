@@ -69,19 +69,9 @@ Fluxo recomendado:
 
 Cada projeto organiza notas vinculadas em secoes com contexto proprio. A pagina do projeto possui o botao **Exportar para agente**, que gera um pacote `.zip` para uso em ChatGPT, Claude, agentes RAG ou fluxos de redacao assistida.
 
-O pacote inclui:
+A especificacao do pacote fica em `docs/admin/project_agent_export.md`, editavel pelo painel administrativo de documentacao.
 
-- `AGENT_CONTEXT.md`: arquivo principal para o agente ler primeiro.
-- `SOURCE_RETRIEVAL_GUIDE.md`: roteiro para buscar texto completo, PDF, DOI e fontes abertas.
-- `project_export.json`: dados estruturados do projeto, secoes, notas, artigos e referencias.
-- `source_retrieval.json`: checklist estruturado para busca de textos completos.
-- `articles_index.csv`: indice tabular com DOI, URL, PDF URL, ABNT e consultas sugeridas.
-- `references_abnt.txt` e `references.bib`: referencias bibliograficas.
-- `articles/*.md`: um arquivo por artigo citado no projeto.
-
-As orientacoes gerais do agente ficam centralizadas em `default_project_agent_instructions()` no `bootstrap.php`. Na interface do projeto, elas aparecem como padrao editavel. Quando o projeto usa o texto padrao, o banco armazena vazio e herda futuras melhorias do sistema. Quando o usuario personaliza as instrucoes, o texto fica salvo em `projects.agent_instructions` e passa a ser incluido no pacote exportado.
-
-O texto completo dos artigos nao e incluido no pacote por padrao. O exportador sinaliza quando existe texto completo armazenado no Fichario e fornece DOI, URL, PDF URL e consultas sugeridas para recuperacao externa legal e verificavel.
+As orientacoes gerais do agente ficam em `docs/admin/default_agent_instructions.md`. A funcao `default_project_agent_instructions()` usa o trecho entre os marcadores `agent-default:start` e `agent-default:end` como padrao operacional. Na interface do projeto, esse texto aparece como padrao editavel; quando o usuario personaliza, o texto fica salvo em `projects.agent_instructions` e passa a ser incluido no pacote exportado.
 
 ## Testes rapidos
 

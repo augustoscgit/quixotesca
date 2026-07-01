@@ -401,14 +401,17 @@ function export_agent_context(array $payload): string
     if (($payload['project_tags'] ?? []) !== []) {
         $lines[] = '### Tags do projeto';
         foreach ($payload['project_tags'] as $tag) {
-            $tagLine = '- ' . export_single_line($tag['name'] ?? '');
+            $label = export_single_line($tag['label'] ?? $tag['name'] ?? '');
+            if ($label === '') {
+                continue;
+            }
+            $lines[] = '- Rotulo: ' . $label;
             if (export_single_line($tag['category'] ?? '') !== '') {
-                $tagLine .= ' [' . export_single_line($tag['category']) . ']';
+                $lines[] = '  Categoria: ' . export_single_line($tag['category']);
             }
             if (export_text($tag['definition'] ?? '') !== '') {
-                $tagLine .= ': ' . export_single_line($tag['definition']);
+                $lines[] = '  Definicao: ' . export_single_line($tag['definition']);
             }
-            $lines[] = $tagLine;
         }
         $lines[] = '';
     }
@@ -656,6 +659,10 @@ $projectTagsStmt = $pdo->prepare('
 ');
 $projectTagsStmt->execute([':project_id' => $projectId]);
 $projectTags = $projectTagsStmt->fetchAll() ?: [];
+foreach ($projectTags as &$projectTag) {
+    $projectTag['label'] = $projectTag['name'] ?? '';
+}
+unset($projectTag);
 
 $sectionStmt = $pdo->prepare('
     SELECT id, project_id, title, context, position, created_at, updated_at

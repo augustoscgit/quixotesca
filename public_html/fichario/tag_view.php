@@ -745,12 +745,13 @@ function render_note_project_linking_html(int $noteId, array $links, bool $isLog
             <div class="d-flex flex-wrap gap-1 align-items-center" id="note-links-container-<?= $noteId ?>">
                 <?php if ($links !== []): ?>
                     <?php foreach ($links as $link): ?>
-                        <span class="badge bg-primary bg-opacity-15 text-primary border border-primary border-opacity-25 d-inline-flex align-items-center gap-1 py-1 px-2">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><path d="m9 14 2 2 4-4"></path></svg>
-                            <?= h($link['section_title']) ?>
+                        <span class="border rounded-2 bg-body-tertiary text-body d-inline-flex align-items-center gap-1 py-1 px-2 small text-wrap">
+                            <i class="bi bi-folder-check text-primary" aria-hidden="true"></i>
+                            <span class="text-body-secondary">Seção:</span>
+                            <span class="fw-semibold"><?= h($link['section_title']) ?></span>
                             <?php if ($canEditNotes): ?>
-                                <button type="button" class="btn btn-sm btn-link p-0 text-danger border-0 d-inline-flex align-items-center" onclick="unlinkNoteFromSection(<?= $noteId ?>, <?= $link['section_id'] ?>)" title="Remover vínculo">
-                                    <span class="text-danger ms-1 fw-bold">&times;</span>
+                                <button type="button" class="btn btn-sm btn-link p-0 text-danger border-0 d-inline-flex align-items-center ms-1" onclick="unlinkNoteFromSection(<?= $noteId ?>, <?= $link['section_id'] ?>)" title="Remover vínculo" aria-label="Remover vínculo com a seção <?= h($link['section_title']) ?>">
+                                    <i class="bi bi-x-circle-fill text-danger" aria-hidden="true"></i>
                                 </button>
                             <?php endif; ?>
                         </span>
@@ -762,7 +763,8 @@ function render_note_project_linking_html(int $noteId, array $links, bool $isLog
         </div>
 
         <?php if ($canEditNotes): ?>
-            <div class="d-flex gap-1 align-items-center">
+            <div class="d-flex flex-column gap-1">
+                <label class="form-label small text-body-secondary mb-0" for="note-link-select-<?= $noteId ?>">Vincular esta nota a uma seção</label>
                 <select class="form-select form-select-sm py-0 px-2" id="note-link-select-<?= $noteId ?>" onchange="handleNoteLinkAction(<?= $noteId ?>, this)">
                     <option value="">+ Vincular a uma seção...</option>
                     <option value="0">Vincular diretamente (Geral)</option>
@@ -820,14 +822,14 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
             window.addEventListener('load', () => requestAnimationFrame(() => window.scrollTo(0, 0)), { once: true });
         }
     </script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
 
 
     <?php render_navbar('tags'); ?>
 
-    <main class="container py-4 main-container">
+    <main class="main-container py-4">
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">Fichário</a></li>
@@ -835,14 +837,20 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 <li class="breadcrumb-item active text-body" aria-current="page"><?= h($selectedTag['name']) ?></li>
             </ol>
         </nav>
-
-        <!-- Back navigation button -->
-        <div class="mb-4">
-            <a href="tags.php" class="btn btn-outline-secondary rounded-pill px-3 d-inline-flex align-items-center gap-2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                Voltar para Navegação
+        <header class="page-header mb-4">
+            <div>
+                <span class="badge border tag-badge mb-2" <?= tag_tooltip_attrs($selectedTag) ?>>
+                    <?= h($selectedTag['category'] ?: 'Sem agrupamento') ?>
+                </span>
+                <h1 class="h2 mb-2"><?= h($selectedTag['name']) ?></h1>
+                <p class="text-body-secondary mb-0">
+                    <?= $stats['recursive'] ?> artigo(s) indexado(s) e <?= $displayNoteCount ?> nota(s) relacionada(s).
+                </p>
+            </div>
+            <a href="tags.php" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Voltar para tags
             </a>
-        </div>
+        </header>
 
         <?php if ($errors !== []): ?>
             <div class="alert alert-danger bg-danger-subtle border-danger text-danger-emphasis rounded-3" role="alert">
@@ -860,10 +868,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 <article class="card p-4 h-100">
                     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
                         <div>
-                            <span class="badge border tag-badge mb-2" <?= tag_tooltip_attrs($selectedTag) ?>>
-                                <?= h($selectedTag['category'] ?: 'Sem agrupamento') ?>
-                            </span>
-                            <h1 class="h3 text-body fw-bold mb-1"><?= h($selectedTag['name']) ?></h1>
+                            <h2 class="h4 text-body fw-bold mb-2">Detalhes da tag</h2>
                             <div class="text-secondary small mt-2">
                                 Artigos indexados: <strong class="text-body-secondary"><?= $stats['direct'] ?></strong> direto(s) | <strong class="text-body-secondary"><?= $stats['recursive'] ?></strong> total (incluindo sub-tags)
                             </div>
@@ -878,23 +883,23 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
 
                     <?php if ($canManageTags): ?>
                     <div class="d-flex justify-content-end gap-2 mb-4">
-                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3" 
+                        <button class="btn btn-sm btn-outline-primary"
                                 data-tag-id="<?= $selectedTag['id'] ?>" 
                                 data-tag-name="<?= h($selectedTag['name']) ?>" 
                                 data-tag-category="<?= h($selectedTag['category']) ?>" 
                                 data-tag-definition="<?= h($selectedTag['definition']) ?>"
                                 data-tag-parents='<?= json_encode($activeParents) ?>'
                                 onclick="openEditTagModal(this)">
-                            Editar Tag
+                            <i class="bi bi-pencil me-1" aria-hidden="true"></i>Editar tag
                         </button>
-                        <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                        <button class="btn btn-sm btn-outline-danger"
                                 type="button"
                                 data-delete-tag="1"
                                 data-tag-id="<?= (int) $selectedTag['id'] ?>"
                                 data-tag-name="<?= h($selectedTag['name']) ?>"
                                 data-child-count="<?= count($children) ?>"
                                 data-note-count="<?= $directNoteCount ?>">
-                            Excluir Tag
+                            <i class="bi bi-trash me-1" aria-hidden="true"></i>Excluir tag
                         </button>
                     </div>
                     <?php endif; ?>
@@ -1082,13 +1087,13 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                                                      <?php if ($noteQuote !== ''): ?>
                                                          <div class="marking-preview marking-preview-quote mb-2">
                                                              <span class="note-teaser-label">Citação</span>
-                                                             <div class="quote-box expandable-text" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= h($noteQuote) ?></div>
+                                                             <div class="quote-box expandable-text markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= fichario_render_markdown($noteQuote) ?></div>
                                                          </div>
                                                      <?php endif; ?>
                                                      <?php if ($noteComment !== ''): ?>
                                                          <div class="marking-preview marking-preview-comment">
                                                              <span class="note-teaser-label">Observação</span>
-                                                             <div class="observation-box expandable-text" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= h($noteComment) ?></div>
+                                                             <div class="observation-box expandable-text markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher"><?= fichario_render_markdown($noteComment) ?></div>
                                                          </div>
                                                      <?php endif; ?>
                                                  <?php endif; ?>
@@ -1112,7 +1117,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
 
                                     <div class="d-flex justify-content-end gap-2 pt-2 border-top border border-opacity-10">
                                         <?php if (trim((string) ($article['url'] ?? '')) !== ''): ?>
-                                            <a class="btn btn-sm btn-outline-info px-3 rounded-pill d-inline-flex align-items-center gap-1"
+                                            <a class="btn btn-sm btn-outline-info px-3 d-inline-flex align-items-center gap-1"
                                                href="<?= h($article['url']) ?>" 
                                                target="_blank" 
                                                rel="noopener noreferrer" 
@@ -1122,7 +1127,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                                             </a>
                                         <?php endif; ?>
                                         <?php if (trim((string) ($article['pdf_url'] ?? '')) !== ''): ?>
-                                            <a class="btn btn-sm btn-outline-danger px-3 rounded-pill d-inline-flex align-items-center gap-1"
+                                            <a class="btn btn-sm btn-outline-danger px-3 d-inline-flex align-items-center gap-1"
                                                href="<?= h($article['pdf_url']) ?>" 
                                                target="_blank" 
                                                rel="noopener noreferrer" 
@@ -1131,7 +1136,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                                                 PDF ↗
                                             </a>
                                         <?php endif; ?>
-                                        <a href="view.php?id=<?= (int) $article['id'] ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 text-nowrap">Abrir Ficha</a>
+                                        <a href="view.php?id=<?= (int) $article['id'] ?>" class="btn btn-sm btn-outline-primary py-1 text-nowrap">Abrir Ficha</a>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -1150,7 +1155,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                         <h2 class="modal-title h5 text-body fw-bold mb-1" id="tagNoteModalLabel">Leitura da nota</h2>
                         <div class="text-secondary small" id="tag-note-article-title"></div>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex flex-wrap gap-2 mb-3" id="tag-note-modal-tags"></div>
@@ -1182,11 +1187,11 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary text-body rounded-pill" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-outline-secondary text-body" data-bs-dismiss="modal">Fechar</button>
                     <?php if ($canEditNotes): ?>
-                        <button type="button" class="btn btn-outline-primary rounded-pill" id="btn-tag-note-edit">Editar</button>
-                        <button type="button" class="btn btn-outline-secondary text-body rounded-pill d-none" id="btn-tag-note-cancel-edit">Cancelar edição</button>
-                        <button type="button" class="btn btn-primary rounded-pill d-none" id="btn-tag-note-save">Salvar nota</button>
+                        <button type="button" class="btn btn-outline-primary" id="btn-tag-note-edit">Editar</button>
+                        <button type="button" class="btn btn-outline-secondary text-body d-none" id="btn-tag-note-cancel-edit">Cancelar edição</button>
+                        <button type="button" class="btn btn-primary d-none" id="btn-tag-note-save">Salvar nota</button>
                     <?php endif; ?>
                 </div>
             </div>
@@ -1200,7 +1205,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title h5 text-body fw-bold" id="tagModalLabel">Editar Tag Temática</h2>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <form method="post" action="tag_view.php?tag_id=<?= $selectedTagId ?>" id="tagForm">
@@ -1254,8 +1259,8 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border border-opacity-25">
-                            <button type="button" class="btn btn-outline-secondary text-body rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary rounded-pill px-4" id="submitBtn">Salvar Alterações</button>
+                            <button type="button" class="btn btn-outline-secondary text-body" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Salvar Alterações</button>
                         </div>
                     </form>
                 </div>
@@ -1298,6 +1303,12 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 '"': '&quot;',
                 "'": '&#039;'
             }[char]));
+        }
+
+        function renderMarkdownText(str) {
+            return window.FicharioUI && typeof window.FicharioUI.renderMarkdown === 'function'
+                ? window.FicharioUI.renderMarkdown(str)
+                : escapeHtml(str);
         }
 
         function textTeaser(text, maxLength) {
@@ -1352,7 +1363,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
 
             const value = String(text || '').trim();
             section.classList.toggle('d-none', value === '');
-            content.textContent = value;
+            content.innerHTML = renderMarkdownText(value);
             return value !== '';
         }
 
@@ -1436,7 +1447,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 parts.push(`
                     <div class="marking-preview marking-preview-quote mb-2">
                         <span class="note-teaser-label">Citação</span>
-                        <div class="quote-box expandable-text${collapsedClass}" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher">${escapeHtml(quoteValue)}</div>
+                        <div class="quote-box expandable-text markdown-body fichario-markdown${collapsedClass}" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher">${renderMarkdownText(quoteValue)}</div>
                     </div>
                 `);
             }
@@ -1444,7 +1455,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 parts.push(`
                     <div class="marking-preview marking-preview-comment">
                         <span class="note-teaser-label">Observação</span>
-                        <div class="observation-box expandable-text${collapsedClass}" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher">${escapeHtml(commentValue)}</div>
+                        <div class="observation-box expandable-text markdown-body fichario-markdown${collapsedClass}" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher">${renderMarkdownText(commentValue)}</div>
                     </div>
                 `);
             }
@@ -1509,7 +1520,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
                         'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: formData
@@ -1652,7 +1663,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                 },
                 body: formData
             })
@@ -1695,7 +1706,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                 },
                 body: formData
             })
@@ -1739,7 +1750,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                 },
                 body: formData
             })
@@ -1784,7 +1795,7 @@ $cColor = get_tag_colors($selectedTag['category'] ?? '');
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                 },
                 body: formData
             })

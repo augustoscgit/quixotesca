@@ -50,9 +50,177 @@
     z-index: 1080;
 }
 
+#fichario-toast-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: .625rem;
+    left: 50%;
+    max-width: 30rem;
+    pointer-events: none;
+    position: fixed;
+    top: 1.25rem;
+    transform: translateX(-50%);
+    width: min(90vw, 30rem);
+    z-index: 1080;
+}
+
+.fichario-toast {
+    opacity: 0;
+    pointer-events: auto;
+    transform: translateY(-.625rem);
+    transition: opacity .2s ease, transform .2s ease;
+    width: 100%;
+}
+
+.fichario-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .markdown-body img,
 .article-content img,
 .reader-content img {
     max-width: 100%;
     height: auto;
+}
+
+.project-summary {
+    display: grid;
+    gap: .75rem;
+}
+
+.project-summary > hr {
+    display: none;
+}
+
+.project-summary-panel {
+    background: var(--bs-body-bg);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+
+.project-summary-panel > summary {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    list-style: none;
+    padding: .875rem 1rem;
+}
+
+.project-summary-panel > summary::-webkit-details-marker {
+    display: none;
+}
+
+.project-summary-panel > summary::after {
+    color: var(--bs-secondary-color);
+    content: "\F282";
+    font-family: "bootstrap-icons";
+    font-size: .875rem;
+    transition: transform .15s ease;
+}
+
+.project-summary-panel[open] > summary {
+    border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.project-summary-panel[open] > summary::after {
+    transform: rotate(180deg);
+}
+
+.project-summary-content {
+    padding: 1rem;
+}
+
+.project-summary-content > .d-flex:first-child {
+    display: none !important;
+}
+
+.project-summary-content > details {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+}
+
+.project-summary-content > details > summary {
+    display: none;
+}
+
+.project-summary-content > details > .markdown-body {
+    margin-top: 0 !important;
+}
+
+.project-note-actions,
+.project-section-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .375rem;
+    justify-content: flex-end;
+}
+
+.icon-button {
+    align-items: center;
+    display: inline-flex;
+    height: 2rem;
+    justify-content: center;
+    padding: 0;
+    width: 2rem;
+}
+
+.project-move-select {
+    min-width: 9.75rem;
+    width: auto;
+}
+
+.section-toggle-icon {
+    transition: transform .15s ease;
+}
+
+.section-toggle-icon.collapsed {
+    transform: rotate(-90deg);
+}
+
+.project-section-context {
+    line-height: 1.55;
+}
+
+.fichario-markdown .table-responsive {
+    margin-bottom: .75rem;
+}
+
+.fichario-markdown-table {
+    font-size: .9375em;
+    margin-bottom: 0;
+}
+
+.fichario-markdown-table th {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+    font-weight: 700;
+}
+
+.tag-badge {
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    max-width: 100%;
+    white-space: normal;
+}
+
+.tag-badge a {
+    color: inherit;
+}
+
+@media (max-width: 767.98px) {
+    .project-note-actions,
+    .project-section-actions {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .project-move-select {
+        width: 100%;
+    }
 }

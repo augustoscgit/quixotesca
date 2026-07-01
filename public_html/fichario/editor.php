@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':bibtex_key' => $article['bibtex_key'],
             ':bibtex_raw' => $article['bibtex_raw'],
             ':reference_abnt' => $article['reference_abnt'],
-            ':reference_abnt_locked' => $article['reference_abnt_locked'] === '1',
+            ':reference_abnt_locked' => $article['reference_abnt_locked'] === '1' ? 'true' : 'false',
             ':reference_abnt_missing' => $article['reference_abnt_missing'],
             ':analysis' => $article['analysis'],
             ':data_year_start' => $article['data_year_start'] === '' ? null : (int) $article['data_year_start'],
@@ -427,7 +427,8 @@ if (!$referenceAbntLocked && trim((string) ($article['reference_abnt'] ?? '')) =
 
         const fields = [
             'title', 'authors', 'year', 'journal', 'volume', 'issue', 'pages',
-            'publisher', 'doi', 'url', 'pdf_url', 'abstract', 'full_text', 'references_text', 'keywords', 'bibtex_key', 'bibtex_raw'
+            'publisher', 'doi', 'url', 'pdf_url', 'abstract', 'full_text', 'references_text', 'keywords', 'bibtex_key', 'bibtex_raw',
+            'reference_abnt', 'reference_abnt_missing'
         ];
         const extractUrlButton = document.getElementById('extractUrlButton');
         const urlExtractMessage = document.getElementById('urlExtractMessage');
@@ -443,7 +444,8 @@ if (!$referenceAbntLocked && trim((string) ($article['reference_abnt'] ?? '')) =
         };
         const metadataFields = [
             'title', 'authors', 'year', 'journal', 'volume', 'issue', 'pages',
-            'publisher', 'doi', 'url', 'pdf_url', 'abstract', 'keywords', 'full_text', 'references_text'
+            'publisher', 'doi', 'url', 'pdf_url', 'abstract', 'keywords', 'full_text', 'references_text',
+            'reference_abnt', 'reference_abnt_missing'
         ];
 
         if (importButton) {
@@ -477,6 +479,7 @@ if (!$referenceAbntLocked && trim((string) ($article['reference_abnt'] ?? '')) =
                             input.value = payload.article[field] ?? '';
                         }
                     });
+                    setReferenceLocked(false);
 
                     modal.hide();
                     document.getElementById('title').focus();
@@ -539,7 +542,9 @@ if (!$referenceAbntLocked && trim((string) ($article['reference_abnt'] ?? '')) =
                     const input = document.getElementById(field);
                     const value = payload.article[field] ?? '';
 
-                    if (input && String(value).trim() !== '' && input.value.trim() === '') {
+                    const shouldReplaceReference = field === 'reference_abnt' && referenceAbntLockedInput?.value !== '1';
+
+                    if (input && String(value).trim() !== '' && (input.value.trim() === '' || shouldReplaceReference)) {
                         input.value = value;
                         filled++;
                     }

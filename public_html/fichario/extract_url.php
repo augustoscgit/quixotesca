@@ -41,6 +41,10 @@ try {
         exit;
     }
 
+    $article['reference_abnt'] = build_article_abnt_reference($article);
+    $article['reference_abnt_missing'] = implode('; ', article_abnt_missing_fields($article));
+    $article['reference_abnt_locked'] = '0';
+
     echo json_encode(['article' => $article], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } catch (Throwable $error) {
     http_response_code(502);

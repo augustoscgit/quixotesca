@@ -229,14 +229,20 @@ $sql = "
         journal,
         abstract,
         keywords,
-        full_text,
-        references_text,
         pdf_url,
         url,
         data_year_start,
         data_year_end,
         length(COALESCE(full_text, '')) AS full_text_length,
         length(COALESCE(references_text, '')) AS references_length,
+        CASE
+            WHEN trim(COALESCE(full_text, '')) = '' THEN 0
+            ELSE array_length(regexp_split_to_array(trim(full_text), '\s+'), 1)
+        END AS full_text_word_count,
+        CASE
+            WHEN trim(COALESCE(references_text, '')) = '' THEN 0
+            ELSE array_length(regexp_split_to_array(trim(references_text), '\s+'), 1)
+        END AS references_word_count,
         ($scoreSql) AS relevance,
         " . article_has_notes_sql('articles') . " AS is_fichado
     FROM articles
@@ -425,10 +431,7 @@ function first_match_snippet(array $article, array $tokens): string
         return '';
     }
 
-    $fields = ['title', 'keywords', 'abstract', 'references_text'];
-    if (is_logged_in()) {
-        $fields[] = 'full_text';
-    }
+    $fields = ['title', 'keywords', 'abstract'];
 
     foreach ($fields as $field) {
         $text = (string) ($article[$field] ?? '');
@@ -468,15 +471,12 @@ function selected_attr(string $current, string $value): string
     <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-<link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
 </head>
 <body>
-    <!-- Background Animated Blobs -->
-
-
     <?php render_navbar('articles'); ?>
 
-    <main class="container py-4 main-container">
+    <main class="main-container py-4">
         <!-- Breadcrumbs -->
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
@@ -485,20 +485,19 @@ function selected_attr(string $current, string $value): string
             </ol>
         </nav>
 
-        <!-- Top heading -->
-        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <header class="page-header mb-4">
             <div>
-                <h1 class="h3 mb-1 text-body fw-bold">Artigos Acadêmicos</h1>
+                <h1 class="h2 mb-2">Artigos Acadêmicos</h1>
                 <p class="text-secondary mb-0">Busca inteligente, filtragem temática e leitura do acervo bibliográfico.</p>
             </div>
             <?php if (can_edit_content()): ?>
                 <div>
-                    <a class="btn btn-primary rounded-pill px-4" href="editor.php">
-                        + Novo Artigo
+                    <a class="btn btn-primary" href="editor.php">
+                        <i class="bi bi-plus-lg me-1"></i>Novo artigo
                     </a>
                 </div>
             <?php endif; ?>
-        </div>
+        </header>
 
         <!-- Filter Form -->
         <form class="card article-filter-card p-4 mb-4" method="get">
@@ -681,8 +680,8 @@ function selected_attr(string $current, string $value): string
                         </select>
                     </div>
                     <div class="d-flex gap-2 align-self-end">
-                        <a class="btn btn-outline-secondary px-4 rounded-pill" href="articles.php?clear=1">Limpar</a>
-                        <button class="btn btn-primary px-4 rounded-pill" type="submit">Buscar</button>
+                        <a class="btn btn-outline-secondary px-4" href="articles.php?clear=1">Limpar</a>
+                        <button class="btn btn-primary px-4" type="submit">Buscar</button>
                     </div>
                 </div>
             </div>
@@ -806,6 +805,16 @@ function selected_attr(string $current, string $value): string
                         // Retrieve pre-fetched tags and projects
                         $articleTags = $articleTagsMap[(int)$article['id']] ?? [];
                         $articleProjects = $articleProjectsMap[(int)$article['id']] ?? [];
+                        $metadataWordCount = count_words(implode(' ', [
+                            $article['title'] ?? '',
+                            $article['authors'] ?? '',
+                            $article['journal'] ?? '',
+                            $article['abstract'] ?? '',
+                            $article['keywords'] ?? ''
+                        ]));
+                        $fullTextWordCount = (int) ($article['full_text_word_count'] ?? 0);
+                        $referencesWordCount = (int) ($article['references_word_count'] ?? 0);
+                        $articleCompleteWordCount = $metadataWordCount + $fullTextWordCount + $referencesWordCount;
                         ?>
                         <article class="card p-4">
                             <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
@@ -891,25 +900,10 @@ function selected_attr(string $current, string $value): string
                             <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top border border-opacity-10">
                                 <div class="d-flex flex-wrap gap-3 text-secondary small">
                                     <?php if (is_logged_in()): ?>
-                                        <span class="metric">Texto Completo: <?= count_words($article['full_text'] ?? '') ?> palavras</span>
-                                        <span class="metric">Artigo Completo: <?= count_words(implode(' ', [
-                                            $article['title'] ?? '',
-                                            $article['authors'] ?? '',
-                                            $article['journal'] ?? '',
-                                            $article['abstract'] ?? '',
-                                            $article['keywords'] ?? '',
-                                            $article['full_text'] ?? '',
-                                            $article['references_text'] ?? ''
-                                        ])) ?> palavras</span>
+                                        <span class="metric">Texto Completo: <?= $fullTextWordCount ?> palavras</span>
+                                        <span class="metric">Artigo Completo: <?= $articleCompleteWordCount ?> palavras</span>
                                     <?php else: ?>
-                                        <span class="metric">Palavras (Metadados): <?= count_words(implode(' ', [
-                                            $article['title'] ?? '',
-                                            $article['authors'] ?? '',
-                                            $article['journal'] ?? '',
-                                            $article['abstract'] ?? '',
-                                            $article['keywords'] ?? '',
-                                            $article['references_text'] ?? ''
-                                        ])) ?> palavras</span>
+                                        <span class="metric">Palavras (Metadados): <?= $metadataWordCount + $referencesWordCount ?> palavras</span>
                                     <?php endif; ?>
                                     <?php if ($tokens !== []): ?>
                                         <span class="metric">Relevância: <?= h((string) $article['relevance']) ?></span>
@@ -917,7 +911,7 @@ function selected_attr(string $current, string $value): string
                                 </div>
                                 <div class="d-flex gap-2 mt-2 mt-sm-0 ms-auto">
                                     <?php if (trim((string) ($article['url'] ?? '')) !== ''): ?>
-                                        <a class="btn btn-sm btn-outline-primary px-3 rounded-pill d-inline-flex align-items-center gap-1"
+                                        <a class="btn btn-sm btn-outline-primary px-3 d-inline-flex align-items-center gap-1"
                                            href="<?= h($article['url']) ?>" 
                                            target="_blank" 
                                            rel="noopener noreferrer" 
@@ -927,7 +921,7 @@ function selected_attr(string $current, string $value): string
                                         </a>
                                     <?php endif; ?>
                                     <?php if (trim((string) ($article['pdf_url'] ?? '')) !== ''): ?>
-                                        <a class="btn btn-sm btn-outline-primary px-3 rounded-pill d-inline-flex align-items-center gap-1"
+                                        <a class="btn btn-sm btn-outline-primary px-3 d-inline-flex align-items-center gap-1"
                                            href="<?= h($article['pdf_url']) ?>" 
                                            target="_blank" 
                                            rel="noopener noreferrer" 
@@ -937,7 +931,7 @@ function selected_attr(string $current, string $value): string
                                         </a>
                                     <?php endif; ?>
                                                               <?php if (trim((string) ($article['abstract'] ?? '')) !== ''): ?>
-                                        <button class="btn btn-sm btn-outline-info px-3 rounded-pill d-inline-flex align-items-center gap-1"
+                                        <button class="btn btn-sm btn-outline-info px-3 d-inline-flex align-items-center gap-1"
                                                 type="button"
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#abstractModal<?= (int) $article['id'] ?>"
@@ -945,7 +939,7 @@ function selected_attr(string $current, string $value): string
                                             <i class="bi bi-book-half"></i> Resumo
                                         </button>
                                     <?php endif; ?>
-                                    <a class="btn btn-sm btn-primary px-3 rounded-pill" href="view.php?id=<?= h((string) $article['id']) ?>"><?= is_logged_in() ? 'Fichar & Ler' : 'Ficha' ?></a>
+                                    <a class="btn btn-sm btn-primary px-3" href="view.php?id=<?= h((string) $article['id']) ?>"><?= is_logged_in() ? 'Fichar & Ler' : 'Ficha' ?></a>
                                  </div>
                              </div>
                          </article>
@@ -1007,8 +1001,8 @@ function selected_attr(string $current, string $value): string
                                              <p><?= h($article['abstract']) ?></p>
                                          </div>
                                          <div class="modal-footer">
-                                             <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Fechar</button>
-                                             <a class="btn btn-primary rounded-pill px-4" href="view.php?id=<?= h((string) $article['id']) ?>"><?= is_logged_in() ? 'Fichar & Ler' : 'Visualizar Ficha' ?></a>
+                                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                                             <a class="btn btn-primary" href="view.php?id=<?= h((string) $article['id']) ?>"><?= is_logged_in() ? 'Fichar & Ler' : 'Visualizar Ficha' ?></a>
                                          </div>
                                      </div>
                                  </div>
@@ -1041,12 +1035,12 @@ function selected_attr(string $current, string $value): string
                     <nav aria-label="Navegação de páginas" class="mt-4">
                         <ul class="pagination pagination-sm justify-content-center flex-wrap gap-1">
                             <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-                                <a class="page-link rounded-pill px-3" href="<?= get_pagination_url(1) ?>" aria-label="Primeira">
+                                <a class="page-link" href="<?= get_pagination_url(1) ?>" aria-label="Primeira">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
                             <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-                                <a class="page-link rounded-pill px-3" href="<?= get_pagination_url($page - 1) ?>" aria-label="Anterior">
+                                <a class="page-link" href="<?= get_pagination_url($page - 1) ?>" aria-label="Anterior">
                                     <span aria-hidden="true">&lsaquo;</span>
                                 </a>
                             </li>
@@ -1056,18 +1050,18 @@ function selected_attr(string $current, string $value): string
                                     <li class="page-item disabled"><span class="page-link border-0 bg-transparent text-secondary">...</span></li>
                                 <?php else: ?>
                                     <li class="page-item <?= $item === $page ? 'active' : '' ?>">
-                                        <a class="page-link rounded-pill px-3" href="<?= get_pagination_url((int)$item) ?>"><?= $item ?></a>
+                                        <a class="page-link" href="<?= get_pagination_url((int)$item) ?>"><?= $item ?></a>
                                     </li>
                                 <?php endif; ?>
                             <?php endforeach; ?>
 
                             <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
-                                <a class="page-link rounded-pill px-3" href="<?= get_pagination_url($page + 1) ?>" aria-label="Próxima">
+                                <a class="page-link" href="<?= get_pagination_url($page + 1) ?>" aria-label="Próxima">
                                     <span aria-hidden="true">&rsaquo;</span>
                                 </a>
                             </li>
                             <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
-                                <a class="page-link rounded-pill px-3" href="<?= get_pagination_url($totalPages) ?>" aria-label="Última">
+                                <a class="page-link" href="<?= get_pagination_url($totalPages) ?>" aria-label="Última">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
@@ -1278,73 +1272,6 @@ function selected_attr(string $current, string $value): string
                 });
             });
         }
-    </script>
-    <!-- Loading overlay (hourglass) -->
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="d-flex flex-column align-items-center gap-3">
-            <svg class="loading-hourglass" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 2h14"></path>
-                <path d="M5 22h14"></path>
-                <path d="M19 2v10a7 7 0 0 1-14 0V2"></path>
-                <path d="M5 22v-10a7 7 0 0 1 14 0v10"></path>
-            </svg>
-            <span class="text-body fw-medium small tracking-wide">Aguarde...</span>
-        </div>
-    </div>
-<script>
-        (function() {
-            let fetchTimer = null;
-            let activeFetchCount = 0;
-            
-            function showOverlay(instant = false) {
-                activeFetchCount++;
-                if (instant) {
-                    const overlay = document.getElementById('loading-overlay');
-                    if (overlay) overlay.classList.add('active');
-                } else if (!fetchTimer) {
-                    fetchTimer = setTimeout(() => {
-                        const overlay = document.getElementById('loading-overlay');
-                        if (overlay) overlay.classList.add('active');
-                    }, 250); // 250ms threshold
-                }
-            }
-
-            function hideOverlay() {
-                activeFetchCount--;
-                if (activeFetchCount <= 0) {
-                    activeFetchCount = 0;
-                    if (fetchTimer) {
-                        clearTimeout(fetchTimer);
-                        fetchTimer = null;
-                    }
-                    const overlay = document.getElementById('loading-overlay');
-                    if (overlay) overlay.classList.remove('active');
-                }
-            }
-
-            // Intercept global fetch calls (AJAX)
-            const originalFetch = window.fetch;
-            window.fetch = function(...args) {
-                showOverlay();
-                return originalFetch(...args).finally(() => {
-                    hideOverlay();
-                });
-            };
-
-            // Intercept form submits (Full page load)
-            document.addEventListener('submit', (event) => {
-                if (event.defaultPrevented) return;
-                const target = event.target.getAttribute('target');
-                if (target === '_blank') return;
-                showOverlay(true);
-            });
-
-            // Show on navigation away / beforeunload (with auto-hide timeout to prevent freezes on downloads)
-            window.addEventListener('beforeunload', () => {
-                showOverlay(true);
-                setTimeout(hideOverlay, 5000);
-            });
-        })();
     </script>
 </body>
 </html>

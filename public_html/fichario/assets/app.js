@@ -11,6 +11,234 @@
         }[char]));
     }
 
+    function renderMarkdownInline(value) {
+        let escaped = escapeHtml(value);
+        const codeTokens = [];
+
+        escaped = escaped.replace(/`([^`]+)`/g, (match, code) => {
+            const token = `\u001A${codeTokens.length}\u001A`;
+            codeTokens.push([token, `<code>${code}</code>`]);
+            return token;
+        });
+        escaped = escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/gi, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        escaped = escaped.replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>');
+
+        codeTokens.forEach(([token, html]) => {
+            escaped = escaped.split(token).join(html);
+        });
+
+        return escaped;
+    }
+
+    function splitMarkdownTableRow(line) {
+        let source = String(line || '').trim();
+        if (source.startsWith('|')) source = source.slice(1);
+        if (source.endsWith('|')) source = source.slice(0, -1);
+
+        const cells = [];
+        let cell = '';
+        let escaped = false;
+        for (const char of source) {
+            if (escaped) {
+                cell += char;
+                escaped = false;
+                continue;
+            }
+            if (char === '\\') {
+                escaped = true;
+                continue;
+            }
+            if (char === '|') {
+                cells.push(cell.trim());
+                cell = '';
+                continue;
+            }
+            cell += char;
+        }
+        cells.push(cell.trim());
+        return cells;
+    }
+
+    function parseMarkdownTableSeparator(line, expectedCells) {
+        const cells = splitMarkdownTableRow(line);
+        if (cells.length < expectedCells) return null;
+
+        const alignments = [];
+        for (const cell of cells.slice(0, expectedCells)) {
+            const value = cell.trim();
+            if (!/^:?-{3,}:?$/.test(value)) return null;
+            const starts = value.startsWith(':');
+            const ends = value.endsWith(':');
+            alignments.push(starts && ends ? 'center' : (ends ? 'right' : (starts ? 'left' : '')));
+        }
+        return alignments;
+    }
+
+    function renderMarkdown(value) {
+        const markdown = String(value || '').replace(/\r\n?/g, '\n').trim();
+        if (markdown === '') return '';
+
+        const lines = markdown.split('\n');
+        let html = '';
+        let paragraph = [];
+        const listStack = [];
+        let inCode = false;
+        let codeBuffer = [];
+
+        const flushParagraph = () => {
+            if (paragraph.length === 0) return;
+            html += `<p>${renderMarkdownInline(paragraph.join('\n')).replace(/\n/g, '<br>')}</p>`;
+            paragraph = [];
+        };
+        const closeListTo = (depth = 0) => {
+            while (listStack.length > depth) {
+                const last = listStack.pop();
+                if (last.liOpen) {
+                    html += '</li>';
+                }
+                html += `</${last.type}>`;
+            }
+        };
+        const appendListItem = (level, type, content) => {
+            const boundedLevel = Math.max(0, Math.min(6, level));
+            const targetDepth = boundedLevel + 1;
+
+            closeListTo(targetDepth);
+
+            while (listStack.length < targetDepth) {
+                html += `<${type}>`;
+                listStack.push({ type, liOpen: false });
+            }
+
+            if (listStack[boundedLevel].type !== type) {
+                closeListTo(boundedLevel);
+                html += `<${type}>`;
+                listStack.push({ type, liOpen: false });
+            }
+
+            if (listStack[boundedLevel].liOpen) {
+                html += '</li>';
+                listStack[boundedLevel].liOpen = false;
+            }
+
+            html += `<li>${renderMarkdownInline(content)}`;
+            listStack[boundedLevel].liOpen = true;
+        };
+        const flushCode = () => {
+            html += `<pre><code>${escapeHtml(codeBuffer.join('\n'))}</code></pre>`;
+            codeBuffer = [];
+        };
+
+        for (let lineIndex = 0; lineIndex < lines.length; lineIndex += 1) {
+            const line = lines[lineIndex];
+            const trimmed = line.trim();
+
+            if (trimmed.startsWith('```')) {
+                if (inCode) {
+                    flushCode();
+                    inCode = false;
+                } else {
+                    flushParagraph();
+                    closeListTo();
+                    inCode = true;
+                    codeBuffer = [];
+                }
+                continue;
+            }
+
+            if (inCode) {
+                codeBuffer.push(line.replace(/\s+$/g, ''));
+                continue;
+            }
+
+            if (trimmed === '') {
+                flushParagraph();
+                closeListTo();
+                continue;
+            }
+
+            if (line.includes('|') && lines[lineIndex + 1]) {
+                const headers = splitMarkdownTableRow(line);
+                const alignments = parseMarkdownTableSeparator(lines[lineIndex + 1], headers.length);
+                if (headers.length > 0 && alignments) {
+                    flushParagraph();
+                    closeListTo();
+
+                    html += '<div class="table-responsive"><table class="table table-sm table-bordered align-middle fichario-markdown-table"><thead><tr>';
+                    headers.forEach((header, index) => {
+                        const align = alignments[index] ? ` style="text-align: ${alignments[index]}"` : '';
+                        html += `<th${align}>${renderMarkdownInline(header)}</th>`;
+                    });
+                    html += '</tr></thead><tbody>';
+
+                    lineIndex += 2;
+                    while (lineIndex < lines.length && lines[lineIndex].trim() !== '' && lines[lineIndex].includes('|')) {
+                        const cells = splitMarkdownTableRow(lines[lineIndex]);
+                        html += '<tr>';
+                        headers.forEach((_, index) => {
+                            const align = alignments[index] ? ` style="text-align: ${alignments[index]}"` : '';
+                            html += `<td${align}>${renderMarkdownInline(cells[index] || '')}</td>`;
+                        });
+                        html += '</tr>';
+                        lineIndex += 1;
+                    }
+                    lineIndex -= 1;
+                    html += '</tbody></table></div>';
+                    continue;
+                }
+            }
+
+            const heading = trimmed.match(/^(#{1,4})\s+(.+)$/);
+            if (heading) {
+                flushParagraph();
+                closeListTo();
+                const level = Math.min(heading[1].length + 2, 6);
+                html += `<h${level}>${renderMarkdownInline(heading[2])}</h${level}>`;
+                continue;
+            }
+
+            const unordered = line.match(/^(\s*)[-*+]\s+(.+)$/);
+            if (unordered) {
+                flushParagraph();
+                const indent = unordered[1].replace(/\t/g, '    ').length;
+                appendListItem(Math.floor(indent / 2), 'ul', unordered[2]);
+                continue;
+            }
+
+            const ordered = line.match(/^(\s*)\d+[.)]\s+(.+)$/);
+            if (ordered) {
+                flushParagraph();
+                const indent = ordered[1].replace(/\t/g, '    ').length;
+                appendListItem(Math.floor(indent / 2), 'ol', ordered[2]);
+                continue;
+            }
+
+            const quote = trimmed.match(/^>\s?(.+)$/);
+            if (quote) {
+                flushParagraph();
+                closeListTo();
+                html += `<blockquote>${renderMarkdownInline(quote[1])}</blockquote>`;
+                continue;
+            }
+
+            if (/^-{3,}$/.test(trimmed)) {
+                flushParagraph();
+                closeListTo();
+                html += '<hr>';
+                continue;
+            }
+
+            paragraph.push(trimmed);
+        }
+
+        if (inCode) flushCode();
+        flushParagraph();
+        closeListTo();
+
+        return html;
+    }
+
     function inferLoadingText(button) {
         const explicit = button?.dataset?.loadingText;
         if (explicit) {
@@ -332,12 +560,10 @@
         if (!container) {
             container = document.createElement('div');
             container.id = 'fichario-toast-container';
-            container.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; width: 90%; max-width: 480px;';
             document.body.appendChild(container);
         }
         const toast = document.createElement('div');
-        toast.className = `alert alert-${type} shadow-lg m-0`;
-        toast.style.cssText = 'pointer-events: auto; width: 100%; border-radius: 12px; font-weight: 500; font-family: var(--bs-body-font-family); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; border: 1px solid; opacity: 0; transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease;';
+        toast.className = `alert alert-${type} fichario-toast m-0`;
         
         const iconMap = {
             success: '<i class="bi bi-check-circle-fill me-2 fs-5"></i>',
@@ -351,15 +577,11 @@
         
         container.appendChild(toast);
         
-        // Force reflow and animate in
-        toast.offsetHeight;
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateY(0)';
+        requestAnimationFrame(() => toast.classList.add('is-visible'));
         
         setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(-10px)';
-            setTimeout(() => toast.remove(), 300);
+            toast.classList.remove('is-visible');
+            setTimeout(() => toast.remove(), 250);
         }, 4000);
     }
 
@@ -433,6 +655,16 @@
 
                 if (!sourceBody || !targetBody) return;
 
+                const expandProjectSection = (body, id) => {
+                    if (!body) return;
+                    body.classList.remove('collapsed', 'd-none');
+                    const iconId = id === generalSectionId ? 'general' : id;
+                    const icon = document.getElementById(`section-toggle-icon-${iconId}`);
+                    if (icon) {
+                        icon.classList.remove('collapsed');
+                    }
+                };
+
                 // Backups for revert on failure
                 const sourceHtmlBackup = sourceBody.innerHTML;
                 const targetHtmlBackup = targetBody.innerHTML;
@@ -478,9 +710,9 @@
                 if (sourceStack && sourceStack.querySelector('.note-card') === null) {
                     let placeholderHtml = '';
                     if (sourceContainerId === 'section-general') {
-                        placeholderHtml = '<div class="p-3 rounded-3 bg-black bg-opacity-25 text-secondary text-center mb-3">Nenhuma nota vinculada diretamente ao projeto.</div>';
+                        placeholderHtml = '<div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">Nenhuma nota vinculada diretamente ao projeto.</div>';
                     } else {
-                        placeholderHtml = '<div class="p-3 rounded-3 bg-black bg-opacity-25 text-secondary text-center mb-3">Nenhuma nota vinculada a esta seção.</div>';
+                        placeholderHtml = '<div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">Nenhuma nota vinculada a esta seção.</div>';
                     }
                     sourceStack.remove();
                     sourceBody.innerHTML = placeholderHtml;
@@ -521,6 +753,8 @@
                 // Update badge counts
                 updateBadgeCount(sourceBadge, -1);
                 updateBadgeCount(targetBadge, 1);
+
+                expandProjectSection(targetBody, toSectionId);
 
                 // Scroll to target card location and animate
                 card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -730,7 +964,7 @@
                             html += `
                                 <div class="marking-preview marking-preview-quote mb-2">
                                     <span class="note-teaser-label">Citação</span>
-                                    <div class="quote-box expandable-text collapsed" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher">${escapeHtml(quoteText)}</div>
+                                    <div class="quote-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher">${renderMarkdown(quoteText)}</div>
                                 </div>
                             `;
                         }
@@ -738,7 +972,7 @@
                             html += `
                                 <div class="marking-preview marking-preview-comment">
                                     <span class="note-teaser-label">Observação</span>
-                                    <div class="observation-box expandable-text collapsed" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher">${escapeHtml(comment)}</div>
+                                    <div class="observation-box expandable-text collapsed markdown-body fichario-markdown" onclick="toggleExpandableText(this)" title="Clique para expandir/recolher">${renderMarkdown(comment)}</div>
                                 </div>
                             `;
                         }
@@ -802,6 +1036,14 @@
                     throw new Error(result.error || 'Erro ao salvar alterações da seção.');
                 }
 
+                // Use the persisted response so Ajax matches the initial server render.
+                const savedSection = result.section || {};
+                const savedTitle = String(savedSection.title || title);
+                const savedContext = String(savedSection.context || context);
+                const savedContextHtml = typeof savedSection.context_html === 'string'
+                    ? savedSection.context_html
+                    : renderMarkdown(savedContext);
+
                 // Close the modal
                 const modalInstance = bootstrap.Modal.getInstance(modal);
                 if (modalInstance) {
@@ -819,29 +1061,28 @@
                         
                         btn.innerHTML = '';
                         if (icon) btn.appendChild(icon);
-                        btn.appendChild(document.createTextNode(' ' + title));
+                        btn.appendChild(document.createTextNode(' ' + savedTitle));
                         if (badge) btn.appendChild(badge);
                     }
                     
                     // Update edit button data attributes
                     const editBtn = sectionContainer.querySelector('button[data-bs-target="#editSectionModal"]');
                     if (editBtn) {
-                        editBtn.setAttribute('data-section-title', title);
-                        editBtn.setAttribute('data-section-context', context);
+                        editBtn.setAttribute('data-section-title', savedTitle);
+                        editBtn.setAttribute('data-section-context', savedContext);
                     }
 
-                    // Update context text in body
+                    // Update context in body
                     const sectionBody = document.getElementById(`section-body-${sectionId}`);
                     if (sectionBody) {
-                        let contextP = sectionBody.querySelector('.text-white-50.small');
-                        if (context !== '') {
+                        let contextP = sectionBody.querySelector('.project-section-context');
+                        if (savedContext !== '') {
                             if (!contextP) {
-                                contextP = document.createElement('p');
-                                contextP.className = 'text-white-50 small mb-4';
-                                contextP.style.cssText = 'white-space: pre-wrap; line-height: 1.6; font-size: 0.88rem;';
+                                contextP = document.createElement('div');
+                                contextP.className = 'project-section-context text-body-secondary small mb-4 markdown-body fichario-markdown';
                                 sectionBody.insertBefore(contextP, sectionBody.firstChild);
                             }
-                            contextP.textContent = context;
+                            contextP.innerHTML = savedContextHtml;
                         } else {
                             if (contextP) {
                                 contextP.remove();
@@ -852,7 +1093,7 @@
 
                 // Update select dropdown options of all note cards
                 document.querySelectorAll(`select[name="to_section_id"] option[value="${sectionId}"]`).forEach((opt) => {
-                    opt.textContent = title;
+                    opt.textContent = savedTitle;
                 });
 
                 showToast('Seção atualizada.');
@@ -924,6 +1165,7 @@
         setPanelBusy,
         toggleSectionCollapse,
         toggleAllSections,
+        renderMarkdown,
         withBusy
     };
 

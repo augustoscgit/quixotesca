@@ -414,6 +414,9 @@ function migrate(PDO $pdo): void
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_articles_abstract_trgm ON articles USING gin (search_norm(abstract) gin_trgm_ops)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_articles_full_text_trgm ON articles USING gin (search_norm(full_text) gin_trgm_ops)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_articles_references_text_trgm ON articles USING gin (search_norm(references_text) gin_trgm_ops)");
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_articles_year_title_sort ON articles(year DESC, lower(title))");
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_articles_lower_title_sort ON articles(lower(title))");
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_articles_lower_journal_year_sort ON articles(lower(journal), year DESC)");
 
     // Create B-Tree indexes for foreign keys
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_tag_hierarchy_child_id ON tag_hierarchy(child_id)");
@@ -562,7 +565,7 @@ function truthy_value(mixed $value): bool
 
 function default_project_agent_instructions(): string
 {
-    return implode("\n", [
+    $fallback = implode("\n", [
         '- Use somente as informacoes deste pacote como base factual, salvo instrucao explicita do usuario.',
         '- Se for pesquisar texto completo, registre quais fontes externas foram consultadas e se o texto completo/PDF foi encontrado.',
         '- Priorize DOI, URL original e PDF URL antes de buscas amplas por titulo.',
@@ -574,6 +577,21 @@ function default_project_agent_instructions(): string
         '- Diferencie citacao literal, observacao/fichamento e metadados bibliograficos.',
         '- Quando uma conclusao depender de inferencia, sinalize a inferencia.',
     ]);
+
+    $docPath = __DIR__ . '/docs/admin/default_agent_instructions.md';
+    if (!is_readable($docPath)) {
+        return $fallback;
+    }
+
+    $doc = (string) file_get_contents($docPath);
+    if (preg_match('/<!--\s*agent-default:start\s*-->(.*?)<!--\s*agent-default:end\s*-->/s', $doc, $match)) {
+        $instructions = trim(str_replace(["\r\n", "\r"], "\n", $match[1]));
+        if ($instructions !== '') {
+            return $instructions;
+        }
+    }
+
+    return $fallback;
 }
 
 function effective_project_agent_instructions(array $project): string

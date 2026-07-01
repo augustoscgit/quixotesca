@@ -292,7 +292,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
                 header('Content-Type: application/json; charset=utf-8');
-                echo json_encode(['success' => true]);
+                echo json_encode([
+                    'success' => true,
+                    'section' => [
+                        'id' => $sectionId,
+                        'title' => $title,
+                        'context' => $context,
+                        'context_html' => fichario_render_markdown($context),
+                    ],
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 exit;
             }
 
@@ -680,10 +688,10 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
     <title><?= h((string) ($project['title'] ?? 'Projeto')) ?> - Projetos - Fichario Academico</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link href="assets/app.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="assets/app.css?v=20260630-project-md" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="../assets/js/theme-switcher.js?v=20260629-vanilla"></script>
-    <link href="../assets/css/style.css?v=20260629-vanilla" rel="stylesheet">
+    <link href="../assets/css/style.css?v=20260630-project-md" rel="stylesheet">
 </head>
 <body>
 
@@ -706,7 +714,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
             </div>
             <div class="d-flex flex-wrap gap-2">
                 <a class="btn btn-outline-primary d-flex align-items-center gap-2" href="export_project.php?id=<?= $projectId ?>">
-                    <i class="bi bi-robot"></i> Exportar para agente
+                    <i class="bi bi-download"></i> Exportar
                 </a>
                 <button class="btn btn-outline-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#editProjectModal">
                     <i class="bi bi-pencil"></i> Editar projeto
@@ -730,22 +738,38 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
             </div>
         <?php endif; ?>
 
-        <section class="card p-4 mb-4">
+        <section class="project-summary mb-4">
             <!-- Sobre o Projeto -->
-            <div class="mb-4">
-                <h2 class="h5 text-body fw-bold mb-3 d-flex align-items-center gap-2">
-                    <i class="bi bi-info-circle text-primary"></i> Sobre o Projeto
-                </h2>
+            <details class="project-summary-panel">
+                <summary>
+                    <span class="d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-info-circle text-primary" aria-hidden="true"></i>
+                        <span class="fw-semibold">Sobre o projeto</span>
+                    </span>
+                    <span class="text-secondary small">descrição e escopo</span>
+                </summary>
+                <div class="project-summary-content">
                 <?php if (trim((string) ($project['description'] ?? '')) !== ''): ?>
                     <div class="text-body-secondary small mb-0 markdown-body fichario-markdown"><?= fichario_render_markdown((string) $project['description']) ?></div>
                 <?php else: ?>
                     <div class="text-secondary small mb-0">Sem descrição cadastrada.</div>
                 <?php endif; ?>
-            </div>
+                </div>
+            </details>
 
             <hr class="border border-opacity-25 my-4">
 
-            <div class="mb-4">
+            <details class="project-summary-panel">
+                <summary>
+                    <span class="d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-robot text-primary" aria-hidden="true"></i>
+                        <span class="fw-semibold">Orientações de exportação</span>
+                    </span>
+                    <span class="badge <?= $usesDefaultAgentInstructions ? 'text-bg-secondary' : 'text-bg-success' ?>">
+                        <?= $usesDefaultAgentInstructions ? 'Padrão do sistema' : 'Personalizadas' ?>
+                    </span>
+                </summary>
+                <div class="project-summary-content">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                     <h2 class="h5 text-body fw-bold mb-0 d-flex align-items-center gap-2">
                         <i class="bi bi-robot text-primary"></i> Orientações para agente
@@ -754,16 +778,25 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                         <?= $usesDefaultAgentInstructions ? 'Padrão do sistema' : 'Personalizadas' ?>
                     </span>
                 </div>
-                <details class="border rounded-3 p-3 bg-body-tertiary bg-opacity-25">
+                <details open class="border rounded-3 p-3 bg-body-tertiary bg-opacity-25">
                     <summary class="text-body fw-semibold small">Ver orientações incluídas no pacote de exportação</summary>
                     <div class="text-body-secondary small mt-3 mb-0 markdown-body fichario-markdown"><?= fichario_render_markdown($effectiveAgentInstructions) ?></div>
                 </details>
-            </div>
+                </div>
+            </details>
 
             <hr class="border border-opacity-25 my-4">
 
             <!-- Tags do projeto -->
-            <div>
+            <details class="project-summary-panel">
+                <summary>
+                    <span class="d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-tags text-primary" aria-hidden="true"></i>
+                        <span class="fw-semibold">Tags do projeto</span>
+                    </span>
+                    <span class="text-secondary small"><?= count($projectTags) ?> tag(s)</span>
+                </summary>
+                <div class="project-summary-content">
                 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
                     <div>
                         <h2 class="h5 text-body fw-bold mb-1">Tags do projeto</h2>
@@ -790,7 +823,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="unlink_project_tag">
                                 <input type="hidden" name="tag_id" value="<?= $tagId ?>">
-                                <button class="btn btn-link btn-sm p-0 border-0 text-danger" type="submit" title="Remover tag">&times;</button>
+                                <button class="btn btn-link btn-sm p-0 border-0 text-danger" type="submit" title="Remover tag" aria-label="Remover tag"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
                             </form>
                         </div>
                     <?php endforeach; ?>
@@ -818,14 +851,15 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                     <button class="btn btn-primary" type="submit">Vincular tag</button>
                 </div>
             </form>
-            </div>
+                </div>
+            </details>
         </section>
 
         <div class="project-layout">
             <section class="vstack gap-4">
                 <div class="d-flex justify-content-end align-items-center gap-2 mb-1">
                     <button class="btn btn-sm btn-outline-secondary text-body px-3" type="button" onclick="toggleAllSections(this)">
-                        Recolher todas as seções
+                        Expandir todas as seções
                     </button>
                     <button class="btn btn-primary btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#newSectionModal">
                         <i class="bi bi-plus-lg"></i> Nova seção
@@ -837,7 +871,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                         <div>
                             <h2 class="h5 text-body fw-bold mb-1">
                                 <button class="btn btn-link p-0 text-body text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse('general')">
-                                    <i class="bi bi-chevron-down section-toggle-icon" id="section-toggle-icon-general"></i>
+                                    <i class="bi bi-chevron-down section-toggle-icon collapsed" id="section-toggle-icon-general"></i>
                                     Notas vinculadas diretamente ao projeto
                                     <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2"><?= count($generalNotes) ?> nota(s)</span>
                                 </button>
@@ -854,7 +888,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                         <?php endif; ?>
                     </div>
 
-                    <div id="section-body-general" class="section-body">
+                    <div id="section-body-general" class="section-body collapsed d-none">
                         <?php if ($generalNotes === []): ?>
                         <div class="p-3 rounded-3 bg-body-tertiary bg-opacity-25 text-secondary text-center mb-3">
                             Nenhuma nota vinculada diretamente ao projeto.
@@ -867,7 +901,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                     $quoteText = trim((string) ($note['quote_text'] ?? ''));
                                     $comment = trim((string) ($note['comment'] ?? ''));
                                 ?>
-                                <div id="note-card-<?= $generalSectionId ?>-<?= $noteId ?>" class="note-card p-2 rounded-3 border border border-opacity-25 bg-body-tertiary bg-opacity-25 small text-body-secondary">
+                                <div id="note-card-<?= $generalSectionId ?>-<?= $noteId ?>" class="note-card p-2 rounded-3 border border-opacity-25 bg-body-tertiary bg-opacity-25 small text-body-secondary">
                                     <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
                                         <div class="min-w-0">
                                             <a class="text-body fw-semibold text-decoration-none" href="view.php?id=<?= (int) $note['article_id'] ?>">
@@ -900,14 +934,14 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 <?php endif; ?>
                                             </div>
                                         </div>
-                                        <div class="d-flex flex-wrap gap-2 flex-shrink-0">
+                                        <div class="project-note-actions">
                                             <form method="post" class="m-0" data-busy-ignore="1">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="action" value="move_note">
                                                 <input type="hidden" name="section_id" value="<?= $generalSectionId ?>">
                                                 <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                 <input type="hidden" name="direction" value="up">
-                                                <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Subir nota">↑</button>
+                                                <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Subir nota" aria-label="Subir nota"><i class="bi bi-arrow-up" aria-hidden="true"></i></button>
                                             </form>
                                             <form method="post" class="m-0" data-busy-ignore="1">
                                                 <?= csrf_field() ?>
@@ -915,15 +949,15 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 <input type="hidden" name="section_id" value="<?= $generalSectionId ?>">
                                                 <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                 <input type="hidden" name="direction" value="down">
-                                                <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Descer nota">↓</button>
+                                                <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Descer nota" aria-label="Descer nota"><i class="bi bi-arrow-down" aria-hidden="true"></i></button>
                                             </form>
                                             <form method="post" class="m-0 d-inline-block">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="action" value="move_note_to_section">
                                                 <input type="hidden" name="from_section_id" value="<?= $generalSectionId ?>">
                                                 <input type="hidden" name="note_id" value="<?= $noteId ?>">
-                                                <select name="to_section_id" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
-                                                    <option value="" selected disabled>Mover para...</option>
+                                                <select name="to_section_id" class="form-select form-select-sm project-move-select" aria-label="Mover nota para outra seção" onchange="this.form.submit()">
+                                                    <option value="" selected disabled>Mover para seção</option>
                                                     <?php foreach ($sections as $targetSection): ?>
                                                         <?php if ((int)$targetSection['id'] !== $generalSectionId): ?>
                                                             <option value="<?= (int)$targetSection['id'] ?>"><?= h((string)$targetSection['title']) ?></option>
@@ -946,7 +980,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 <input type="hidden" name="action" value="unlink_note">
                                                 <input type="hidden" name="section_id" value="<?= $generalSectionId ?>">
                                                 <input type="hidden" name="note_id" value="<?= $noteId ?>">
-                                                <button class="btn btn-outline-danger icon-button" type="submit" title="Remover nota">&times;</button>
+                                                <button class="btn btn-outline-danger icon-button" type="submit" title="Remover nota" aria-label="Remover nota"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
                                             </form>
                                         </div>
                                     </div>
@@ -988,26 +1022,26 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                     <div class="text-secondary small fw-semibold mb-1">Seção <?= $index + 1 ?></div>
                                     <h2 class="h4 text-body fw-bold mb-0">
                                         <button class="btn btn-link p-0 text-body text-decoration-none border-0 d-inline-flex align-items-center gap-2" type="button" onclick="toggleSectionCollapse(<?= $sectionId ?>)">
-                                            <i class="bi bi-chevron-down section-toggle-icon" id="section-toggle-icon-<?= $sectionId ?>"></i>
+                                            <i class="bi bi-chevron-down section-toggle-icon collapsed" id="section-toggle-icon-<?= $sectionId ?>"></i>
                                             <?= h((string) $section['title']) ?>
                                             <span class="badge bg-secondary bg-opacity-25 text-secondary fs-6 fw-normal ms-2"><?= count($sectionNotes) ?> nota(s)</span>
                                         </button>
                                     </h2>
                                 </div>
-                                <div class="d-flex flex-wrap gap-2">
+                                <div class="project-section-actions">
                                     <form method="post" data-busy-ignore="1">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="action" value="move_section">
                                         <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                         <input type="hidden" name="direction" value="up">
-                                        <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Subir seção">↑</button>
+                                        <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Subir seção" aria-label="Subir seção"><i class="bi bi-arrow-up" aria-hidden="true"></i></button>
                                     </form>
                                     <form method="post" data-busy-ignore="1">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="action" value="move_section">
                                         <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                         <input type="hidden" name="direction" value="down">
-                                        <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Descer seção">↓</button>
+                                        <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Descer seção" aria-label="Descer seção"><i class="bi bi-arrow-down" aria-hidden="true"></i></button>
                                     </form>
                                     <button class="btn btn-outline-secondary icon-button text-body" 
                                             type="button" 
@@ -1023,17 +1057,17 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="action" value="delete_section">
                                         <input type="hidden" name="section_id" value="<?= $sectionId ?>">
-                                        <button class="btn btn-outline-danger icon-button" type="submit" title="Excluir seção">&times;</button>
+                                        <button class="btn btn-outline-danger icon-button" type="submit" title="Excluir seção" aria-label="Excluir seção"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
                                     </form>
                                 </div>
                             </div>
 
-                            <div id="section-body-<?= $sectionId ?>" class="section-body">
+                            <div id="section-body-<?= $sectionId ?>" class="section-body collapsed d-none">
                                 <?php if (trim((string) ($section['context'] ?? '')) !== ''): ?>
-                                <div class="text-body-secondary small mb-4 markdown-body fichario-markdown"><?= fichario_render_markdown((string) $section['context']) ?></div>
+                                <div class="project-section-context text-body-secondary small mb-4 markdown-body fichario-markdown"><?= fichario_render_markdown((string) $section['context']) ?></div>
                             <?php endif; ?>
 
-                            <div class="border-top border border-opacity-25 pt-4">
+                            <div class="border-top pt-4">
                                  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
                                      <h3 class="h5 text-body fw-bold mb-0">Notas vinculadas</h3>
                                      <div class="d-flex align-items-center gap-3">
@@ -1056,7 +1090,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                 $quoteText = trim((string) ($note['quote_text'] ?? ''));
                                                 $comment = trim((string) ($note['comment'] ?? ''));
                                             ?>
-                                            <div id="note-card-<?= $sectionId ?>-<?= $noteId ?>" class="note-card p-2 rounded-3 border border border-opacity-25 bg-body-tertiary bg-opacity-25 small text-body-secondary">
+                                            <div id="note-card-<?= $sectionId ?>-<?= $noteId ?>" class="note-card p-2 rounded-3 border border-opacity-25 bg-body-tertiary bg-opacity-25 small text-body-secondary">
                                                 <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
                                                     <div class="min-w-0">
                                                         <a class="text-body fw-semibold text-decoration-none" href="view.php?id=<?= (int) $note['article_id'] ?>">
@@ -1089,14 +1123,14 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                             <?php endif; ?>
                                                         </div>
                                                     </div>
-                                                    <div class="d-flex flex-wrap gap-2 flex-shrink-0">
+                                                    <div class="project-note-actions">
                                                         <form method="post" class="m-0" data-busy-ignore="1">
                                                             <?= csrf_field() ?>
                                                             <input type="hidden" name="action" value="move_note">
                                                             <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                                             <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                             <input type="hidden" name="direction" value="up">
-                                                            <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Subir nota">↑</button>
+                                                            <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Subir nota" aria-label="Subir nota"><i class="bi bi-arrow-up" aria-hidden="true"></i></button>
                                                         </form>
                                                         <form method="post" class="m-0" data-busy-ignore="1">
                                                             <?= csrf_field() ?>
@@ -1104,15 +1138,15 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                             <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                                             <input type="hidden" name="note_id" value="<?= $noteId ?>">
                                                             <input type="hidden" name="direction" value="down">
-                                                            <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Descer nota">↓</button>
+                                                            <button class="btn btn-outline-secondary icon-button text-body" type="submit" title="Descer nota" aria-label="Descer nota"><i class="bi bi-arrow-down" aria-hidden="true"></i></button>
                                                         </form>
                                                         <form method="post" class="m-0 d-inline-block">
                                                             <?= csrf_field() ?>
                                                             <input type="hidden" name="action" value="move_note_to_section">
                                                             <input type="hidden" name="from_section_id" value="<?= $sectionId ?>">
                                                             <input type="hidden" name="note_id" value="<?= $noteId ?>">
-                                                            <select name="to_section_id" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
-                                                                <option value="" selected disabled>Mover para...</option>
+                                                            <select name="to_section_id" class="form-select form-select-sm project-move-select" aria-label="Mover nota para outra seção" onchange="this.form.submit()">
+                                                                <option value="" selected disabled>Mover para seção</option>
                                                                 <?php foreach ($sections as $targetSection): ?>
                                                                     <?php if ((int)$targetSection['id'] !== $sectionId): ?>
                                                                         <option value="<?= (int)$targetSection['id'] ?>"><?= h((string)$targetSection['title']) ?></option>
@@ -1135,7 +1169,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
                                                             <input type="hidden" name="action" value="unlink_note">
                                                             <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                                                             <input type="hidden" name="note_id" value="<?= $noteId ?>">
-                                                            <button class="btn btn-outline-danger icon-button" type="submit" title="Remover nota">&times;</button>
+                                                            <button class="btn btn-outline-danger icon-button" type="submit" title="Remover nota" aria-label="Remover nota"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -1305,7 +1339,7 @@ $linkedInGeneral = $generalSectionId > 0 ? ($linkedNoteIdsBySection[$generalSect
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script src="assets/app.js?v=20260625e"></script>
+    <script src="assets/app.js?v=20260630-project-md"></script>
     <script>
         const editSectionModal = document.getElementById('editSectionModal');
         if (editSectionModal) {
